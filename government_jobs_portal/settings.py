@@ -27,8 +27,15 @@ SECRET_KEY = 'django-insecure-*kncs1+#0o%kw%-n8rw_!l+@w_)yi1c(+muw(x(h^&avqs(eea
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "government-jobs-portal.onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://government-jobs-portal.onrender.com",
+]
 
 # Application definition
 
