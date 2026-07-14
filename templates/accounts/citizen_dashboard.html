@@ -1,0 +1,860 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Citizen Dashboard - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       DASHBOARD GOVERNMENT STYLES
+       ============================================ */
+    
+    .dashboard-hero {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #2b6cb0 100%);
+        padding: 30px 0 30px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-hero::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: -20%;
+        right: -5%;
+        font-size: 200px;
+        opacity: 0.03;
+        transform: rotate(-15deg);
+    }
+    
+    .dashboard-hero .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .dashboard-hero .greeting {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2rem;
+    }
+    
+    .dashboard-hero .sub-greeting {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
+        margin-top: 2px;
+    }
+    
+    .dashboard-hero .status-badge {
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.12);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .dashboard-hero .status-badge:hover {
+        background: rgba(255,255,255,0.2);
+        transform: scale(1.02);
+    }
+    
+    .dashboard-hero .status-badge.paid {
+        background: rgba(56, 161, 105, 0.2);
+        border-color: rgba(56, 161, 105, 0.3);
+    }
+    
+    .dashboard-hero .status-badge.paid i {
+        color: #48bb78;
+    }
+    
+    .dashboard-hero .status-badge.unpaid {
+        background: rgba(237, 137, 54, 0.2);
+        border-color: rgba(237, 137, 54, 0.3);
+    }
+    
+    .dashboard-hero .status-badge.unpaid i {
+        color: #ed8936;
+    }
+    
+    /* Statistics Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .stat-card:hover::after {
+        transform: scaleX(1);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+        border-color: rgba(201, 163, 61, 0.15);
+    }
+    
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(-5deg);
+    }
+    
+    .stat-card .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1a365d;
+        line-height: 1.2;
+    }
+    
+    .stat-card .stat-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        margin-top: 2px;
+    }
+    
+    /* Main Layout */
+    .dashboard-main {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 24px;
+    }
+    
+    @media (max-width: 1024px) {
+        .dashboard-main {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .quick-actions .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .quick-actions .section-title i {
+        color: #c9a33d;
+    }
+    
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        background: #f7fafc;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: #2d3748;
+        border: 1px solid transparent;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateX(6px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        background: white;
+        border-color: rgba(201, 163, 61, 0.15);
+    }
+    
+    .quick-action-btn i:first-child {
+        width: 24px;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
+    .quick-action-btn .arrow {
+        margin-left: auto;
+        color: #a0aec0;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-btn:hover .arrow {
+        transform: translateX(4px);
+        color: #c9a33d;
+    }
+    
+    /* Profile Summary */
+    .profile-summary {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-top: 20px;
+    }
+    
+    .profile-summary .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .profile-summary .section-title i {
+        color: #c9a33d;
+    }
+    
+    .profile-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 3px solid #c9a33d;
+    }
+    
+    .profile-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+    }
+    
+    .profile-email {
+        font-family: 'Inter', sans-serif;
+        color: #718096;
+        font-size: 0.85rem;
+    }
+    
+    .profile-phone {
+        font-family: 'Inter', sans-serif;
+        color: #a0aec0;
+        font-size: 0.8rem;
+    }
+    
+    .completion-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+    
+    .completion-number {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    
+    .progress-track {
+        height: 6px;
+        border-radius: 3px;
+        background: #e2e8f0;
+        overflow: hidden;
+        margin-top: 6px;
+    }
+    
+    .progress-track .progress-bar {
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Recent Applications */
+    .recent-applications {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .recent-applications .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .recent-applications .section-title i {
+        color: #c9a33d;
+    }
+    
+    .recent-applications .view-all {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #c9a33d;
+        text-decoration: none;
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .recent-applications .view-all:hover {
+        color: #b8860b;
+    }
+    
+    .application-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 14px 16px;
+        background: #f7fafc;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        margin-bottom: 10px;
+    }
+    
+    .application-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .application-item:hover {
+        background: white;
+        border-color: rgba(201, 163, 61, 0.1);
+        transform: translateX(4px);
+    }
+    
+    .application-item .app-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .application-item .app-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1rem;
+    }
+    
+    .application-item .app-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 2px;
+    }
+    
+    .application-item .app-meta i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    
+    .application-item .app-date {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+        margin-top: 4px;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.submitted { background: #e2e8f0; color: #4a5568; }
+    .status-badge.under-review { background: #bee3f8; color: #2b6cb0; }
+    .status-badge.shortlisted { background: #fefcbf; color: #975a16; }
+    .status-badge.interview-scheduled { background: #fbd38d; color: #7b341e; }
+    .status-badge.medical-examination { background: #f6ad55; color: #7b341e; }
+    .status-badge.visa-processing { background: #9f7aea; color: #553c9a; }
+    .status-badge.accepted { background: #c6f6d5; color: #22543d; }
+    .status-badge.rejected { background: #fed7d7; color: #742a2a; }
+    .status-badge.withdrawn { background: #e9d8fd; color: #44337a; }
+    
+    /* Payment Status */
+    .payment-status {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-top: 20px;
+    }
+    
+    .payment-status .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .payment-status .section-title i {
+        color: #c9a33d;
+    }
+    
+    .payment-status .status-box {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        border: 1px solid;
+        transition: all 0.3s ease;
+    }
+    
+    .payment-status .status-box.paid {
+        background: #f0fff4;
+        border-color: #c6f6d5;
+    }
+    
+    .payment-status .status-box.unpaid {
+        background: #fffbeb;
+        border-color: #fefcbf;
+    }
+    
+    .payment-status .status-box i {
+        font-size: 1.5rem;
+    }
+    
+    .payment-status .status-box .status-text {
+        flex: 1;
+    }
+    
+    .payment-status .status-box .status-text h4 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+    
+    .payment-status .status-box .status-text p {
+        font-family: 'Merriweather', serif;
+        font-size: 0.85rem;
+        margin-top: 2px;
+    }
+    
+    .payment-status .status-box.paid .status-text h4 { color: #22543d; }
+    .payment-status .status-box.paid .status-text p { color: #48bb78; }
+    .payment-status .status-box.unpaid .status-text h4 { color: #7b341e; }
+    .payment-status .status-box.unpaid .status-text p { color: #ed8936; }
+    
+    .payment-status .pay-now-btn {
+        padding: 8px 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #ed8936, #dd6b20);
+        color: white;
+    }
+    
+    .payment-status .pay-now-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(237, 137, 54, 0.3);
+    }
+    
+    /* No Applications */
+    .no-applications {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .no-applications i {
+        font-size: 48px;
+        color: #a0aec0;
+        margin-bottom: 12px;
+    }
+    
+    .no-applications h4 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.1rem;
+    }
+    
+    .no-applications p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+    
+    .no-applications .browse-btn {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 10px 28px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .no-applications .browse-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-hero .greeting {
+            font-size: 1.5rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .stat-card {
+            padding: 16px;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1.5rem;
+        }
+        
+        .dashboard-main {
+            grid-template-columns: 1fr;
+        }
+        
+        .application-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .payment-status .status-box {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .payment-status .pay-now-btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .dashboard-hero {
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .dashboard-hero .greeting {
+            font-size: 1.2rem;
+        }
+        
+        .dashboard-hero .status-badge {
+            font-size: 0.75rem;
+            padding: 6px 14px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-card {
+            padding: 14px;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1.2rem;
+        }
+        
+        .stat-card .stat-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
+        }
+        
+        .quick-actions,
+        .profile-summary,
+        .recent-applications,
+        .payment-status {
+            padding: 16px;
+        }
+        
+        .application-item {
+            padding: 12px 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Hero -->
+<section class="dashboard-hero">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="greeting">Welcome back, {{ user.full_name }}!</h1>
+                <p class="sub-greeting">Here's what's happening with your job applications</p>
+            </div>
+            <div>
+                {% if has_payment_access %}
+                    <span class="status-badge paid">
+                        <i class="fas fa-check-circle"></i> Payment Verified
+                    </span>
+                {% else %}
+                    <a href="{% url 'payment_page' %}" class="status-badge unpaid">
+                        <i class="fas fa-credit-card"></i> Pay Now
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics -->
+<section class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #ebf8ff; color: #2b6cb0;">
+            <i class="fas fa-briefcase"></i>
+        </div>
+        <div class="stat-number">{{ applications.count }}</div>
+        <div class="stat-label">Total Applications</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #f0fff4; color: #38a169;">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-number">{{ status_counts.accepted|default:0 }}</div>
+        <div class="stat-label">Accepted</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fffbeb; color: #ed8936;">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-number">{{ status_counts.under_review|default:0 }}</div>
+        <div class="stat-label">Under Review</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #faf5ff; color: #805ad5;">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-number">{{ status_counts.interview_scheduled|default:0 }}</div>
+        <div class="stat-label">Interviews</div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="dashboard-main">
+    <!-- Left Column -->
+    <div class="left-column">
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+            <div class="space-y-3">
+                <a href="{% url 'job_list' %}" class="quick-action-btn">
+                    <i class="fas fa-search" style="color: #2b6cb0;"></i>
+                    <span>Browse Jobs</span>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </a>
+                <a href="{% url 'payment_page' %}" class="quick-action-btn">
+                    <i class="fas fa-credit-card" style="color: #38a169;"></i>
+                    <span>Make Payment</span>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </a>
+                <a href="{% url 'profile' %}" class="quick-action-btn">
+                    <i class="fas fa-user-edit" style="color: #805ad5;"></i>
+                    <span>Update Profile</span>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </a>
+                <a href="{% url 'my_applications' %}" class="quick-action-btn">
+                    <i class="fas fa-file-alt" style="color: #ed8936;"></i>
+                    <span>View All Applications</span>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Summary -->
+        <div class="profile-summary">
+            <h3 class="section-title"><i class="fas fa-user-circle"></i> Profile Summary</h3>
+            <div class="flex items-center gap-4 mb-4">
+                <div class="profile-avatar">
+                    {{ user.full_name|slice:":1"|upper }}
+                </div>
+                <div>
+                    <div class="profile-name">{{ user.full_name }}</div>
+                    <div class="profile-email">{{ user.email }}</div>
+                    <div class="profile-phone">{{ user.phone_number }}</div>
+                </div>
+            </div>
+            <div class="border-t border-gray-100 pt-4">
+                <div class="flex justify-between text-sm">
+                    <span class="completion-text">Profile Completion</span>
+                    <span class="completion-number">{{ profile_completion }}%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" style="width: {{ profile_completion }}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-column">
+        <!-- Recent Applications -->
+        <div class="recent-applications">
+            <div class="section-title">
+                <span><i class="fas fa-clock"></i> Recent Applications</span>
+                <a href="{% url 'my_applications' %}" class="view-all">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            {% if recent_applications %}
+                <div class="space-y-3">
+                    {% for app in recent_applications %}
+                        <div class="application-item">
+                            <div class="app-info">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="app-title">{{ app.job.title }}</span>
+                                    <span class="status-badge {{ app.status|slugify }}">
+                                        {{ app.get_status_display }}
+                                    </span>
+                                </div>
+                                <div class="app-meta">
+                                    <span><i class="fas fa-building"></i> {{ app.job.employer.company_name|default:app.job.agency.agency_name|default:'N/A' }}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ app.job.country.name }}</span>
+                                </div>
+                                <div class="app-date">
+                                    <i class="far fa-calendar-alt"></i> Applied: {{ app.date_applied|date:"M d, Y" }}
+                                </div>
+                            </div>
+                            <a href="{% url 'application_detail' app.id %}" class="text-gold-dark hover:text-gold font-medium text-sm inline-flex items-center gap-1 mt-2 md:mt-0" style="color: #c9a33d;">
+                                View <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-applications">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>No Applications Yet</h4>
+                    <p>You haven't applied to any jobs yet. Start your job search today!</p>
+                    <a href="{% url 'job_list' %}" class="browse-btn">
+                        <i class="fas fa-search"></i> Browse Jobs
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Payment Status -->
+        <div class="payment-status">
+            <h3 class="section-title"><i class="fas fa-credit-card"></i> Payment Status</h3>
+            {% if has_payment_access %}
+                <div class="status-box paid">
+                    <i class="fas fa-check-circle" style="color: #48bb78;"></i>
+                    <div class="status-text">
+                        <h4>Payment Verified</h4>
+                        <p>
+                            You have used {{ total_applications_used }} applications
+                            {% if access_type == 'single' %}
+                                out of 1
+                            {% elif access_type == 'monthly' %}
+                                this month
+                            {% elif access_type == 'quarterly' %}
+                                this quarter
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="status-box unpaid">
+                    <i class="fas fa-exclamation-triangle" style="color: #ed8936;"></i>
+                    <div class="status-text">
+                        <h4>Payment Required</h4>
+                        <p>Pay the government employment service fee to apply for jobs.</p>
+                    </div>
+                    <a href="{% url 'payment_page' %}" class="pay-now-btn">
+                        <i class="fas fa-credit-card"></i> Pay Now
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

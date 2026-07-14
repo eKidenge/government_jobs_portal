@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Confirmation - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .confirmation-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 40px;
+        text-align: center;
+    }
+    .status-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 48px;
+    }
+    .status-icon.pending {
+        background: #fefcbf;
+        color: #d69e2e;
+    }
+    .status-icon.completed {
+        background: #c6f6d5;
+        color: #48bb78;
+    }
+    .status-icon.failed {
+        background: #fed7d7;
+        color: #fc8181;
+    }
+    .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #2b6cb0;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .progress-ring {
+        width: 100%;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 2px;
+        overflow: hidden;
+        margin: 20px 0;
+    }
+    .progress-ring .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #2b6cb0, #4299e1);
+        border-radius: 2px;
+        animation: progress 3s ease-in-out infinite;
+    }
+    @keyframes progress {
+        0% { width: 0%; }
+        50% { width: 70%; }
+        100% { width: 100%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="confirmation-container px-4 sm:px-6 lg:px-8">
+        <div class="confirmation-card">
+            {% if payment.status == 'pending' %}
+                <!-- Pending -->
+                <div class="status-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Payment in Progress</h2>
+                <p class="text-gray-600 mt-2">Your payment is being processed. Please wait...</p>
+                
+                <div class="progress-ring">
+                    <div class="progress-bar"></div>
+                </div>
+                
+                <div class="bg-blue-50 rounded-xl p-4 text-left mt-4">
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-info-circle text-primary-light mr-2"></i>
+                        <strong>Transaction Reference:</strong> {{ payment.transaction_reference }}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <i class="fas fa-phone text-primary-light mr-2"></i>
+                        <strong>Phone:</strong> {{ payment.metadata.phone_number|default:'N/A' }}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <i class="fas fa-money-bill-wave text-primary-light mr-2"></i>
+                        <strong>Amount:</strong> {{ payment.currency }} {{ payment.amount|floatformat:2 }}
+                    </p>
+                </div>
+                
+                <div class="mt-6">
+                    <button onclick="checkStatus()" class="bg-primary-light text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary transition">
+                        <i class="fas fa-sync-alt mr-2"></i> Check Status
+                    </button>
+                </div>
+                
+                <p class="text-xs text-gray-500 mt-4">
+                    <i class="fas fa-info-circle mr-1"></i> This page will auto-refresh every 10 seconds
+                </p>
+                
+            {% elif payment.status == 'completed' %}
+                <!-- Completed -->
+                <div class="status-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-green-600">Payment Successful!</h2>
+                <p class="text-gray-600 mt-2">Your payment has been verified and confirmed.</p>
+                
+                <div class="bg-green-50 rounded-xl p-4 text-left mt-4">
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <strong>Reference:</strong> {{ payment.transaction_reference }}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-1">
+                        <i class="fas fa-money-bill-wave text-green-500 mr-2"></i>
+                        <strong>Amount:</strong> {{ payment.currency }} {{ payment.amount|floatformat:2 }}
+                    </p>
+                    {% if payment.mpesa_receipt_number %}
+                        <p class="text-sm text-gray-600 mt-1">
+                            <i class="fas fa-receipt text-green-500 mr-2"></i>
+                            <strong>M-Pesa Receipt:</strong> {{ payment.mpesa_receipt_number }}
+                        </p>
+                    {% endif %}
+                    <p class="text-sm text-gray-600 mt-1">
+                        <i class="fas fa-calendar-check text-green-500 mr-2"></i>
+                        <strong>Date:</strong> {{ payment.completed_date|date:"F d, Y H:i" }}
+                    </p>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                    <a href="{% url 'citizen_dashboard' %}" class="bg-gradient-to-r from-primary-light to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition">
+                        <i class="fas fa-home mr-2"></i> Go to Dashboard
+                    </a>
+                    <a href="{% url 'payment_history' %}" class="border border-primary-light text-primary-light px-6 py-3 rounded-xl font-semibold hover:bg-primary-light hover:text-white transition">
+                        <i class="fas fa-history mr-2"></i> View History
+                    </a>
+                    <button onclick="window.print()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+                        <i class="fas fa-print mr-2"></i> Print Receipt
+                    </button>
+                </div>
+                
+            {% elif payment.status == 'failed' %}
+                <!-- Failed -->
+                <div class="status-icon failed">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-red-600">Payment Failed</h2>
+                <p class="text-gray-600 mt-2">Your payment could not be processed.</p>
+                
+                <div class="bg-red-50 rounded-xl p-4 text-left mt-4">
+                    <p class="text-sm text-red-700">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        There was an issue processing your payment. Please try again or contact support.
+                    </p>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                    <a href="{% url 'payment_page' %}" class="bg-gradient-to-r from-primary-light to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition">
+                        <i class="fas fa-redo mr-2"></i> Try Again
+                    </a>
+                    <a href="{% url 'contact' %}" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+                        <i class="fas fa-headset mr-2"></i> Contact Support
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-refresh for pending status
+{% if payment.status == 'pending' %}
+    let checkCount = 0;
+    
+    function checkStatus() {
+        const paymentId = '{{ payment.id }}';
+        fetch(`/api/payments/status/${paymentId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    location.reload();
+                } else if (data.status === 'failed') {
+                    location.reload();
+                }
+                checkCount++;
+                if (checkCount < 30) { // Try 30 times (5 minutes)
+                    setTimeout(checkStatus, 10000);
+                }
+            })
+            .catch(error => console.error('Error checking status:', error));
+    }
+    
+    // Start checking after 10 seconds
+    setTimeout(checkStatus, 10000);
+    
+    // Auto-reload every 60 seconds as fallback
+    setTimeout(() => location.reload(), 60000);
+{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,1405 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Government Jobs Portal - Connecting Citizens to Verified Employment Opportunities Worldwide">
+    <meta name="keywords" content="government jobs, employment, verified jobs, recruitment, careers">
+    <title>{% block title %}Government Jobs Portal{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Government-Style Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Slick Carousel -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    
+    <style>
+        /* ============================================
+           GOVERNMENT-STYLE FONTS & ROOT VARIABLES
+           ============================================ */
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gov-font {
+            font-family: 'Playfair Display', serif !important;
+        }
+        
+        .gov-font-body {
+            font-family: 'Merriweather', serif !important;
+        }
+        
+        .gov-font-sans {
+            font-family: 'Inter', sans-serif !important;
+        }
+        
+        :root {
+            --primary: #0a1628;
+            --primary-light: #1a365d;
+            --primary-mid: #2b6cb0;
+            --primary-dark: #0d1b3e;
+            --secondary: #4299e1;
+            --accent: #48bb78;
+            --gold: #c9a33d;
+            --gold-light: #d4af37;
+            --gold-dark: #b8860b;
+            --danger: #e53e3e;
+            --warning: #ed8936;
+            --info: #4299e1;
+            --purple: #805ad5;
+            --cream: #fdf8f0;
+            --gov-bg: #f8f6f2;
+        }
+        
+        /* ============================================
+           CUSTOM SCROLLBAR
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-dark);
+        }
+        
+        /* ============================================
+           GRADIENT BACKGROUNDS
+           ============================================ */
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary-mid) 100%);
+        }
+        
+        .gradient-hero {
+            background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        }
+        
+        .gradient-gold {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+        }
+        
+        .gradient-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        }
+        
+        .gradient-success {
+            background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+        }
+        
+        .gradient-danger {
+            background: linear-gradient(135deg, #c53030 0%, #e53e3e 100%);
+        }
+        
+        .gradient-warning {
+            background: linear-gradient(135deg, #dd6b20 0%, #ed8936 100%);
+        }
+        
+        .gradient-purple {
+            background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%);
+        }
+        
+        /* ============================================
+           GLASSMORPHISM
+           ============================================ */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .slide-left {
+            animation: slideInLeft 1s ease-out;
+        }
+        
+        .slide-right {
+            animation: slideInRight 1s ease-out;
+        }
+        
+        .fade-up {
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .scale-in {
+            animation: scaleIn 0.8s ease-out;
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        /* ============================================
+           CARD HOVER EFFECTS
+           ============================================ */
+        .job-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .job-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(43, 108, 176, 0.08), rgba(201, 163, 61, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .job-card:hover::before {
+            opacity: 1;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(26, 54, 93, 0.15);
+            border-color: var(--gold);
+        }
+        
+        .job-card .apply-btn {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .job-card:hover .apply-btn {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* ============================================
+           STAT CARDS
+           ============================================ */
+        .stat-card {
+            transition: all 0.3s ease;
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(201, 163, 61, 0.08);
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card .stat-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        
+        /* ============================================
+           COUNTRY CARDS
+           ============================================ */
+        .country-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background: white;
+        }
+        
+        .country-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .country-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .country-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--gold);
+        }
+        
+        /* ============================================
+           CATEGORY CARDS
+           ============================================ */
+        .category-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background: white;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--gold);
+        }
+        
+        /* ============================================
+           TESTIMONIAL CARDS
+           ============================================ */
+        .testimonial-card {
+            position: relative;
+            transition: all 0.3s ease;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(201, 163, 61, 0.08);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 60px;
+            color: var(--gold);
+            opacity: 0.2;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--gold);
+        }
+        
+        /* ============================================
+           NOTIFICATION BADGE
+           ============================================ */
+        .notification-badge {
+            position: relative;
+        }
+        
+        .notification-badge .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        
+        /* ============================================
+           DROPDOWN MENU
+           ============================================ */
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        /* ============================================
+           MOBILE MENU
+           ============================================ */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* ============================================
+           SEARCH BAR
+           ============================================ */
+        .search-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(201, 163, 61, 0.15);
+        }
+        
+        .search-container input,
+        .search-container select {
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .search-container input:focus,
+        .search-container select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.2);
+        }
+        
+        /* ============================================
+           STATUS BADGES
+           ============================================ */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .status-submitted { background: #e2e8f0; color: #4a5568; }
+        .status-under-review { background: #bee3f8; color: #2b6cb0; }
+        .status-shortlisted { background: #fefcbf; color: #975a16; }
+        .status-interview-scheduled { background: #fbd38d; color: #7b341e; }
+        .status-medical-examination { background: #f6ad55; color: #7b341e; }
+        .status-visa-processing { background: #9f7aea; color: #553c9a; }
+        .status-accepted { background: #c6f6d5; color: #22543d; }
+        .status-rejected { background: #fed7d7; color: #742a2a; }
+        .status-withdrawn { background: #e9d8fd; color: #44337a; }
+        .status-pending { background: #fefcbf; color: #975a16; }
+        .status-approved { background: #c6f6d5; color: #22543d; }
+        .status-active { background: #bee3f8; color: #2b6cb0; }
+        .status-closed { background: #e2e8f0; color: #4a5568; }
+        .status-expired { background: #fed7d7; color: #742a2a; }
+        .status-draft { background: #e2e8f0; color: #4a5568; }
+        
+        /* ============================================
+           LOADING SPINNER
+           ============================================ */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ============================================
+           PROGRESS STEPS
+           ============================================ */
+        .step {
+            position: relative;
+            padding: 20px 0 20px 40px;
+            border-left: 3px solid #e2e8f0;
+        }
+        
+        .step:last-child {
+            border-left: 3px solid transparent;
+        }
+        
+        .step::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active::before {
+            background: var(--gold);
+            box-shadow: 0 0 0 6px rgba(201, 163, 61, 0.2);
+        }
+        
+        .step.completed::before {
+            background: var(--accent);
+        }
+        
+        /* ============================================
+           RESPONSIVE UTILITIES
+           ============================================ */
+        @media (max-width: 768px) {
+            .hide-mobile {
+                display: none !important;
+            }
+            .show-mobile {
+                display: block !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .text-xs-sm {
+                font-size: 0.75rem !important;
+            }
+            .p-sm {
+                padding: 0.5rem !important;
+            }
+        }
+        
+        /* ============================================
+           BUTTON STYLES
+           ============================================ */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-mid));
+            color: white;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(43, 108, 176, 0.3);
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: white;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(201, 163, 61, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-light);
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary-light);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* ============================================
+           NAVBAR STYLES
+           ============================================ */
+        .navbar-gov {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(201, 163, 61, 0.15);
+        }
+        
+        .navbar-gov .nav-link {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #1a365d;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .navbar-gov .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .navbar-gov .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .navbar-gov .nav-link:hover {
+            color: var(--gold-dark);
+        }
+        
+        /* ============================================
+           FOOTER STYLES
+           ============================================ */
+        .footer-gov {
+            background: linear-gradient(180deg, #0a1628, #1a365d);
+            border-top: 3px solid var(--gold);
+        }
+        
+        .footer-gov .footer-link {
+            transition: all 0.3s ease;
+        }
+        
+        .footer-gov .footer-link:hover {
+            color: var(--gold) !important;
+            transform: translateX(4px);
+        }
+        
+        /* ============================================
+           SIDEBAR TOGGLE
+           ============================================ */
+        .sidebar-toggle {
+            cursor: pointer;
+        }
+        
+        /* ============================================
+           RESPONSIVE ADJUSTMENTS
+           ============================================ */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 70vh;
+            }
+            .stat-value {
+                font-size: 2rem;
+            }
+            .hero-title {
+                font-size: 2.5rem !important;
+            }
+            .search-container {
+                flex-direction: column !important;
+            }
+            .search-container > * {
+                width: 100% !important;
+            }
+            .step-number {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .stat-card {
+                padding: 16px;
+            }
+            .job-card {
+                padding: 12px;
+            }
+            .feature-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+        
+        /* ============================================
+           FILE UPLOAD WRAPPER
+           ============================================ */
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 12px 20px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f7fafc;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--gold);
+            background: #fdf8f0;
+        }
+        
+        /* ============================================
+           PAGINATION
+           ============================================ */
+        .pagination {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
+            transition: all 0.2s;
+            font-size: 14px;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .pagination a:hover {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+        
+        .pagination .current {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+        
+        /* ============================================
+           QUICK ACTION BUTTONS
+           ============================================ */
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #2d3748;
+            border: 1px solid rgba(201, 163, 61, 0.08);
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            background: #fdf8f0;
+            border-color: var(--gold);
+        }
+        
+        /* ============================================
+           PROGRESS TRACK
+           ============================================ */
+        .progress-track {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-track .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            transition: width 0.5s ease;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+        <div class="text-center">
+            <div class="spinner mx-auto"></div>
+            <p class="mt-4 text-gray-600 font-medium gov-font-sans">Loading...</p>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION BAR -->
+    <!-- ============================================ -->
+    <nav class="navbar-gov fixed top-0 left-0 right-0 z-50 shadow-lg transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo Section -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2">
+                            <img src="{% static 'images/coat-of-arms.png' %}" alt="Government Logo" class="h-12 w-auto hidden sm:block">
+                            <div>
+                                <div class="text-[10px] text-gray-600 font-semibold tracking-wider uppercase gov-font-sans">Republic of Kenya</div>
+                                <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    <a href="{% url 'job_list' %}" class="nav-link">Jobs</a>
+                    <a href="{% url 'countries' %}" class="nav-link">Countries</a>
+                    <a href="{% url 'employers' %}" class="nav-link">Employers</a>
+                    <a href="{% url 'agencies' %}" class="nav-link">Recruitment Agencies</a>
+                    <a href="{% url 'about' %}" class="nav-link">About Us</a>
+                    <a href="{% url 'contact' %}" class="nav-link">Contact</a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <!-- Notification Bell -->
+                        <div class="relative notification-badge">
+                            <button class="text-gray-600 hover:text-gold-dark transition-colors p-2 rounded-full hover:bg-gray-100" id="notificationToggle">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="badge" id="notificationCount">{{ unread_notifications|default:0 }}</span>
+                            </button>
+                            
+                            <!-- Notification Dropdown -->
+                            <div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl overflow-hidden hidden" id="notificationDropdown">
+                                <div class="p-4 border-b border-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="font-semibold text-gray-800 gov-font-sans">Notifications</h3>
+                                        <a href="{% url 'notification_list' %}" class="text-sm text-gold-dark hover:underline gov-font-sans">View All</a>
+                                    </div>
+                                </div>
+                                <div class="max-h-96 overflow-y-auto" id="notificationList">
+                                    <!-- Notifications loaded via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="relative dropdown">
+                            <button class="flex items-center space-x-3 focus:outline-none group">
+                                <div class="w-10 h-10 rounded-full gradient-gold flex items-center justify-center text-white font-semibold text-sm gov-font">
+                                    {{ user.full_name|slice:":1"|upper }}
+                                </div>
+                                <div class="hidden lg:block text-left">
+                                    <p class="text-sm font-semibold text-gray-800 gov-font-sans">{{ user.full_name|truncatechars:15 }}</p>
+                                    <p class="text-xs text-gray-500 gov-font-sans">{{ user.user_type|title }}</p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180"></i>
+                            </button>
+                            
+                            <div class="dropdown-menu absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-2xl py-2 border border-gray-100">
+                                <a href="{% url 'dashboard' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
+                                    <i class="fas fa-home w-6 text-gold"></i> Dashboard
+                                </a>
+                                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
+                                    <i class="fas fa-user w-6 text-gold"></i> Profile
+                                </a>
+                                <a href="{% url 'my_applications' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
+                                    <i class="fas fa-file-alt w-6 text-gold"></i> My Applications
+                                </a>
+                                <a href="{% url 'payment_page' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
+                                    <i class="fas fa-credit-card w-6 text-gold"></i> Payments
+                                </a>
+                                <hr class="my-1 border-gray-200">
+                                <a href="{% url 'logout' %}" class="block px-4 py-3 text-red-600 hover:bg-red-50 transition-colors gov-font-sans">
+                                    <i class="fas fa-sign-out-alt w-6"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-gold-dark font-medium transition-colors px-4 py-2 rounded-lg hover:bg-gray-100 gov-font-sans">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Login
+                        </a>
+                        <a href="{% url 'register' %}" class="btn-gold px-6 py-2.5 rounded-lg hover:shadow-lg transition-all duration-300 font-semibold gov-font-sans">
+                            <i class="fas fa-user-plus mr-2"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="lg:hidden text-gray-700 hover:text-gold-dark transition-colors p-2" id="mobileMenuBtn">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="lg:hidden fixed inset-0 z-50 mobile-menu bg-white" id="mobileMenu">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <img src="{% static 'images/coat-of-arms.png' %}" alt="Logo" class="h-10 w-auto">
+                    <div>
+                        <div class="text-[10px] text-gray-600 font-semibold gov-font-sans">Republic of Kenya</div>
+                        <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                    </div>
+                </div>
+                <button class="text-gray-700 hover:text-gold-dark transition-colors p-2" id="closeMobileMenu">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <a href="{% url 'home' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-home mr-3 text-gold"></i> Home
+                </a>
+                <a href="{% url 'job_list' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-briefcase mr-3 text-gold"></i> Jobs
+                </a>
+                <a href="{% url 'countries' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-globe-africa mr-3 text-gold"></i> Countries
+                </a>
+                <a href="{% url 'employers' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-building mr-3 text-gold"></i> Employers
+                </a>
+                <a href="{% url 'agencies' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-handshake mr-3 text-gold"></i> Recruitment Agencies
+                </a>
+                <a href="{% url 'about' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-info-circle mr-3 text-gold"></i> About Us
+                </a>
+                <a href="{% url 'contact' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
+                    <i class="fas fa-envelope mr-3 text-gold"></i> Contact
+                </a>
+                
+                <div class="pt-4 space-y-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="block text-center btn-primary py-3 rounded-lg font-semibold gov-font-sans">
+                            <i class="fas fa-home mr-2"></i> Dashboard
+                        </a>
+                        <a href="{% url 'logout' %}" class="block text-center border border-red-500 text-red-500 py-3 rounded-lg font-semibold gov-font-sans">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
+                            <i class="fas fa-sign-in-alt mr-2"></i> Login
+                        </a>
+                        <a href="{% url 'register' %}" class="block text-center btn-gold py-3 rounded-lg font-semibold gov-font-sans">
+                            <i class="fas fa-user-plus mr-2"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- MESSAGES -->
+    <!-- ============================================ -->
+    {% if messages %}
+        <div class="fixed top-24 right-4 z-[999] space-y-2 max-w-sm w-full" id="messageContainer">
+            {% for message in messages %}
+                <div class="p-4 rounded-lg shadow-xl transform transition-all duration-500 border-l-4 {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %}">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas {% if message.tags == 'success' %}fa-check-circle text-green-500{% elif message.tags == 'error' %}fa-exclamation-circle text-red-500{% elif message.tags == 'warning' %}fa-exclamation-triangle text-yellow-500{% else %}fa-info-circle text-blue-500{% endif %} mt-1"></i>
+                        <div class="flex-1">
+                            <p class="text-sm gov-font-sans">{{ message }}</p>
+                        </div>
+                        <button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================ -->
+    <main class="mt-20">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="footer-gov text-white">
+        <!-- Newsletter -->
+        <div class="gradient-gold py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold gov-font">Subscribe to Our Newsletter</h3>
+                        <p class="text-white/80 mt-2 gov-font-body">Get the latest job opportunities and updates directly in your inbox.</p>
+                    </div>
+                    <div>
+                        <form action="{% url 'newsletter_subscribe' %}" method="POST" class="flex flex-col sm:flex-row gap-3">
+                            {% csrf_token %}
+                            <input type="email" name="email" placeholder="Enter your email" required 
+                                   class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white gov-font-sans">
+                            <button type="submit" class="bg-white text-gold-dark px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors gov-font-sans">
+                                <i class="fas fa-paper-plane mr-2"></i> Subscribe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- About -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 gov-font">Government Jobs Portal</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed gov-font-body">Connecting citizens to verified employment opportunities worldwide through a transparent, government-managed platform.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 gov-font">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{% url 'job_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Browse Jobs</a></li>
+                        <li><a href="{% url 'countries' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Countries</a></li>
+                        <li><a href="{% url 'employers' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Employers</a></li>
+                        <li><a href="{% url 'agencies' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Recruitment Agencies</a></li>
+                        <li><a href="{% url 'about' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> About Us</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 gov-font">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="{% url 'faq' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> FAQ</a></li>
+                        <li><a href="{% url 'contact' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Contact Us</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Privacy Policy</a></li>
+                        <li><a href="{% url 'terms' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Terms & Conditions</a></li>
+                        <li><a href="{% url 'help' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Help Center</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 gov-font">Get in Touch</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start space-x-3">
+                            <i class="fas fa-map-marker-alt text-gold mt-1"></i>
+                            <span class="gov-font-body">Ministry of Labour<br>Nairobi, Kenya</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-phone text-gold"></i>
+                            <span class="gov-font-sans">+254 20 222 0000</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-envelope text-gold"></i>
+                            <span class="gov-font-sans">info@governmentjobs.go.ke</span>
+                        </li>
+                        <li class="flex items-center space-x-3">
+                            <i class="fas fa-clock text-gold"></i>
+                            <span class="gov-font-sans">Mon-Fri: 8:00 AM - 5:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Partners -->
+            <div class="border-t border-white/10 mt-8 pt-8">
+                <h4 class="text-lg font-semibold text-center mb-6 gov-font">Our Partner Organizations</h4>
+                <div class="flex flex-wrap justify-center items-center gap-8">
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Ministry of Labour</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Public Employment Service</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Accredited Recruitment Agencies</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">International Employers</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Foreign Embassies</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Development Partners</div>
+                </div>
+            </div>
+            
+            <!-- Copyright -->
+            <div class="border-t border-white/10 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p class="gov-font-sans">&copy; {% now "Y" %} Government Jobs Portal. All rights reserved.</p>
+                <p class="mt-1 gov-font-body">Powered by the Government of Kenya</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================ -->
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Slick Carousel -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // ============================================
+        // PRELOADER
+        // ============================================
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function() {
+                preloader.style.display = 'none';
+            }, 500);
+        });
+
+        // ============================================
+        // AOS INITIALIZATION
+        // ============================================
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+
+        // ============================================
+        // NAVBAR SCROLL EFFECT
+        // ============================================
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-2xl');
+                navbar.classList.add('bg-white/95');
+                navbar.classList.add('backdrop-blur-md');
+            } else {
+                navbar.classList.remove('shadow-2xl');
+                navbar.classList.remove('bg-white/95');
+                navbar.classList.remove('backdrop-blur-md');
+            }
+        });
+
+        // ============================================
+        // MOBILE MENU
+        // ============================================
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn?.addEventListener('click', function() {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeMobileMenu?.addEventListener('click', function() {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // ============================================
+        // NOTIFICATION DROPDOWN
+        // ============================================
+        const notificationToggle = document.getElementById('notificationToggle');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+
+        notificationToggle?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('hidden');
+            if (!notificationDropdown.classList.contains('hidden')) {
+                loadNotifications();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#notificationToggle') && !e.target.closest('#notificationDropdown')) {
+                notificationDropdown?.classList.add('hidden');
+            }
+        });
+
+        function loadNotifications() {
+            fetch('/api/notifications/')
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('notificationList');
+                    if (data.results && data.results.length > 0) {
+                        list.innerHTML = data.results.map(notif => `
+                            <div class="p-3 hover:bg-gray-50 border-b border-gray-100 ${notif.is_read ? '' : 'bg-gold/5'}">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 rounded-full ${notif.is_read ? 'bg-gray-300' : 'bg-gold'} mt-2"></div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-800 gov-font-sans">${notif.title}</p>
+                                        <p class="text-xs text-gray-500 mt-1 gov-font-body">${notif.message}</p>
+                                        <p class="text-xs text-gray-400 mt-1 gov-font-sans">${new Date(notif.created_at).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        list.innerHTML = `
+                            <div class="p-8 text-center">
+                                <i class="fas fa-bell-slash text-4xl text-gray-300"></i>
+                                <p class="text-gray-500 mt-2 gov-font-sans">No notifications</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => console.error('Error loading notifications:', error));
+        }
+
+        // ============================================
+        // AUTO-DISMISS MESSAGES
+        // ============================================
+        setTimeout(function() {
+            const messages = document.querySelectorAll('#messageContainer > div');
+            messages.forEach(function(message, index) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(50px)';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, index * 1000);
+            });
+        }, 5000);
+
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ============================================
+        // COUNTER ANIMATION
+        // ============================================
+        function animateCounters() {
+            document.querySelectorAll('.counter').forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.round(current).toLocaleString();
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        // ============================================
+        // FAQ ACCORDION
+        // ============================================
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                // Close other FAQs
+                document.querySelectorAll('.faq-answer').forEach(item => {
+                    if (item !== answer) {
+                        item.classList.add('hidden');
+                        item.previousElementSibling.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    }
+                });
+                
+                answer.classList.toggle('hidden');
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            });
+        });
+
+        // ============================================
+        // BACK TO TOP
+        // ============================================
+        const backToTopBtn = document.createElement('button');
+        backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        backToTopBtn.className = 'fixed bottom-8 right-8 bg-gold text-white w-12 h-12 rounded-full shadow-lg hover:bg-gold-dark transition-all duration-300 transform translate-y-20 opacity-0 z-50';
+        backToTopBtn.id = 'backToTop';
+        document.body.appendChild(backToTopBtn);
+
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.remove('translate-y-20', 'opacity-0');
+                backToTopBtn.classList.add('translate-y-0', 'opacity-100');
+            } else {
+                backToTopBtn.classList.add('translate-y-20', 'opacity-0');
+                backToTopBtn.classList.remove('translate-y-0', 'opacity-100');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ============================================
+        // JOB SEARCH AUTOCOMPLETE
+        // ============================================
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let debounceTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    const query = searchInput.value;
+                    if (query.length > 2) {
+                        fetch(`/api/jobs/?search=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Search results:', data);
+                            })
+                            .catch(error => console.error('Search error:', error));
+                    }
+                }, 500);
+            });
+        }
+
+        // ============================================
+        // SMOOTH SIDEBAR TOGGLE
+        // ============================================
+        document.querySelectorAll('.sidebar-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.classList.toggle('collapsed');
+            });
+        });
+
+        console.log('🏛️ Government Jobs Portal loaded successfully!');
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

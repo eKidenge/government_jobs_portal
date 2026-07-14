@@ -1,0 +1,113 @@
+Django>=5.2,<5.3
+
+# Django REST Framework
+djangorestframework>=3.16.0
+djangorestframework-simplejwt>=5.5.1
+
+# Database
+psycopg2-binary>=2.9.10
+dj-database-url>=3.0.1
+
+# Environment Variables
+python-decouple>=3.8
+python-dotenv>=1.1.1
+
+# CORS
+django-cors-headers>=4.9.0
+
+# Authentication & Security
+django-allauth>=65.10.0
+django-axes>=8.0.0
+django-otp>=1.6.1
+django-two-factor-auth>=1.18.1
+djangorestframework-api-key>=3.1.0
+django-ratelimit>=4.1.0
+
+# Forms
+django-crispy-forms>=2.4
+crispy-tailwind>=1.0.3
+django-widget-tweaks>=1.5.0
+
+# Rich Text Editor
+django-ckeditor>=6.7.3
+
+# Filtering
+django-filter>=25.1
+
+# Import / Export
+django-import-export>=4.3.7
+
+# Images
+Pillow>=11.3.0
+
+# Storage
+django-storages>=1.14.6
+boto3>=1.40.0
+
+# Background Tasks
+celery>=5.5.3
+redis>=6.4.0
+django-celery-results>=2.6.0
+
+# Reports & Data Processing
+reportlab>=4.4.3
+openpyxl>=3.1.5
+pandas>=2.3.1
+
+# HTTP Requests
+requests>=2.32.4
+
+# Utilities
+phonenumbers>=9.0.12
+django-phonenumber-field>=8.3.0
+django-countries>=7.6.1
+django-taggit>=6.1.0
+
+# API Documentation
+drf-yasg>=1.21.10
+
+# Deployment
+gunicorn>=23.0.0
+whitenoise>=6.9.0
+
+# Optional Production Server
+uvicorn>=0.35.0
+
+# Email Validation
+email-validator>=2.3.0
+
+# PDF Generation
+weasyprint>=66.0
+
+# Excel Support
+xlsxwriter>=3.2.5
+
+# QR Codes
+qrcode>=8.2
+
+# Barcode Generation
+python-barcode>=0.16.1
+
+# Date Utilities
+python-dateutil>=2.9.0.post0
+
+# Time Zone Support
+pytz>=2025.2
+
+# YAML Support
+PyYAML>=6.0.2
+
+# Cryptography
+cryptography>=45.0.5
+
+# XML Processing
+lxml>=6.0.0
+
+# Image Processing
+imagekit>=1.2.3
+
+# File Type Detection
+python-magic>=0.4.27
+
+# Logging
+colorlog>=6.9.0

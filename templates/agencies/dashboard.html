@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Agency Dashboard - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .agency-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .license-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .license-valid {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    .license-expiring {
+        background: #fefcbf;
+        color: #975a16;
+    }
+    .license-expired {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    .agency-job-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        transition: all 0.3s ease;
+    }
+    .agency-job-card:hover {
+        border-color: #2b6cb0;
+        box-shadow: 0 4px 12px rgba(43, 108, 176, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Welcome Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-6 md:p-8 text-white mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold">Welcome, {{ agency.agency_name }}</h1>
+                    <p class="text-purple-200 mt-2">
+                        {% if agency.is_verified %}
+                            <i class="fas fa-check-circle mr-2"></i> Verified Agency
+                            <span class="mx-2">•</span>
+                            License: 
+                            <span class="license-status {% if agency.license_expiry > now %}license-valid{% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}license-expiring{% else %}license-expired{% endif %}">
+                                {% if agency.license_expiry > now %}
+                                    Valid until {{ agency.license_expiry|date:"M d, Y" }}
+                                {% else %}
+                                    Expired
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <i class="fas fa-clock mr-2"></i> Pending Verification
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
+                    <a href="{% url 'agency_create_job' %}" class="bg-white text-purple-600 px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition">
+                        <i class="fas fa-plus mr-2"></i> Post Overseas Job
+                    </a>
+                    <a href="{% url 'agency_verification' %}" class="bg-white/20 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-white/30 transition">
+                        <i class="fas fa-file-alt mr-2"></i> Documents
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="agency-stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ jobs_count }}</div>
+                <div class="stat-label">Jobs Posted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ active_jobs }}</div>
+                <div class="stat-label">Active Positions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_applications }}</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ placements }}</div>
+                <div class="stat-label">Successful Placements</div>
+            </div>
+        </div>
+
+        <!-- Active Countries -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm mb-8">
+            <h3 class="font-bold text-gray-800 mb-4">Active Recruiting Countries</h3>
+            <div class="flex flex-wrap gap-3">
+                {% for country in agency.active_countries.all %}
+                    <span class="inline-flex items-center px-4 py-2 bg-blue-50 text-primary-light rounded-xl text-sm font-semibold">
+                        <i class="fas fa-flag mr-2"></i> {{ country.name }}
+                    </span>
+                {% empty %}
+                    <p class="text-gray-500">No countries added yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Jobs -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-gray-800">Recent Overseas Job Postings</h3>
+                <a href="{% url 'agency_job_list' %}" class="text-sm text-purple-600 hover:underline">View All</a>
+            </div>
+            
+            <div class="space-y-3">
+                {% for job in recent_jobs %}
+                    <div class="agency-job-card">
+                        <div class="flex flex-wrap justify-between items-start gap-4">
+                            <div>
+                                <h4 class="font-semibold text-gray-800">{{ job.title }}</h4>
+                                <p class="text-sm text-gray-600">
+                                    <i class="fas fa-map-marker-alt mr-1 text-purple-600"></i> {{ job.country.name }}
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-users mr-1 text-purple-600"></i> {{ job.applications_count }} applications
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Destination: {{ job.country.name }}
+                                    <span class="mx-2">•</span>
+                                    Posted: {{ job.posted_date|date:"M d, Y" }}
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="status-badge status-{{ job.status|slugify }}">
+                                    {{ job.get_status_display }}
+                                </span>
+                                <a href="{% url 'job_applications' job.id %}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                                    <i class="fas fa-users mr-1"></i> View Apps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-plane text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">No overseas jobs posted yet.</p>
+                        <a href="{% url 'agency_create_job' %}" class="inline-block mt-3 bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition text-sm">
+                            <i class="fas fa-plus mr-2"></i> Post Your First Job
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

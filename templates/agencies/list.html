@@ -1,0 +1,739 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recruitment Agencies - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       RECRUITMENT AGENCIES PAGE GOVERNMENT STYLES
+       ============================================ */
+    
+    .agencies-hero {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #2b6cb0 70%, #805ad5 100%);
+        padding: 40px 0 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .agencies-hero::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: 10%;
+        right: 10%;
+        font-size: 120px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .agencies-hero::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(128, 90, 213, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .agencies-hero .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .agencies-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2.5rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .agencies-hero p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.85);
+        font-size: 1.05rem;
+        max-width: 600px;
+        margin-top: 4px;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        gap: 8px;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .breadcrumb a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .breadcrumb a:hover {
+        color: var(--gold);
+    }
+    
+    .breadcrumb .separator {
+        color: rgba(255,255,255,0.4);
+    }
+    
+    .breadcrumb .current {
+        color: var(--gold);
+    }
+    
+    .agencies-section {
+        background: #f7fafc;
+        min-height: 100vh;
+        padding: 30px 0 60px;
+    }
+    
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .results-header .title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.6rem;
+    }
+    
+    .results-header .count {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    
+    .results-header .count strong {
+        color: #1a365d;
+        font-weight: 700;
+    }
+    
+    /* Filters */
+    .filter-section {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-bottom: 24px;
+    }
+    
+    .filter-section .filter-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+    
+    .filter-section input,
+    .filter-section select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .filter-section input:focus,
+    .filter-section select:focus {
+        outline: none;
+        border-color: #805ad5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(128, 90, 213, 0.08);
+    }
+    
+    .filter-section .btn-filter {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .filter-section .btn-filter.apply {
+        background: linear-gradient(135deg, #6b46c1, #805ad5);
+        color: white;
+        flex: 1;
+    }
+    
+    .filter-section .btn-filter.apply:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(128, 90, 213, 0.25);
+    }
+    
+    .filter-section .btn-filter.clear {
+        background: #e2e8f0;
+        color: #4a5568;
+        flex: 1;
+    }
+    
+    .filter-section .btn-filter.clear:hover {
+        background: #cbd5e0;
+    }
+    
+    /* Agency Grid */
+    .agency-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+    }
+    
+    .agency-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .agency-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #805ad5, #9f7aea);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .agency-card:hover::after {
+        transform: scaleX(1);
+    }
+    
+    .agency-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(128, 90, 213, 0.08);
+        border-color: rgba(128, 90, 213, 0.15);
+    }
+    
+    .agency-card .card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .agency-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #faf5ff, #e9d8fd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #805ad5;
+        flex-shrink: 0;
+        border: 2px solid rgba(128, 90, 213, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .agency-card:hover .agency-logo {
+        transform: scale(1.05) rotate(-3deg);
+        border-color: rgba(128, 90, 213, 0.2);
+    }
+    
+    .agency-card .agency-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .agency-card .agency-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+        margin-bottom: 2px;
+    }
+    
+    .agency-card .agency-name a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .agency-card .agency-name a:hover {
+        color: #805ad5;
+    }
+    
+    .agency-card .agency-email {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .verification-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    .verification-badge.verified {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .verification-badge.pending {
+        background: #fefcbf;
+        color: #975a16;
+    }
+    
+    .agency-card .agency-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+    
+    .agency-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        background: #f0f4f8;
+        color: #4a5568;
+    }
+    
+    .agency-tag i {
+        color: #805ad5;
+        font-size: 0.65rem;
+    }
+    
+    .license-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .license-status.valid {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .license-status.expiring {
+        background: #fefcbf;
+        color: #975a16;
+    }
+    
+    .license-status.expired {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .agency-card .agency-stats {
+        display: flex;
+        gap: 16px;
+        margin-top: 10px;
+    }
+    
+    .agency-card .agency-stats .stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .agency-card .agency-stats .stat i {
+        color: #805ad5;
+        width: 16px;
+        font-size: 0.75rem;
+    }
+    
+    .agency-card .card-footer {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid #f0f4f8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .agency-card .view-details {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #805ad5;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .agency-card .view-details:hover {
+        color: #6b46c1;
+        gap: 8px;
+    }
+    
+    .agency-card .jobs-count {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+    }
+    
+    /* No Results */
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        grid-column: 1 / -1;
+    }
+    
+    .no-results i {
+        font-size: 48px;
+        color: #a0aec0;
+        margin-bottom: 16px;
+    }
+    
+    .no-results h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    
+    .no-results p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    
+    .no-results .clear-link {
+        font-family: 'Inter', sans-serif;
+        color: #805ad5;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+        display: inline-block;
+        margin-top: 12px;
+    }
+    
+    .no-results .clear-link:hover {
+        color: #6b46c1;
+    }
+    
+    /* Pagination */
+    .pagination {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .pagination a:hover {
+        background: #805ad5;
+        color: white;
+        border-color: #805ad5;
+    }
+    
+    .pagination .current {
+        background: #805ad5;
+        color: white;
+        border-color: #805ad5;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .agencies-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .agencies-hero p {
+            font-size: 0.95rem;
+        }
+        
+        .agency-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-section .filter-group {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-section .filter-actions {
+            flex-direction: column;
+        }
+        
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .agency-card .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .agencies-hero {
+            padding: 30px 0 20px;
+        }
+        
+        .agencies-hero h1 {
+            font-size: 1.6rem;
+        }
+        
+        .agency-card {
+            padding: 16px;
+        }
+        
+        .agency-logo {
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+        }
+        
+        .agency-card .agency-name {
+            font-size: 1rem;
+        }
+        
+        .filter-section {
+            padding: 16px;
+        }
+        
+        .pagination a, .pagination span {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="agencies-hero">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Recruitment Agencies</span>
+        </div>
+        <h1>Licensed Recruitment Agencies</h1>
+        <p>Find trusted recruitment agencies verified by the government</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="agencies-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div>
+                <h2 class="title">Recruitment Agencies</h2>
+                <p class="count"><strong>{{ paginator.count }}</strong> agencies found</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <form method="GET" id="filterForm">
+                <div class="filter-group">
+                    <div>
+                        <input type="text" name="search" value="{{ current_filters.search|default:'' }}" 
+                               placeholder="Search agencies..." 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                    </div>
+                    <div>
+                        <select name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                            <option value="">All Countries</option>
+                            {% for country in countries %}
+                                <option value="{{ country.id }}" {% if current_filters.country == country.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ country.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-actions" style="display: flex; gap: 8px;">
+                        <button type="submit" class="btn-filter apply">
+                            <i class="fas fa-sliders-h"></i> Filter
+                        </button>
+                        <a href="{% url 'agencies' %}" class="btn-filter clear">
+                            <i class="fas fa-undo"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Agency Grid -->
+        <div class="agency-grid">
+            {% for agency in agencies %}
+                <div class="agency-card">
+                    <div class="card-header">
+                        <div class="agency-logo">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="agency-info">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="agency-name">
+                                    <a href="{% url 'agency_detail' agency.id %}">{{ agency.agency_name }}</a>
+                                </div>
+                                <span class="verification-badge {% if agency.is_verified %}verified{% else %}pending{% endif %}">
+                                    <i class="fas {% if agency.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
+                                    {% if agency.is_verified %}Verified{% else %}Pending{% endif %}
+                                </span>
+                            </div>
+                            <div class="agency-email">{{ agency.user.email }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="agency-tags">
+                        {% if agency.country %}
+                            <span class="agency-tag">
+                                <i class="fas fa-map-marker-alt"></i> {{ agency.country.name }}
+                            </span>
+                        {% endif %}
+                        <span class="license-status 
+                            {% if agency.license_expiry > now %}valid
+                            {% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}expiring
+                            {% else %}expired{% endif %}">
+                            <i class="fas fa-id-card"></i>
+                            {% if agency.license_expiry > now %}
+                                Valid
+                            {% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}
+                                Expires Soon
+                            {% else %}
+                                Expired
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="agency-stats">
+                        <span class="stat">
+                            <i class="fas fa-briefcase"></i> {{ agency.job_count }} jobs
+                        </span>
+                        <span class="stat">
+                            <i class="fas fa-calendar"></i> Expires: {{ agency.license_expiry|date:"M d, Y" }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <a href="{% url 'agency_detail' agency.id %}" class="view-details">
+                            View Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <span class="jobs-count">
+                            <i class="fas fa-briefcase"></i> {{ agency.job_count }} positions
+                        </span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-results">
+                    <i class="fas fa-handshake"></i>
+                    <h3>No Agencies Found</h3>
+                    <p>Try adjusting your filters or search terms to find recruitment agencies.</p>
+                    <a href="{% url 'agencies' %}" class="clear-link">
+                        <i class="fas fa-undo"></i> Clear all filters
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if agencies.has_other_pages %}
+            <div class="pagination">
+                {% if agencies.has_previous %}
+                    <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo; First</a>
+                    <a href="?page={{ agencies.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+                {% endif %}
+
+                {% for num in agencies.paginator.page_range %}
+                    {% if agencies.number == num %}
+                        <span class="current">{{ num }}</span>
+                    {% elif num > agencies.number|add:'-3' and num < agencies.number|add:'3' %}
+                        <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if agencies.has_next %}
+                    <a href="?page={{ agencies.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+                    <a href="?page={{ agencies.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form on select change
+    document.querySelectorAll('#filterForm select').forEach(element => {
+        element.addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+    });
+
+    // Debounced search input
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                document.getElementById('filterForm').submit();
+            }, 500);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,882 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       CONTACT PAGE GOVERNMENT STYLES
+       ============================================ */
+    
+    .contact-hero {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 60px 0 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-hero::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: 10%;
+        right: 5%;
+        font-size: 150px;
+        opacity: 0.03;
+        transform: rotate(-15deg);
+    }
+    
+    .contact-hero::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(66, 153, 225, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 25s ease-in-out infinite;
+    }
+    
+    .contact-hero .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .contact-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 3rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .contact-hero p {
+        font-family: 'Merriweather', serif;
+        font-size: 1.15rem;
+        color: rgba(255,255,255,0.85);
+        max-width: 600px;
+        line-height: 1.8;
+        margin-top: 6px;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        gap: 8px;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .breadcrumb a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .breadcrumb a:hover {
+        color: var(--gold);
+    }
+    
+    .breadcrumb .separator {
+        color: rgba(255,255,255,0.4);
+    }
+    
+    .breadcrumb .current {
+        color: var(--gold);
+    }
+    
+    .contact-section {
+        padding: 80px 0;
+        background: #f7fafc;
+    }
+    
+    .contact-wrapper {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+    }
+    
+    /* Contact Form */
+    .contact-form-wrapper {
+        padding: 48px;
+    }
+    
+    .contact-form-wrapper h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #1a365d;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+    
+    .contact-form-wrapper .subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        margin-bottom: 28px;
+        font-size: 0.95rem;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #2d3748;
+        margin-bottom: 5px;
+    }
+    
+    .form-group label .required {
+        color: #e53e3e;
+        margin-left: 2px;
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.08);
+    }
+    
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .form-group input.error,
+    .form-group textarea.error {
+        border-color: #e53e3e;
+        background: #fff5f5;
+    }
+    
+    .form-group .error-message {
+        color: #e53e3e;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        margin-top: 4px;
+        display: none;
+    }
+    
+    .form-group.error .error-message {
+        display: block;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .submit-btn:hover::before {
+        left: 100%;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(43, 108, 176, 0.3);
+    }
+    
+    /* Contact Info */
+    .contact-info-wrapper {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #2b6cb0 100%);
+        padding: 48px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-info-wrapper::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: -20%;
+        right: -10%;
+        font-size: 200px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .contact-info-wrapper::after {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -30%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .contact-info-wrapper > * {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .contact-info-wrapper h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+    
+    .contact-info-wrapper .info-subtitle {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 28px;
+        font-size: 0.95rem;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding: 14px 18px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .info-item:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(201, 163, 61, 0.15);
+        transform: translateX(6px);
+    }
+    
+    .info-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--gold);
+    }
+    
+    .info-item:hover .info-icon {
+        background: rgba(201, 163, 61, 0.15);
+        border-color: rgba(201, 163, 61, 0.2);
+        transform: scale(1.1);
+    }
+    
+    .info-content h4 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 2px;
+    }
+    
+    .info-content p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .social-links {
+        display: flex;
+        gap: 10px;
+        margin-top: 28px;
+        padding-top: 28px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    
+    .social-link {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.05);
+        font-size: 1.1rem;
+    }
+    
+    .social-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        border-color: transparent;
+    }
+    
+    .social-link.facebook:hover { background: #1877f2; }
+    .social-link.twitter:hover { background: #1da1f2; }
+    .social-link.linkedin:hover { background: #0a66c2; }
+    .social-link.youtube:hover { background: #ff0000; }
+    .social-link.instagram:hover { background: #e4405f; }
+    
+    /* Map Section */
+    .map-section {
+        padding: 60px 0;
+        background: white;
+    }
+    
+    .map-section .map-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.8rem;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+    
+    .map-section .map-subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    
+    .map-container {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        height: 400px;
+        background: #e2e8f0;
+        position: relative;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+    }
+    
+    .map-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background: linear-gradient(135deg, #f7fafc, #edf2f7);
+        color: #718096;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .map-placeholder i {
+        font-size: 48px;
+        color: #c9a33d;
+        opacity: 0.3;
+    }
+    
+    .map-placeholder p {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
+    }
+    
+    .map-placeholder .sub {
+        font-family: 'Merriweather', serif;
+        font-size: 0.85rem;
+        color: #a0aec0;
+    }
+    
+    /* FAQ Preview */
+    .faq-preview {
+        background: #f7fafc;
+        padding: 60px 0;
+    }
+    
+    .faq-preview .faq-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #1a365d;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+    
+    .faq-preview .faq-subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        text-align: center;
+        margin-bottom: 32px;
+        font-size: 0.95rem;
+    }
+    
+    .faq-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .faq-item {
+        background: white;
+        border-radius: 12px;
+        padding: 18px 22px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .faq-item:hover {
+        border-color: rgba(201, 163, 61, 0.2);
+        box-shadow: 0 4px 12px rgba(201, 163, 61, 0.06);
+    }
+    
+    .faq-item.active {
+        border-color: #c9a33d;
+    }
+    
+    .faq-item .question {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        font-size: 0.95rem;
+    }
+    
+    .faq-item .question i {
+        transition: transform 0.3s ease;
+        color: #c9a33d;
+    }
+    
+    .faq-item.active .question i {
+        transform: rotate(180deg);
+    }
+    
+    .faq-item .answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        color: #4a5568;
+        font-family: 'Merriweather', serif;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    .faq-item.active .answer {
+        max-height: 200px;
+        padding-top: 12px;
+    }
+    
+    .faq-view-all {
+        text-align: center;
+        margin-top: 28px;
+    }
+    
+    .faq-view-all a {
+        font-family: 'Inter', sans-serif;
+        color: #c9a33d;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .faq-view-all a:hover {
+        color: #b8860b;
+        gap: 10px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .contact-wrapper {
+            grid-template-columns: 1fr;
+            border-radius: 16px;
+        }
+        
+        .contact-form-wrapper {
+            padding: 32px;
+        }
+        
+        .contact-info-wrapper {
+            padding: 32px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .contact-hero h1 {
+            font-size: 2.2rem;
+        }
+        
+        .contact-hero p {
+            font-size: 1rem;
+        }
+        
+        .contact-form-wrapper {
+            padding: 24px;
+        }
+        
+        .contact-info-wrapper {
+            padding: 24px;
+        }
+        
+        .faq-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .map-container {
+            height: 250px;
+        }
+        
+        .social-links {
+            flex-wrap: wrap;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .contact-hero {
+            padding: 40px 0 30px;
+        }
+        
+        .contact-hero h1 {
+            font-size: 1.8rem;
+        }
+        
+        .contact-wrapper {
+            border-radius: 12px;
+        }
+        
+        .contact-form-wrapper {
+            padding: 16px;
+        }
+        
+        .contact-info-wrapper {
+            padding: 20px;
+        }
+        
+        .info-item {
+            padding: 10px 14px;
+        }
+        
+        .submit-btn {
+            font-size: 0.9rem;
+            padding: 12px 24px;
+        }
+        
+        .faq-item {
+            padding: 14px 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="contact-hero">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Contact Us</span>
+        </div>
+        <h1>Get in Touch</h1>
+        <p>Have questions or need assistance? Our team is here to help you with any inquiries about our services.</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="contact-wrapper">
+            <!-- Contact Form -->
+            <div class="contact-form-wrapper">
+                <h2>Send Us a Message</h2>
+                <p class="subtitle">Fill in the form below and we'll get back to you within 24 hours.</p>
+                
+                <!-- Fixed: Removed namespace from URL -->
+                <form method="POST" action="{% url 'contact_submit' %}" id="contactForm" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                        <div class="error-message">Please enter your full name.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email address">
+                        <div class="error-message">Please enter a valid email address.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject <span class="required">*</span></label>
+                        <input type="text" id="subject" name="subject" required placeholder="What is this about?">
+                        <div class="error-message">Please enter a subject.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message <span class="required">*</span></label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Describe your inquiry in detail..."></textarea>
+                        <div class="error-message">Please enter your message.</div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Message
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="contact-info-wrapper">
+                <div>
+                    <h3>Contact Information</h3>
+                    <p class="info-subtitle">Reach out to us through any of the following channels.</p>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Office Address</h4>
+                            <p>Ministry of Labour,<br>Nairobi, Kenya</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Phone Number</h4>
+                            <p>+254 20 222 0000</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Email Address</h4>
+                            <p>info@governmentjobs.go.ke</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <h4>Office Hours</h4>
+                            <p>Monday - Friday: 8:00 AM - 5:00 PM<br>Saturday - Sunday: Closed</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="social-links">
+                        <a href="#" class="social-link facebook" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link twitter" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link youtube" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link instagram" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="map-title">Find Us Here</h2>
+        <p class="map-subtitle">Visit our office for in-person assistance.</p>
+        <div class="map-container">
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <p>Ministry of Labour, Nairobi, Kenya</p>
+                <span class="sub">Interactive map loading...</span>
+            </div>
+            <!-- Uncomment below for actual Google Maps embed -->
+            <!-- <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255282.35853743783!2d36.682196715468746!3d-1.3028613744208148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1172d84d49a7%3A0xf7cf0254b297924c!2sNairobi%2C%20Kenya!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe> -->
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Preview -->
+<section class="faq-preview">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="faq-title">Frequently Asked Questions</h2>
+        <p class="faq-subtitle">Quick answers to common questions about our services.</p>
+        
+        <div class="faq-grid">
+            <div class="faq-item active">
+                <div class="question">
+                    <span>How do I register on the portal?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="answer">
+                    Click on the "Register" button and fill in your personal information, then upload the required documents for verification.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">
+                    <span>What documents do I need?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="answer">
+                    You need your CV, National ID, Passport, Academic Certificates, Professional Certificates, and a passport-size photo.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">
+                    <span>How long does verification take?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="answer">
+                    Verification typically takes 2-3 business days. You will be notified via email once your account is verified.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="question">
+                    <span>What payment methods are accepted?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="answer">
+                    We accept M-Pesa, eCitizen, Bank Transfer, Visa, and Mastercard for government employment service fees.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fixed: Removed namespace from URL -->
+        <div class="faq-view-all">
+            <a href="{% url 'faq' %}">
+                View All FAQs <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.getElementById('contactForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                const fields = form.querySelectorAll('input[required], textarea[required]');
+                
+                fields.forEach(field => {
+                    const group = field.closest('.form-group');
+                    if (!field.value.trim()) {
+                        group.classList.add('error');
+                        isValid = false;
+                    } else {
+                        group.classList.remove('error');
+                    }
+                    
+                    // Email validation
+                    if (field.type === 'email' && field.value.trim()) {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(field.value.trim())) {
+                            group.classList.add('error');
+                            isValid = false;
+                        }
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    const firstError = form.querySelector('.form-group.error');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+            
+            // Clear error on input
+            form.querySelectorAll('input, textarea').forEach(field => {
+                field.addEventListener('input', function() {
+                    const group = this.closest('.form-group');
+                    if (this.value.trim()) {
+                        group.classList.remove('error');
+                    }
+                });
+            });
+        }
+        
+        // FAQ toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+    });
+</script>
+{% endblock %}
