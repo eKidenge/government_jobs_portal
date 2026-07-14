@@ -3,7 +3,7 @@ Django>=5.2,<5.3
 # Django REST Framework
 djangorestframework>=3.16.0
 djangorestframework-simplejwt>=5.5.1
-
+gunicorn
 # Database
 psycopg2-binary>=2.9.10
 dj-database-url>=3.0.1
