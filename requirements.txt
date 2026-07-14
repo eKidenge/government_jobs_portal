@@ -38,7 +38,7 @@ django-filter>=25.1
 django-import-export>=4.3.7
 
 # Images
-Pillow>=11.3.0
+#Pillow>=11.3.0
 
 # Storage
 django-storages>=1.14.6
