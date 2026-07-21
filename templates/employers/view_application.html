@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Application - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .application-detail {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    
+    .application-detail .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 16px;
+        border-bottom: 2px solid rgba(201, 163, 61, 0.1);
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+    }
+    
+    .application-detail .header .applicant-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .application-detail .header .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .application-detail .header .name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: #0a1628;
+    }
+    
+    .application-detail .header .email {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+    }
+    
+    .application-detail .header .status-badge-large {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .detail-section {
+        margin-bottom: 24px;
+    }
+    
+    .detail-section h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+        color: #0a1628;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 8px;
+    }
+    
+    .detail-section h3 i {
+        color: #c9a33d;
+        margin-right: 8px;
+    }
+    
+    .detail-section .content {
+        font-family: 'Merriweather', serif;
+        color: #4a5568;
+        line-height: 1.8;
+        white-space: pre-wrap;
+    }
+    
+    .detail-item {
+        display: flex;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-item .label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        width: 140px;
+        flex-shrink: 0;
+    }
+    
+    .detail-item .value {
+        font-family: 'Merriweather', serif;
+        color: #4a5568;
+    }
+    
+    .btn-back {
+        background: #e2e8f0;
+        color: #4a5568;
+        padding: 10px 24px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-back:hover {
+        background: #cbd5e0;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .application-detail {
+            padding: 16px;
+        }
+        .application-detail .header {
+            flex-direction: column;
+        }
+        .detail-item {
+            flex-direction: column;
+            padding: 12px 0;
+        }
+        .detail-item .label {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Back Button -->
+        <a href="{% url 'job_applications' application.job.id %}" class="btn-back mb-6" data-aos="fade-up">
+            <i class="fas fa-arrow-left"></i> Back to Applications
+        </a>
+
+        <!-- Application Detail -->
+        <div class="application-detail" data-aos="fade-up" data-aos-delay="100">
+            <!-- Header -->
+            <div class="header">
+                <div class="applicant-info">
+                    <div class="avatar" style="background: linear-gradient(135deg, #1a365d, #2b6cb0);">
+                        {{ application.applicant.full_name|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <div class="name">{{ application.applicant.full_name }}</div>
+                        <div class="email">
+                            <i class="fas fa-envelope mr-1"></i> {{ application.applicant.email }}
+                        </div>
+                        <div class="email">
+                            <i class="fas fa-phone mr-1"></i> {{ application.applicant.phone_number|default:"Not provided" }}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="status-badge-large app-status-{{ application.status|slugify }}">
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Application Details -->
+            <div class="detail-section">
+                <h3><i class="fas fa-info-circle"></i> Application Details</h3>
+                <div class="detail-item">
+                    <span class="label">Applied Date:</span>
+                    <span class="value">{{ application.date_applied|date:"F d, Y - H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Last Updated:</span>
+                    <span class="value">{{ application.date_updated|date:"F d, Y - H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Job Title:</span>
+                    <span class="value">{{ application.job.title }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Country:</span>
+                    <span class="value">{{ application.job.country.name }}</span>
+                </div>
+            </div>
+
+            <!-- Cover Letter -->
+            {% if application.cover_letter %}
+                <div class="detail-section">
+                    <h3><i class="fas fa-file-alt"></i> Cover Letter</h3>
+                    <div class="content">{{ application.cover_letter }}</div>
+                </div>
+            {% endif %}
+
+            <!-- Review Notes -->
+            {% if application.review_notes %}
+                <div class="detail-section">
+                    <h3><i class="fas fa-sticky-note"></i> Review Notes</h3>
+                    <div class="content">{{ application.review_notes }}</div>
+                </div>
+            {% endif %}
+
+            <!-- Interview Details -->
+            {% if application.interview_date %}
+                <div class="detail-section">
+                    <h3><i class="fas fa-calendar-check"></i> Interview Details</h3>
+                    <div class="detail-item">
+                        <span class="label">Interview Date:</span>
+                        <span class="value">{{ application.interview_date|date:"F d, Y - H:i" }}</span>
+                    </div>
+                    {% if application.interview_notes %}
+                        <div class="content mt-2">{{ application.interview_notes }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="flex flex-wrap gap-4 pt-4 border-t border-gray-200">
+                <a href="{% url 'update_application_status' application.id %}" class="btn-gov-action btn-gov-primary">
+                    <i class="fas fa-cog"></i> Update Status
+                </a>
+                <a href="mailto:{{ application.applicant.email }}" class="btn-gov-action btn-gov-outline" style="background: #1a365d; color: white; border: none;">
+                    <i class="fas fa-envelope"></i> Contact Applicant
+                </a>
+                <a href="{% url 'job_applications' application.job.id %}" class="btn-gov-action" style="background: #e2e8f0; color: #4a5568;">
+                    <i class="fas fa-users"></i> View All Applications
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

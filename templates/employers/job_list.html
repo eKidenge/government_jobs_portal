@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Jobs - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-bar {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+    
+    .filter-bar select, .filter-bar input {
+        font-family: 'Inter', sans-serif;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .filter-bar select:focus, .filter-bar input:focus {
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+        outline: none;
+    }
+    
+    .job-table-container {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        overflow-x: auto;
+    }
+    
+    .job-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .job-table th {
+        text-align: left;
+        padding: 14px 16px;
+        font-weight: 600;
+        color: #1a365d;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .job-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+    
+    .job-table tr:hover {
+        background: #fdf8f0;
+    }
+    
+    .job-table .job-title {
+        font-weight: 600;
+        color: #0a1628;
+    }
+    
+    .job-table .job-meta {
+        font-family: 'Merriweather', serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .job-table .job-meta i {
+        color: #c9a33d;
+        width: 14px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    
+    .action-buttons .btn-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+    
+    .btn-view {
+        background: #e8f0fe;
+        color: #1a365d;
+    }
+    
+    .btn-view:hover {
+        background: #1a365d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-edit {
+        background: #fefcbf;
+        color: #975a16;
+    }
+    
+    .btn-edit:hover {
+        background: #975a16;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-delete {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .btn-delete:hover {
+        background: #742a2a;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-applications {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .btn-applications:hover {
+        background: #22543d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .empty-state .icon {
+        font-size: 4rem;
+        color: #e2e8f0;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #0a1628;
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+    
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        max-width: 400px;
+        margin: 8px auto 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-bar {
+            padding: 16px;
+        }
+        .filter-bar .flex-wrap {
+            flex-direction: column;
+        }
+        .filter-bar .flex-wrap > * {
+            width: 100%;
+        }
+        .job-table-container {
+            padding: 12px;
+        }
+        .job-table th, .job-table td {
+            padding: 10px 12px;
+            font-size: 0.8rem;
+        }
+        .action-buttons .btn-icon {
+            width: 30px;
+            height: 30px;
+            font-size: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8" data-aos="fade-up">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 gov-font">My Job Postings</h1>
+                <p class="text-gray-600 gov-font-body mt-1">
+                    <i class="fas fa-briefcase text-gold mr-2"></i>
+                    Manage all your job listings in one place
+                </p>
+            </div>
+            <a href="{% url 'create_job' %}" class="btn-gov-action btn-gov-primary mt-4 md:mt-0">
+                <i class="fas fa-plus"></i> Post New Job
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar mb-6" data-aos="fade-up" data-aos-delay="100">
+            <form method="get" class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[180px]">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1 gov-font-sans uppercase tracking-wider">
+                        <i class="fas fa-filter text-gold mr-1"></i> Status
+                    </label>
+                    <select name="status" class="w-full">
+                        <option value="">All Status</option>
+                        {% for status_code, status_label in status_choices %}
+                            <option value="{{ status_code }}" {% if current_status == status_code %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[180px]">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1 gov-font-sans uppercase tracking-wider">
+                        <i class="fas fa-calendar text-gold mr-1"></i> Date
+                    </label>
+                    <select name="date_filter" class="w-full">
+                        <option value="">All Time</option>
+                        <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today</option>
+                        <option value="week" {% if date_filter == 'week' %}selected{% endif %}>This Week</option>
+                        <option value="month" {% if date_filter == 'month' %}selected{% endif %}>This Month</option>
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="btn-gov-action btn-gov-primary" style="padding: 10px 24px;">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'employer_job_list' %}" class="btn-gov-action" style="padding: 10px 20px; background: #e2e8f0; color: #4a5568; border-radius: 12px;">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Job Table -->
+        <div class="job-table-container" data-aos="fade-up" data-aos-delay="200">
+            {% if jobs %}
+                <table class="job-table">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Location</th>
+                            <th>Posted</th>
+                            <th>Closes</th>
+                            <th>Applications</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                            <tr>
+                                <td>
+                                    <div class="job-title">{{ job.title }}</div>
+                                    <div class="job-meta">
+                                        <i class="fas fa-tag"></i> {{ job.get_employment_type_display }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="job-meta">
+                                        <i class="fas fa-map-marker-alt"></i> {{ job.country.name }}
+                                        {% if job.is_remote %}
+                                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1">Remote</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="job-meta">
+                                        <i class="fas fa-calendar-alt"></i> {{ job.posted_date|date:"M d, Y" }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="job-meta">
+                                        <i class="fas fa-hourglass-end"></i> {{ job.closing_date|date:"M d, Y" }}
+                                        {% if job.is_expiring %}
+                                            <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full ml-1">Expiring</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="font-semibold text-gray-800">{{ job.applications_count }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ job.status|slugify }}">
+                                        {{ job.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'job_applications' job.id %}" class="btn-icon btn-applications" title="View Applications">
+                                            <i class="fas fa-users"></i>
+                                        </a>
+                                        <a href="{% url 'edit_job' job.id %}" class="btn-icon btn-edit" title="Edit Job">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{% url 'delete_job' job.id %}" class="inline" onsubmit="return confirm('Are you sure you want to close this job?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-icon btn-delete" title="Close Job">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {% if jobs.has_other_pages %}
+                    <div class="mt-6">
+                        <div class="pagination">
+                            {% if jobs.has_previous %}
+                                <a href="?page={{ jobs.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            {% endif %}
+                            
+                            {% for num in jobs.paginator.page_range %}
+                                {% if jobs.number == num %}
+                                    <span class="current">{{ num }}</span>
+                                {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                                    <a href="?page={{ num }}{% if current_status %}&status={{ current_status }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if jobs.has_next %}
+                                <a href="?page={{ jobs.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}{% if date_filter %}&date_filter={{ date_filter }}{% endif %}">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>No Jobs Posted Yet</h3>
+                    <p>Start your recruitment journey by posting your first job opportunity.</p>
+                    <a href="{% url 'create_job' %}" class="btn-gov-action btn-gov-primary" style="display: inline-block;">
+                        <i class="fas fa-plus"></i> Post Your First Job
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

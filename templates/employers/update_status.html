@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Application Status - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-card {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .status-card .header {
+        text-align: center;
+        border-bottom: 2px solid rgba(201, 163, 61, 0.1);
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+    }
+    
+    .status-card .header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #0a1628;
+        font-size: 1.5rem;
+    }
+    
+    .status-card .header h1 i {
+        color: #c9a33d;
+        margin-right: 12px;
+    }
+    
+    .status-card .header .applicant {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        margin-top: 4px;
+    }
+    
+    .status-card .header .job-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+    }
+    
+    .status-card .current-status {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    
+    .status-card .current-status .label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.85rem;
+    }
+    
+    .status-card .current-status .status-badge-large {
+        padding: 6px 20px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .status-card .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .status-card .form-group label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        display: block;
+        margin-bottom: 6px;
+    }
+    
+    .status-card .form-group select,
+    .status-card .form-group textarea {
+        font-family: 'Inter', sans-serif;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        width: 100%;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .status-card .form-group select:focus,
+    .status-card .form-group textarea:focus {
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+        outline: none;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        color: white;
+        padding: 14px 36px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(26, 54, 93, 0.3);
+    }
+    
+    .btn-cancel {
+        background: #e2e8f0;
+        color: #4a5568;
+        padding: 14px 36px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .btn-cancel:hover {
+        background: #cbd5e0;
+        transform: translateY(-2px);
+    }
+    
+    .status-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    
+    .status-option {
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid #e2e8f0;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+    
+    .status-option:hover {
+        border-color: #c9a33d;
+        background: #fdf8f0;
+    }
+    
+    .status-option.selected {
+        border-color: #c9a33d;
+        background: #fdf8f0;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .status-card {
+            padding: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="status-card" data-aos="fade-up">
+            <div class="header">
+                <h1>
+                    <i class="fas fa-exchange-alt"></i> Update Application Status
+                </h1>
+                <div class="applicant">
+                    <span class="job-title">{{ application.job.title }}</span>
+                    <span class="mx-2">•</span>
+                    {{ application.applicant.full_name }}
+                </div>
+            </div>
+
+            <!-- Current Status -->
+            <div class="current-status">
+                <span class="label">Current Status:</span>
+                <span class="status-badge-large app-status-{{ application.status|slugify }}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="status">
+                        <i class="fas fa-tag text-gold mr-1"></i> New Status
+                    </label>
+                    <select name="status" id="status" required class="w-full">
+                        <option value="">Select new status...</option>
+                        {% for status_code, status_label in status_choices %}
+                            <option value="{{ status_code }}" {% if application.status == status_code %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">
+                        <i class="fas fa-sticky-note text-gold mr-1"></i> Review Notes (Optional)
+                    </label>
+                    <textarea name="notes" id="notes" rows="4" placeholder="Add any notes about this decision..." class="w-full">{{ application.review_notes }}</textarea>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i> Update Status
+                    </button>
+                    <a href="{% url 'job_applications' application.job.id %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight selected status option
+        const statusSelect = document.getElementById('status');
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function() {
+                // Add visual feedback
+                const options = document.querySelectorAll('.status-option');
+                options.forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.dataset.value === this.value) {
+                        opt.classList.add('selected');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
