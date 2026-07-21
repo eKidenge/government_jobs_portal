@@ -597,7 +597,7 @@
                             <i class="fas fa-sliders-h"></i> Filter
                         </button>
                         <!-- FIXED: Changed 'employers' to 'employer_list' -->
-                        <a href="{% url 'employer_list' %}" class="btn-filter clear">
+                        <a href="{% url 'employers:employer_list' %}" class="btn-filter clear">
                             <i class="fas fa-undo"></i> Clear
                         </a>
                     </div>
@@ -668,7 +668,7 @@
                     <h3>No Employers Found</h3>
                     <p>Try adjusting your filters or search terms to find employers.</p>
                     <!-- FIXED: Changed 'employers' to 'employer_list' -->
-                    <a href="{% url 'employer_list' %}" class="clear-link">
+                    <a href="{% url 'employers:employer_list' %}" class="clear-link">
                         <i class="fas fa-undo"></i> Clear all filters
                     </a>
                 </div>
