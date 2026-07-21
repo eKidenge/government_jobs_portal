@@ -5,16 +5,17 @@ Handles employer registration, profile management, and dashboard
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum  # Added Sum here
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
 
 from .models import EmployerProfile, EmployerDocument
+from .forms import EmployerProfileForm, EmployerDocumentForm  # Added forms import
 from accounts.models import User
 from accounts.forms import EmployerRegistrationForm
-from jobs.models import Job, JobApplication, Country  # Add Country here
+from jobs.models import Job, JobApplication, Country
 from notifications.models import Notification
 
 
@@ -54,7 +55,7 @@ def employer_list(request):
     
     # Get filter options
     industries = EmployerProfile.INDUSTRIES
-    countries = Country.objects.filter(is_active=True)  # Now Country is imported
+    countries = Country.objects.filter(is_active=True)
     
     context = {
         'employers': employers,
@@ -179,27 +180,24 @@ def employer_verification(request):
         return redirect('employer_setup')
     
     if request.method == 'POST':
-        document_type = request.POST.get('document_type')
-        document_file = request.FILES.get('document')
-        
-        if document_type and document_file:
-            EmployerDocument.objects.create(
-                employer=employer,
-                document_type=document_type,
-                document=document_file,
-                description=request.POST.get('description', '')
-            )
+        form = EmployerDocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            doc = form.save(commit=False)
+            doc.employer = employer
+            doc.save()
             messages.success(request, 'Document uploaded successfully!')
+            return redirect('employer_verification')
         else:
-            messages.error(request, 'Please select a document type and file.')
-        
-        return redirect('employer_verification')
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = EmployerDocumentForm()
     
     documents = EmployerDocument.objects.filter(employer=employer)
     
     context = {
         'employer': employer,
         'documents': documents,
+        'form': form,
         'document_types': EmployerDocument.DOCUMENT_TYPES,
     }
     return render(request, 'employers/verification.html', context)
