@@ -104,9 +104,9 @@ def login_view(request):
                 elif user.user_type == 'citizen':
                     return redirect('citizen_dashboard')
                 elif user.user_type == 'employer':
-                    return redirect('employer_dashboard')
+                    return redirect('employers:employer_dashboard')
                 elif user.user_type == 'agency':
-                    return redirect('agency_dashboard')
+                    return redirect('agencies:agency_dashboard')
                 else:
                     return redirect('home')
             else:
@@ -133,9 +133,9 @@ def dashboard_redirect(request):
     elif request.user.user_type == 'citizen':
         return redirect('citizen_dashboard')
     elif request.user.user_type == 'employer':
-        return redirect('employer_dashboard')
+        return redirect('employers:employer_dashboard')
     elif request.user.user_type == 'agency':
-        return redirect('agency_dashboard')
+        return redirect('agencies:agency_dashboard')
     return redirect('home')
 
 
@@ -211,7 +211,6 @@ def employer_dashboard(request):
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         messages.error(request, 'Please complete your employer profile first.')
-        #return redirect('employer_setup')
         return redirect('employers:employer_setup')
     
     jobs = Job.objects.filter(employer=employer)
@@ -242,7 +241,7 @@ def agency_dashboard(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        return redirect('agencies:agency_setup')
     
     jobs = Job.objects.filter(agency=agency)
     applications = JobApplication.objects.filter(job__agency=agency)
