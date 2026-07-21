@@ -1,3 +1,12 @@
+echo "===== CURRENT DIRECTORY ====="
+pwd
+
+echo "===== ROOT FILES ====="
+ls -la
+
+echo "===== DJANGO PACKAGE ====="
+ls -la government_jobs_portal
+
 #!/usr/bin/env bash
 echo "🚀 Starting build process..."
 

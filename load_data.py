@@ -167,8 +167,8 @@ def load_countries():
     
     countries_data = [
         {'name': 'Kenya', 'code': 'KE', 'currency': 'KES', 'currency_symbol': 'KSh', 'description': 'East African nation', 'is_active': True},
-        {'name': 'United Kingdom', 'code': 'UK', 'currency': 'GBP', 'currency_symbol': '£', 'description': 'United Kingdom of Great Britain and Northern Ireland', 'is_active': True},
-        {'name': 'United States', 'code': 'USA', 'currency': 'USD', 'currency_symbol': '$', 'description': 'United States of America', 'is_active': True},
+        {'name': 'United Kingdom', 'code': 'GB', 'currency': 'GBP', 'currency_symbol': '£', 'description': 'United Kingdom of Great Britain and Northern Ireland', 'is_active': True},
+        {'name': 'United States', 'code': 'US', 'currency': 'USD', 'currency_symbol': '$', 'description': 'United States of America', 'is_active': True},
         {'name': 'Canada', 'code': 'CA', 'currency': 'CAD', 'currency_symbol': 'C$', 'description': 'North American country', 'is_active': True},
         {'name': 'Australia', 'code': 'AU', 'currency': 'AUD', 'currency_symbol': 'A$', 'description': 'Australian continent', 'is_active': True},
         {'name': 'Germany', 'code': 'DE', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Central European country', 'is_active': True},
@@ -176,6 +176,11 @@ def load_countries():
         {'name': 'South Africa', 'code': 'ZA', 'currency': 'ZAR', 'currency_symbol': 'R', 'description': 'Southern African nation', 'is_active': True},
         {'name': 'Nigeria', 'code': 'NG', 'currency': 'NGN', 'currency_symbol': '₦', 'description': 'West African nation', 'is_active': True},
         {'name': 'Ghana', 'code': 'GH', 'currency': 'GHS', 'currency_symbol': 'GH₵', 'description': 'West African nation', 'is_active': True},
+        {'name': 'Tanzania', 'code': 'TZ', 'currency': 'TZS', 'currency_symbol': 'TSh', 'description': 'East African nation', 'is_active': True},
+        {'name': 'Uganda', 'code': 'UG', 'currency': 'UGX', 'currency_symbol': 'USh', 'description': 'East African nation', 'is_active': True},
+        {'name': 'Rwanda', 'code': 'RW', 'currency': 'RWF', 'currency_symbol': 'FRw', 'description': 'East African nation', 'is_active': True},
+        {'name': 'India', 'code': 'IN', 'currency': 'INR', 'currency_symbol': '₹', 'description': 'South Asian country', 'is_active': True},
+        {'name': 'China', 'code': 'CN', 'currency': 'CNY', 'currency_symbol': '¥', 'description': 'East Asian country', 'is_active': True},
     ]
     
     created_count = 0
@@ -194,37 +199,39 @@ def load_countries():
     return created_count
 
 
-def load_job_categories():
-    """Load job categories into the database"""
-    from jobs.models import JobCategory
+def load_categories():
+    """Load categories into the database"""
+    from jobs.models import Category
     
-    print("📊 Loading job categories...")
+    print("📊 Loading categories...")
     
     categories_data = [
-        {'name': 'Government & Public Sector', 'slug': 'government-public-sector', 'icon': '🏛️', 'description': 'Government and public sector positions', 'is_active': True},
-        {'name': 'Administration', 'slug': 'administration', 'icon': '📋', 'description': 'Administrative and office management roles', 'is_active': True},
-        {'name': 'Finance & Accounting', 'slug': 'finance-accounting', 'icon': '💰', 'description': 'Financial management and accounting positions', 'is_active': True},
-        {'name': 'Human Resources', 'slug': 'human-resources', 'icon': '👥', 'description': 'HR and personnel management roles', 'is_active': True},
-        {'name': 'Information Technology', 'slug': 'information-technology', 'icon': '💻', 'description': 'IT and technology positions', 'is_active': True},
-        {'name': 'Legal', 'slug': 'legal', 'icon': '⚖️', 'description': 'Legal and compliance roles', 'is_active': True},
-        {'name': 'Health & Medical', 'slug': 'health-medical', 'icon': '🏥', 'description': 'Healthcare and medical positions', 'is_active': True},
-        {'name': 'Education', 'slug': 'education', 'icon': '📚', 'description': 'Teaching and education roles', 'is_active': True},
-        {'name': 'Engineering', 'slug': 'engineering', 'icon': '🔧', 'description': 'Engineering and technical roles', 'is_active': True},
-        {'name': 'Agriculture', 'slug': 'agriculture', 'icon': '🌾', 'description': 'Agricultural and environmental positions', 'is_active': True},
-        {'name': 'Security & Defense', 'slug': 'security-defense', 'icon': '🛡️', 'description': 'Security and defense roles', 'is_active': True},
-        {'name': 'Transport & Logistics', 'slug': 'transport-logistics', 'icon': '🚚', 'description': 'Transportation and logistics positions', 'is_active': True},
-        {'name': 'Communications', 'slug': 'communications', 'icon': '📡', 'description': 'Communications and media roles', 'is_active': True},
-        {'name': 'Research & Development', 'slug': 'research-development', 'icon': '🔬', 'description': 'Research and development positions', 'is_active': True},
-        {'name': 'Customer Service', 'slug': 'customer-service', 'icon': '🎯', 'description': 'Customer service and support roles', 'is_active': True},
-        {'name': 'Hospitality', 'slug': 'hospitality', 'icon': '🏨', 'description': 'Hospitality and tourism positions', 'is_active': True},
-        {'name': 'Construction', 'slug': 'construction', 'icon': '🏗️', 'description': 'Construction and building roles', 'is_active': True},
-        {'name': 'Manufacturing', 'slug': 'manufacturing', 'icon': '🏭', 'description': 'Manufacturing and production positions', 'is_active': True},
+        {'name': 'Government & Public Sector', 'icon': 'fa-landmark', 'description': 'Government and public sector positions', 'is_active': True},
+        {'name': 'Administration', 'icon': 'fa-briefcase', 'description': 'Administrative and office management roles', 'is_active': True},
+        {'name': 'Finance & Accounting', 'icon': 'fa-calculator', 'description': 'Financial management and accounting positions', 'is_active': True},
+        {'name': 'Human Resources', 'icon': 'fa-users', 'description': 'HR and personnel management roles', 'is_active': True},
+        {'name': 'Information Technology', 'icon': 'fa-laptop-code', 'description': 'IT and technology positions', 'is_active': True},
+        {'name': 'Legal', 'icon': 'fa-gavel', 'description': 'Legal and compliance roles', 'is_active': True},
+        {'name': 'Health & Medical', 'icon': 'fa-heartbeat', 'description': 'Healthcare and medical positions', 'is_active': True},
+        {'name': 'Education & Training', 'icon': 'fa-graduation-cap', 'description': 'Teaching and education roles', 'is_active': True},
+        {'name': 'Engineering', 'icon': 'fa-microchip', 'description': 'Engineering and technical roles', 'is_active': True},
+        {'name': 'Agriculture & Farming', 'icon': 'fa-seedling', 'description': 'Agricultural and environmental positions', 'is_active': True},
+        {'name': 'Security & Defense', 'icon': 'fa-shield-alt', 'description': 'Security and defense roles', 'is_active': True},
+        {'name': 'Transport & Logistics', 'icon': 'fa-truck', 'description': 'Transportation and logistics positions', 'is_active': True},
+        {'name': 'Communications & Media', 'icon': 'fa-bullhorn', 'description': 'Communications and media roles', 'is_active': True},
+        {'name': 'Research & Development', 'icon': 'fa-flask', 'description': 'Research and development positions', 'is_active': True},
+        {'name': 'Customer Service', 'icon': 'fa-headset', 'description': 'Customer service and support roles', 'is_active': True},
+        {'name': 'Hospitality & Tourism', 'icon': 'fa-hotel', 'description': 'Hospitality and tourism positions', 'is_active': True},
+        {'name': 'Construction & Building', 'icon': 'fa-hard-hat', 'description': 'Construction and building roles', 'is_active': True},
+        {'name': 'Manufacturing & Production', 'icon': 'fa-industry', 'description': 'Manufacturing and production positions', 'is_active': True},
+        {'name': 'Sales & Marketing', 'icon': 'fa-chart-line', 'description': 'Sales and marketing roles', 'is_active': True},
+        {'name': 'Real Estate & Property', 'icon': 'fa-home', 'description': 'Real estate and property positions', 'is_active': True},
     ]
     
     created_count = 0
     for category_data in categories_data:
-        category, created = JobCategory.objects.get_or_create(
-            slug=category_data['slug'],
+        category, created = Category.objects.get_or_create(
+            name=category_data['name'],
             defaults=category_data
         )
         if created:
@@ -233,18 +240,129 @@ def load_job_categories():
         else:
             print(f"  ℹ️ Category already exists: {category.name}")
     
-    print(f"✅ Loaded {created_count} new job categories")
+    print(f"✅ Loaded {created_count} new categories")
+    return created_count
+
+
+def load_employers():
+    """Load employers into the database"""
+    from employers.models import EmployerProfile
+    from accounts.models import User
+    
+    print("📊 Loading employers...")
+    
+    # Create employer users first
+    employer_users_data = [
+        {'email': 'employer1@company.com', 'full_name': 'John Mwangi', 'phone_number': '0712345001', 'password': 'employer123'},
+        {'email': 'employer2@company.com', 'full_name': 'Jane Akinyi', 'phone_number': '0712345002', 'password': 'employer123'},
+        {'email': 'employer3@company.com', 'full_name': 'Peter Ochieng', 'phone_number': '0712345003', 'password': 'employer123'},
+    ]
+    
+    employers_data = [
+        {
+            'company_name': 'Kenya Commercial Bank',
+            'registration_number': 'KCB/2024/001',
+            'industry': 'Banking & Finance',
+            'phone_number': '0712345678',
+            'address': 'KCB Towers, Nairobi, Kenya',
+            'is_verified': True,
+            'description': 'Leading commercial bank in East Africa',
+            'website': 'https://www.kcb.co.ke'
+        },
+        {
+            'company_name': 'Safaricom PLC',
+            'registration_number': 'SAF/2024/002',
+            'industry': 'Telecommunications',
+            'phone_number': '0712345679',
+            'address': 'Safaricom House, Nairobi, Kenya',
+            'is_verified': True,
+            'description': 'Leading telecommunications company in Kenya',
+            'website': 'https://www.safaricom.co.ke'
+        },
+        {
+            'company_name': 'Equity Bank Kenya',
+            'registration_number': 'EQT/2024/003',
+            'industry': 'Banking & Finance',
+            'phone_number': '0712345680',
+            'address': 'Equity Centre, Nairobi, Kenya',
+            'is_verified': True,
+            'description': 'Leading financial services provider',
+            'website': 'https://www.equitybank.co.ke'
+        },
+        {
+            'company_name': 'Kenya Airways',
+            'registration_number': 'KQ/2024/004',
+            'industry': 'Aviation & Transport',
+            'phone_number': '0712345681',
+            'address': 'Embakasi, Nairobi, Kenya',
+            'is_verified': True,
+            'description': 'Flag carrier airline of Kenya',
+            'website': 'https://www.kenya-airways.com'
+        },
+        {
+            'company_name': 'Nation Media Group',
+            'registration_number': 'NMG/2024/005',
+            'industry': 'Media & Communications',
+            'phone_number': '0712345682',
+            'address': 'Nation Centre, Nairobi, Kenya',
+            'is_verified': True,
+            'description': 'Leading media house in East Africa',
+            'website': 'https://www.nationmedia.com'
+        },
+    ]
+    
+    created_count = 0
+    for i, employer_data in enumerate(employers_data):
+        try:
+            # Get or create user for employer
+            user_data = employer_users_data[i] if i < len(employer_users_data) else employer_users_data[0]
+            
+            user, user_created = User.objects.get_or_create(
+                email=user_data['email'],
+                defaults={
+                    'full_name': user_data['full_name'],
+                    'phone_number': user_data['phone_number'],
+                    'user_type': 'employer',
+                    'status': 'approved',
+                    'is_verified': True,
+                    'is_active': True,
+                    'national_id': f'EMP-{i+1:06d}',
+                    'date_of_birth': timezone.now().date() - timedelta(days=365*30),
+                    'gender': 'M' if i % 2 == 0 else 'F',
+                    'county': 'Nairobi'
+                }
+            )
+            if user_created:
+                user.set_password(user_data['password'])
+                user.save()
+                print(f"  ✅ Created employer user: {user.email}")
+            
+            # Create employer profile
+            employer, created = EmployerProfile.objects.get_or_create(
+                user=user,
+                defaults=employer_data
+            )
+            if created:
+                created_count += 1
+                print(f"  ✅ Created employer: {employer.company_name}")
+            else:
+                # Update existing employer
+                for key, value in employer_data.items():
+                    setattr(employer, key, value)
+                employer.save()
+                print(f"  🔄 Updated employer: {employer.company_name}")
+                
+        except Exception as e:
+            print(f"  ⚠️ Error creating employer: {e}")
+    
+    print(f"✅ Loaded {created_count} new employers")
     return created_count
 
 
 def load_agencies():
     """Load recruitment agencies into the database"""
-    try:
-        from agencies.models import Agency
-    except ImportError:
-        print("  ⚠️ Agency model not found, skipping...")
-        return 0
-    
+    from agencies.models import RecruitmentAgency
+    from accounts.models import User
     from jobs.models import Country
     
     print("📊 Loading recruitment agencies...")
@@ -252,8 +370,8 @@ def load_agencies():
     # Get countries
     try:
         kenya = Country.objects.get(code='KE')
-        uk = Country.objects.get(code='UK')
-        usa = Country.objects.get(code='USA')
+        uk = Country.objects.get(code='GB')
+        usa = Country.objects.get(code='US')
         canada = Country.objects.get(code='CA')
         australia = Country.objects.get(code='AU')
         uae = Country.objects.get(code='AE')
@@ -263,153 +381,182 @@ def load_agencies():
         print("  ⚠️ Countries not found, run load_countries first")
         return 0
     
+    # Agency users
+    agency_users_data = [
+        {'email': 'psc@go.ke', 'full_name': 'Public Service Commission Admin', 'phone_number': '0712346001', 'password': 'agency123'},
+        {'email': 'kmra@go.ke', 'full_name': 'KMRA Admin', 'phone_number': '0712346002', 'password': 'agency123'},
+        {'email': 'globalrecruit@global.com', 'full_name': 'Global Recruitment Admin', 'phone_number': '0712346003', 'password': 'agency123'},
+        {'email': 'ukhealthcare@nhs.co.uk', 'full_name': 'UK Healthcare Admin', 'phone_number': '0712346004', 'password': 'agency123'},
+        {'email': 'canadaimm@ca.com', 'full_name': 'Canada Immigration Admin', 'phone_number': '0712346005', 'password': 'agency123'},
+        {'email': 'gulfrecruit@ae.com', 'full_name': 'Gulf Recruitment Admin', 'phone_number': '0712346006', 'password': 'agency123'},
+        {'email': 'austskills@au.com', 'full_name': 'Australian Skills Admin', 'phone_number': '0712346007', 'password': 'agency123'},
+        {'email': 'usworks@us.com', 'full_name': 'US Work Solutions Admin', 'phone_number': '0712346008', 'password': 'agency123'},
+        {'email': 'germantech@de.com', 'full_name': 'German Technical Admin', 'phone_number': '0712346009', 'password': 'agency123'},
+        {'email': 'saes@co.za', 'full_name': 'SA Employment Services Admin', 'phone_number': '0712346010', 'password': 'agency123'},
+    ]
+    
     agencies_data = [
         {
-            'name': 'Public Service Commission',
-            'description': 'Kenya Public Service Commission - Government recruitment agency',
-            'email': 'info@psc.go.ke',
-            'phone': '+254-20-222-3333',
-            'website': 'https://www.psc.go.ke',
-            'is_active': True,
-            'country': kenya,
+            'agency_name': 'Public Service Commission',
+            'license_number': 'PSC/2024/001',
+            'phone_number': '+254-20-222-3333',
+            'agency_email': 'info@psc.go.ke',
             'address': 'P.O. Box 30095-00100, Nairobi, Kenya',
-            'specializations': ['Government', 'Administration', 'Public Service'],
+            'services': 'Government recruitment, Public service placements, Career guidance',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': kenya,
+            'website': 'https://www.psc.go.ke',
+            'description': 'Kenya Public Service Commission - Government recruitment agency'
         },
         {
-            'name': 'Kenya Medical Recruitment Agency',
-            'description': 'Specialized in healthcare recruitment for local and international positions',
-            'email': 'info@kmra.go.ke',
-            'phone': '+254-20-222-4444',
-            'website': 'https://www.kmra.go.ke',
-            'is_active': True,
-            'country': kenya,
+            'agency_name': 'Kenya Medical Recruitment Agency',
+            'license_number': 'KMRA/2024/001',
+            'phone_number': '+254-20-222-4444',
+            'agency_email': 'info@kmra.go.ke',
             'address': 'P.O. Box 45678-00100, Nairobi, Kenya',
-            'specializations': ['Healthcare', 'Medical', 'Nursing'],
+            'services': 'Healthcare recruitment, Medical placements, Nursing recruitment',
             'is_verified': True,
-            'verification_date': timezone.now()
-        },
-        {
-            'name': 'Global Recruitment Solutions',
-            'description': 'International recruitment agency for skilled professionals',
-            'email': 'info@globalrecruit.com',
-            'phone': '+254-20-222-5555',
-            'website': 'https://www.globalrecruit.com',
-            'is_active': True,
             'country': kenya,
+            'website': 'https://www.kmra.go.ke',
+            'description': 'Specialized in healthcare recruitment for local and international positions'
+        },
+        {
+            'agency_name': 'Global Recruitment Solutions',
+            'license_number': 'GRS/2024/001',
+            'phone_number': '+254-20-222-5555',
+            'agency_email': 'info@globalrecruit.com',
             'address': 'P.O. Box 56789-00100, Nairobi, Kenya',
-            'specializations': ['IT', 'Engineering', 'Finance'],
+            'services': 'International recruitment, Skilled professionals, Executive search',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': kenya,
+            'website': 'https://www.globalrecruit.com',
+            'description': 'International recruitment agency for skilled professionals'
         },
         {
-            'name': 'UK Healthcare Recruitment',
-            'description': 'Recruitment agency specializing in UK healthcare placements',
-            'email': 'info@ukhealthcare.co.uk',
-            'phone': '+44-20-222-6666',
-            'website': 'https://www.ukhealthcare.co.uk',
-            'is_active': True,
-            'country': uk,
+            'agency_name': 'UK Healthcare Recruitment',
+            'license_number': 'UKHR/2024/001',
+            'phone_number': '+44-20-222-6666',
+            'agency_email': 'info@ukhealthcare.co.uk',
             'address': 'London, United Kingdom',
-            'specializations': ['Healthcare', 'Nursing', 'Doctors'],
+            'services': 'NHS recruitment, Healthcare placements, Nursing recruitment',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': uk,
+            'website': 'https://www.ukhealthcare.co.uk',
+            'description': 'Recruitment agency specializing in UK healthcare placements'
         },
         {
-            'name': 'Canada Immigration Recruitment',
-            'description': 'Specialized in Canadian work visas and job placement',
-            'email': 'info@canadaimmigration.ca',
-            'phone': '+1-416-222-7777',
-            'website': 'https://www.canadaimmigration.ca',
-            'is_active': True,
-            'country': canada,
+            'agency_name': 'Canada Immigration Recruitment',
+            'license_number': 'CIR/2024/001',
+            'phone_number': '+1-416-222-7777',
+            'agency_email': 'info@canadaimmigration.ca',
             'address': 'Toronto, Canada',
-            'specializations': ['Immigration', 'Skilled Workers', 'Healthcare'],
+            'services': 'Canadian work visas, Job placement, Immigration services',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': canada,
+            'website': 'https://www.canadaimmigration.ca',
+            'description': 'Specialized in Canadian work visas and job placement'
         },
         {
-            'name': 'Gulf Recruitment Services',
-            'description': 'Recruitment for Middle East and Gulf countries',
-            'email': 'info@gulfrecruit.ae',
-            'phone': '+971-4-222-8888',
-            'website': 'https://www.gulfrecruit.ae',
-            'is_active': True,
-            'country': uae,
+            'agency_name': 'Gulf Recruitment Services',
+            'license_number': 'GRS/2024/002',
+            'phone_number': '+971-4-222-8888',
+            'agency_email': 'info@gulfrecruit.ae',
             'address': 'Dubai, United Arab Emirates',
-            'specializations': ['Construction', 'Engineering', 'Hospitality'],
+            'services': 'Gulf country recruitment, Construction, Engineering, Hospitality',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': uae,
+            'website': 'https://www.gulfrecruit.ae',
+            'description': 'Recruitment for Middle East and Gulf countries'
         },
         {
-            'name': 'Australian Skills Recruitment',
-            'description': 'Recruitment for Australian skilled worker programs',
-            'email': 'info@australianskills.com.au',
-            'phone': '+61-2-222-9999',
-            'website': 'https://www.australianskills.com.au',
-            'is_active': True,
-            'country': australia,
+            'agency_name': 'Australian Skills Recruitment',
+            'license_number': 'ASR/2024/001',
+            'phone_number': '+61-2-222-9999',
+            'agency_email': 'info@australianskills.com.au',
             'address': 'Sydney, Australia',
-            'specializations': ['IT', 'Engineering', 'Construction'],
+            'services': 'Skilled worker programs, IT recruitment, Engineering placements',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': australia,
+            'website': 'https://www.australianskills.com.au',
+            'description': 'Recruitment for Australian skilled worker programs'
         },
         {
-            'name': 'US Work Solutions',
-            'description': 'Recruitment for US work visas and job placements',
-            'email': 'info@usworksolutions.com',
-            'phone': '+1-202-222-0000',
-            'website': 'https://www.usworksolutions.com',
-            'is_active': True,
-            'country': usa,
+            'agency_name': 'US Work Solutions',
+            'license_number': 'USWS/2024/001',
+            'phone_number': '+1-202-222-0000',
+            'agency_email': 'info@usworksolutions.com',
             'address': 'Washington DC, USA',
-            'specializations': ['Technology', 'Healthcare', 'Finance'],
+            'services': 'US work visas, Technology recruitment, Healthcare placements',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': usa,
+            'website': 'https://www.usworksolutions.com',
+            'description': 'Recruitment for US work visas and job placements'
         },
         {
-            'name': 'German Technical Recruitment',
-            'description': 'Specialized in technical recruitment for Germany',
-            'email': 'info@germantech.de',
-            'phone': '+49-30-222-1111',
-            'website': 'https://www.germantech.de',
-            'is_active': True,
-            'country': germany,
+            'agency_name': 'German Technical Recruitment',
+            'license_number': 'GTR/2024/001',
+            'phone_number': '+49-30-222-1111',
+            'agency_email': 'info@germantech.de',
             'address': 'Berlin, Germany',
-            'specializations': ['Engineering', 'Technology', 'Manufacturing'],
+            'services': 'Technical recruitment, Engineering, Technology, Manufacturing',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': germany,
+            'website': 'https://www.germantech.de',
+            'description': 'Specialized in technical recruitment for Germany'
         },
         {
-            'name': 'South African Employment Services',
-            'description': 'Recruitment for South African and SADC region',
-            'email': 'info@saes.co.za',
-            'phone': '+27-11-222-2222',
-            'website': 'https://www.saes.co.za',
-            'is_active': True,
-            'country': south_africa,
+            'agency_name': 'South African Employment Services',
+            'license_number': 'SAES/2024/001',
+            'phone_number': '+27-11-222-2222',
+            'agency_email': 'info@saes.co.za',
             'address': 'Johannesburg, South Africa',
-            'specializations': ['Mining', 'Healthcare', 'Education'],
+            'services': 'SADC region recruitment, Mining, Healthcare, Education',
             'is_verified': True,
-            'verification_date': timezone.now()
+            'country': south_africa,
+            'website': 'https://www.saes.co.za',
+            'description': 'Recruitment for South African and SADC region'
         }
     ]
     
     created_count = 0
-    for agency_data in agencies_data:
-        specializations = agency_data.pop('specializations', [])
-        agency, created = Agency.objects.get_or_create(
-            name=agency_data['name'],
-            defaults=agency_data
-        )
-        if created:
-            agency.specializations = specializations
-            agency.save()
-            created_count += 1
-            print(f"  ✅ Created agency: {agency.name}")
-        else:
-            print(f"  ℹ️ Agency already exists: {agency.name}")
+    for i, agency_data in enumerate(agencies_data):
+        try:
+            # Get or create user for agency
+            user_data = agency_users_data[i] if i < len(agency_users_data) else agency_users_data[0]
+            
+            user, user_created = User.objects.get_or_create(
+                email=user_data['email'],
+                defaults={
+                    'full_name': user_data['full_name'],
+                    'phone_number': user_data['phone_number'],
+                    'user_type': 'agency',
+                    'status': 'approved',
+                    'is_verified': True,
+                    'is_active': True,
+                    'national_id': f'AGY-{i+1:06d}',
+                    'date_of_birth': timezone.now().date() - timedelta(days=365*30),
+                    'gender': 'M' if i % 2 == 0 else 'F',
+                    'county': 'Nairobi'
+                }
+            )
+            if user_created:
+                user.set_password(user_data['password'])
+                user.save()
+                print(f"  ✅ Created agency user: {user.email}")
+            
+            # Create agency
+            agency, created = RecruitmentAgency.objects.get_or_create(
+                user=user,
+                defaults=agency_data
+            )
+            if created:
+                created_count += 1
+                print(f"  ✅ Created agency: {agency.agency_name}")
+            else:
+                print(f"  ℹ️ Agency already exists: {agency.agency_name}")
+                
+        except Exception as e:
+            print(f"  ⚠️ Error creating agency: {e}")
     
     print(f"✅ Loaded {created_count} new agencies")
     return created_count
@@ -417,70 +564,81 @@ def load_agencies():
 
 def load_sample_jobs():
     """Load sample job listings into the database"""
-    try:
-        from jobs.models import Job, JobCategory, Country
-        from agencies.models import Agency
-    except ImportError:
-        print("  ⚠️ Job, JobCategory, Country, or Agency model not found, skipping sample jobs...")
-        return 0
+    from jobs.models import Job, Category, Country
+    from agencies.models import RecruitmentAgency
+    from employers.models import EmployerProfile
     
     print("📊 Loading sample jobs...")
     
     # Get categories
     try:
-        government_category = JobCategory.objects.get(slug='government-public-sector')
-        admin_category = JobCategory.objects.get(slug='administration')
-        finance_category = JobCategory.objects.get(slug='finance-accounting')
-        hr_category = JobCategory.objects.get(slug='human-resources')
-        it_category = JobCategory.objects.get(slug='information-technology')
-        legal_category = JobCategory.objects.get(slug='legal')
-        health_category = JobCategory.objects.get(slug='health-medical')
-        education_category = JobCategory.objects.get(slug='education')
-        engineering_category = JobCategory.objects.get(slug='engineering')
-        hospitality_category = JobCategory.objects.get(slug='hospitality')
-        construction_category = JobCategory.objects.get(slug='construction')
-    except JobCategory.DoesNotExist:
-        print("  ⚠️ Job categories not found, run load_job_categories first")
-        return 0
-    
-    # Get agencies
-    try:
-        psc = Agency.objects.get(name='Public Service Commission')
-        kmra = Agency.objects.get(name='Kenya Medical Recruitment Agency')
-        global_recruit = Agency.objects.get(name='Global Recruitment Solutions')
-        uk_healthcare = Agency.objects.get(name='UK Healthcare Recruitment')
-        canada_recruit = Agency.objects.get(name='Canada Immigration Recruitment')
-        gulf_recruit = Agency.objects.get(name='Gulf Recruitment Services')
-        australia_recruit = Agency.objects.get(name='Australian Skills Recruitment')
-        us_works = Agency.objects.get(name='US Work Solutions')
-        german_tech = Agency.objects.get(name='German Technical Recruitment')
-        sa_services = Agency.objects.get(name='South African Employment Services')
-    except Agency.DoesNotExist:
-        print("  ⚠️ Agencies not found, run load_agencies first")
+        government_category = Category.objects.get(name='Government & Public Sector')
+        admin_category = Category.objects.get(name='Administration')
+        finance_category = Category.objects.get(name='Finance & Accounting')
+        hr_category = Category.objects.get(name='Human Resources')
+        it_category = Category.objects.get(name='Information Technology')
+        legal_category = Category.objects.get(name='Legal')
+        health_category = Category.objects.get(name='Health & Medical')
+        education_category = Category.objects.get(name='Education & Training')
+        engineering_category = Category.objects.get(name='Engineering')
+        hospitality_category = Category.objects.get(name='Hospitality & Tourism')
+        construction_category = Category.objects.get(name='Construction & Building')
+    except Category.DoesNotExist:
+        print("  ⚠️ Categories not found, run load_categories first")
         return 0
     
     # Get countries
     try:
         kenya = Country.objects.get(code='KE')
-        uk = Country.objects.get(code='UK')
-        usa = Country.objects.get(code='USA')
+        uk = Country.objects.get(code='GB')
+        usa = Country.objects.get(code='US')
         canada = Country.objects.get(code='CA')
         australia = Country.objects.get(code='AU')
         germany = Country.objects.get(code='DE')
         uae = Country.objects.get(code='AE')
         south_africa = Country.objects.get(code='ZA')
+        nigeria = Country.objects.get(code='NG')
+        tanzania = Country.objects.get(code='TZ')
     except Country.DoesNotExist:
         print("  ⚠️ Countries not found, run load_countries first")
         return 0
     
+    # Get agencies and employers
+    try:
+        psc = RecruitmentAgency.objects.get(agency_name='Public Service Commission')
+        kmra = RecruitmentAgency.objects.get(agency_name='Kenya Medical Recruitment Agency')
+        global_recruit = RecruitmentAgency.objects.get(agency_name='Global Recruitment Solutions')
+        uk_healthcare = RecruitmentAgency.objects.get(agency_name='UK Healthcare Recruitment')
+        canada_recruit = RecruitmentAgency.objects.get(agency_name='Canada Immigration Recruitment')
+        gulf_recruit = RecruitmentAgency.objects.get(agency_name='Gulf Recruitment Services')
+        australia_recruit = RecruitmentAgency.objects.get(agency_name='Australian Skills Recruitment')
+        us_works = RecruitmentAgency.objects.get(agency_name='US Work Solutions')
+        german_tech = RecruitmentAgency.objects.get(agency_name='German Technical Recruitment')
+        sa_services = RecruitmentAgency.objects.get(agency_name='South African Employment Services')
+    except RecruitmentAgency.DoesNotExist:
+        print("  ⚠️ Agencies not found, run load_agencies first")
+        return 0
+    
+    # Get employers
+    try:
+        kcb = EmployerProfile.objects.get(company_name='Kenya Commercial Bank')
+        safaricom = EmployerProfile.objects.get(company_name='Safaricom PLC')
+        equity = EmployerProfile.objects.get(company_name='Equity Bank Kenya')
+        kq = EmployerProfile.objects.get(company_name='Kenya Airways')
+        nmg = EmployerProfile.objects.get(company_name='Nation Media Group')
+    except EmployerProfile.DoesNotExist:
+        print("  ⚠️ Employers not found, run load_employers first")
+        return 0
+    
     jobs_data = [
-        # Kenya Jobs
+        # Kenya Jobs - Agency
         {
             'title': 'Senior Administrative Officer',
             'agency': psc,
             'country': kenya,
             'category': admin_category,
             'description': 'Lead administrative operations and coordinate government services delivery across multiple departments.',
+            'responsibilities': 'Oversee daily operations, manage staff, coordinate with departments, prepare reports',
             'requirements': "Bachelor's degree in Public Administration or related field. 5+ years experience.",
             'benefits': 'Medical cover, Pension scheme, Housing allowance',
             'salary_min': Decimal('80000'),
@@ -504,6 +662,7 @@ def load_sample_jobs():
             'country': kenya,
             'category': finance_category,
             'description': 'Manage financial operations, budgeting, and reporting for government departments.',
+            'responsibilities': 'Budget preparation, financial reporting, compliance, audit support',
             'requirements': 'CPA(K) or equivalent. 3+ years experience in public finance.',
             'benefits': 'Medical cover, Pension, Training opportunities',
             'salary_min': Decimal('60000'),
@@ -522,57 +681,12 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'IT Systems Administrator',
-            'agency': global_recruit,
-            'country': kenya,
-            'category': it_category,
-            'description': 'Manage and maintain government IT systems, networks, and infrastructure.',
-            'requirements': 'Degree in Computer Science or IT. 3+ years experience. CCNA, MCSA preferred.',
-            'benefits': 'Medical cover, Pension, Training, Certification support',
-            'salary_min': Decimal('70000'),
-            'salary_max': Decimal('100000'),
-            'salary_currency': 'KES',
-            'is_salary_negotiable': True,
-            'employment_type': 'full_time',
-            'experience_level': 'mid',
-            'location': 'Nairobi, Kenya',
-            'is_remote': False,
-            'visa_requirements': 'Kenyan citizenship or valid work permit',
-            'required_languages': ['English'],
-            'closing_date': timezone.now() + timedelta(days=20),
-            'status': 'active',
-            'is_featured': False,
-            'is_verified': True
-        },
-        {
-            'title': 'Human Resources Manager',
-            'agency': global_recruit,
-            'country': kenya,
-            'category': hr_category,
-            'description': 'Lead HR operations including recruitment, training, performance management, and employee relations.',
-            'requirements': 'Bachelors in HR Management. 5+ years experience. CHRP certification preferred.',
-            'benefits': 'Medical cover, Pension, Performance bonuses',
-            'salary_min': Decimal('90000'),
-            'salary_max': Decimal('130000'),
-            'salary_currency': 'KES',
-            'is_salary_negotiable': True,
-            'employment_type': 'full_time',
-            'experience_level': 'senior',
-            'location': 'Nairobi, Kenya',
-            'is_remote': False,
-            'visa_requirements': 'Kenyan citizenship',
-            'required_languages': ['English', 'Swahili'],
-            'closing_date': timezone.now() + timedelta(days=35),
-            'status': 'active',
-            'is_featured': False,
-            'is_verified': True
-        },
-        {
             'title': 'Healthcare Administrator - County Government',
             'agency': kmra,
             'country': kenya,
             'category': health_category,
             'description': 'Coordinate healthcare services and administration at county level.',
+            'responsibilities': 'Manage healthcare facilities, coordinate medical staff, patient services',
             'requirements': 'Bachelors in Healthcare Administration or Public Health. 3+ years experience.',
             'benefits': 'Medical cover, Pension, Housing allowance',
             'salary_min': Decimal('65000'),
@@ -591,15 +705,113 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Legal Counsel - Public Service Commission',
-            'agency': psc,
+            'title': 'IT Systems Administrator',
+            'agency': global_recruit,
             'country': kenya,
-            'category': legal_category,
-            'description': 'Provide legal advice and representation for government agencies.',
-            'requirements': 'Bachelor of Laws (LLB). 5+ years experience in public law. Advocate of the High Court.',
-            'benefits': 'Medical cover, Pension, Legal practice allowance',
+            'category': it_category,
+            'description': 'Manage and maintain government IT systems, networks, and infrastructure.',
+            'responsibilities': 'Network administration, system maintenance, user support, security management',
+            'requirements': 'Degree in Computer Science or IT. 3+ years experience. CCNA, MCSA preferred.',
+            'benefits': 'Medical cover, Pension, Training, Certification support',
+            'salary_min': Decimal('70000'),
+            'salary_max': Decimal('100000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'mid',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship or valid work permit',
+            'required_languages': ['English'],
+            'closing_date': timezone.now() + timedelta(days=20),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
+        # Kenya Jobs - Employers
+        {
+            'title': 'Branch Manager - KCB',
+            'employer': kcb,
+            'country': kenya,
+            'category': finance_category,
+            'description': 'Lead branch operations and drive business growth for KCB.',
+            'responsibilities': 'Manage branch operations, lead team, drive sales, ensure compliance',
+            'requirements': 'Degree in Business or Finance. 5+ years banking experience. CPA preferred.',
+            'benefits': 'Medical cover, Pension, Performance bonuses, Car allowance',
             'salary_min': Decimal('120000'),
             'salary_max': Decimal('180000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'senior',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=35),
+            'status': 'active',
+            'is_featured': True,
+            'is_verified': True
+        },
+        {
+            'title': 'Network Engineer - Safaricom',
+            'employer': safaricom,
+            'country': kenya,
+            'category': it_category,
+            'description': 'Design and maintain telecommunications network infrastructure.',
+            'responsibilities': 'Network design, maintenance, troubleshooting, capacity planning',
+            'requirements': 'Degree in Telecommunications or IT. 4+ years experience. CCNA/CCNP preferred.',
+            'benefits': 'Medical cover, Pension, Stock options, Training',
+            'salary_min': Decimal('90000'),
+            'salary_max': Decimal('130000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'mid',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=30),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
+        {
+            'title': 'Relationship Manager - Equity Bank',
+            'employer': equity,
+            'country': kenya,
+            'category': finance_category,
+            'description': 'Build and maintain relationships with high-value clients.',
+            'responsibilities': 'Client relationship management, business development, portfolio management',
+            'requirements': 'Degree in Business or Finance. 4+ years banking experience.',
+            'benefits': 'Medical cover, Pension, Performance bonuses',
+            'salary_min': Decimal('100000'),
+            'salary_max': Decimal('150000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'mid',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=28),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
+        {
+            'title': 'Flight Operations Manager - Kenya Airways',
+            'employer': kq,
+            'country': kenya,
+            'category': transport_category,
+            'description': 'Manage flight operations and ensure safety compliance.',
+            'responsibilities': 'Flight scheduling, crew management, safety oversight, regulatory compliance',
+            'requirements': 'Degree in Aviation Management or related. 5+ years experience.',
+            'benefits': 'Medical cover, Pension, Flight benefits, Training',
+            'salary_min': Decimal('150000'),
+            'salary_max': Decimal('200000'),
             'salary_currency': 'KES',
             'is_salary_negotiable': False,
             'employment_type': 'full_time',
@@ -613,36 +825,14 @@ def load_sample_jobs():
             'is_featured': True,
             'is_verified': True
         },
-        {
-            'title': 'Education Officer - Ministry of Education',
-            'agency': psc,
-            'country': kenya,
-            'category': education_category,
-            'description': 'Coordinate education programs and policy implementation at national level.',
-            'requirements': 'Masters in Education or related field. 5+ years experience in education administration.',
-            'benefits': 'Medical cover, Pension, Education allowance',
-            'salary_min': Decimal('85000'),
-            'salary_max': Decimal('120000'),
-            'salary_currency': 'KES',
-            'is_salary_negotiable': False,
-            'employment_type': 'full_time',
-            'experience_level': 'senior',
-            'location': 'Nairobi, Kenya',
-            'is_remote': False,
-            'visa_requirements': 'Kenyan citizenship',
-            'required_languages': ['English', 'Swahili'],
-            'closing_date': timezone.now() + timedelta(days=32),
-            'status': 'active',
-            'is_featured': False,
-            'is_verified': True
-        },
-        # UK Jobs
+        # International Jobs - Agencies
         {
             'title': 'Registered Nurse - NHS',
             'agency': uk_healthcare,
             'country': uk,
             'category': health_category,
             'description': 'Join the UK National Health Service as a registered nurse.',
+            'responsibilities': 'Patient care, medication administration, health monitoring, care planning',
             'requirements': 'Degree in Nursing. NMC registration. IELTS 7.0. 3+ years experience.',
             'benefits': 'NHS pension, 28 days holiday, Training opportunities, Relocation package',
             'salary_min': Decimal('25000'),
@@ -660,13 +850,13 @@ def load_sample_jobs():
             'is_featured': True,
             'is_verified': True
         },
-        # USA Jobs
         {
             'title': 'Data Scientist - Tech Firm',
             'agency': us_works,
             'country': usa,
             'category': it_category,
             'description': 'Analyze big data and develop machine learning models.',
+            'responsibilities': 'Data analysis, ML model development, data visualization, reporting',
             'requirements': 'Masters in Data Science or related. 5+ years experience. Python, R, SQL.',
             'benefits': 'Health insurance, 401k, Stock options, 25 days holiday',
             'salary_min': Decimal('90000'),
@@ -684,13 +874,13 @@ def load_sample_jobs():
             'is_featured': True,
             'is_verified': True
         },
-        # Canada Jobs
         {
             'title': 'Civil Engineer - Construction',
             'agency': canada_recruit,
             'country': canada,
             'category': engineering_category,
             'description': 'Lead civil engineering projects for infrastructure development.',
+            'responsibilities': 'Project design, site management, team coordination, quality control',
             'requirements': 'BEng Civil Engineering. PEng designation. 5+ years experience.',
             'benefits': 'Health benefits, RRSP, 4 weeks holiday',
             'salary_min': Decimal('75000'),
@@ -708,13 +898,13 @@ def load_sample_jobs():
             'is_featured': False,
             'is_verified': True
         },
-        # Australia Jobs
         {
             'title': 'IT Project Manager',
             'agency': australia_recruit,
             'country': australia,
             'category': it_category,
             'description': 'Lead IT projects and teams for enterprise solutions.',
+            'responsibilities': 'Project planning, team management, stakeholder communication, delivery',
             'requirements': 'PMP certification. 7+ years experience in IT project management.',
             'benefits': 'Health insurance, Superannuation, 5 weeks holiday',
             'salary_min': Decimal('120000'),
@@ -732,13 +922,13 @@ def load_sample_jobs():
             'is_featured': True,
             'is_verified': True
         },
-        # UAE Jobs
         {
             'title': 'Hospitality Manager - Hotel Chain',
             'agency': gulf_recruit,
             'country': uae,
             'category': hospitality_category,
             'description': 'Manage hotel operations and guest services for 5-star property.',
+            'responsibilities': 'Hotel operations, guest services, staff management, quality assurance',
             'requirements': 'Degree in Hospitality Management. 5+ years experience in luxury hotels.',
             'benefits': 'Tax-free salary, Accommodation, Transport, Medical insurance',
             'salary_min': Decimal('15000'),
@@ -756,13 +946,13 @@ def load_sample_jobs():
             'is_featured': False,
             'is_verified': True
         },
-        # Germany Jobs
         {
             'title': 'Mechanical Engineer - Automotive',
             'agency': german_tech,
             'country': germany,
             'category': engineering_category,
             'description': 'Design and develop automotive systems for leading car manufacturer.',
+            'responsibilities': 'Product design, testing, quality assurance, project coordination',
             'requirements': 'Degree in Mechanical Engineering. 4+ years experience in automotive industry.',
             'benefits': 'Company pension, Health insurance, 30 days holiday, Training',
             'salary_min': Decimal('55000'),
@@ -780,13 +970,13 @@ def load_sample_jobs():
             'is_featured': False,
             'is_verified': True
         },
-        # South Africa Jobs
         {
             'title': 'Mining Engineer',
             'agency': sa_services,
             'country': south_africa,
             'category': engineering_category,
             'description': 'Lead mining operations and resource extraction projects.',
+            'responsibilities': 'Mine planning, operations management, safety compliance, team leadership',
             'requirements': 'Mining Engineering degree. 5+ years experience in mining.',
             'benefits': 'Medical aid, Pension, Performance bonuses',
             'salary_min': Decimal('600000'),
@@ -809,21 +999,28 @@ def load_sample_jobs():
     created_count = 0
     for job_data in jobs_data:
         agency = job_data.pop('agency', None)
+        employer = job_data.pop('employer', None)
         category = job_data.pop('category', None)
         country = job_data.pop('country', None)
         
-        job, created = Job.objects.get_or_create(
-            title=job_data['title'],
-            agency=agency,
-            country=country,
-            category=category,
-            defaults=job_data
-        )
-        if created:
-            created_count += 1
-            print(f"  ✅ Created job: {job.title}")
-        else:
-            print(f"  ℹ️ Job already exists: {job.title}")
+        # Create the job
+        try:
+            job, created = Job.objects.get_or_create(
+                title=job_data['title'],
+                employer=employer,
+                agency=agency,
+                country=country,
+                category=category,
+                defaults=job_data
+            )
+            if created:
+                created_count += 1
+                source = employer.company_name if employer else agency.agency_name if agency else 'N/A'
+                print(f"  ✅ Created job: {job.title} ({source})")
+            else:
+                print(f"  ℹ️ Job already exists: {job.title}")
+        except Exception as e:
+            print(f"  ⚠️ Error creating job: {e}")
     
     print(f"✅ Loaded {created_count} sample jobs")
     return created_count
@@ -831,13 +1028,16 @@ def load_sample_jobs():
 
 def create_superuser():
     """Create admin superuser if it doesn't exist"""
+    from accounts.models import User
+    
     print("👤 Checking superuser...")
     
     # Delete existing admin if exists to avoid conflicts
     User.objects.filter(email='admin@admin.com').delete()
     
     try:
-        # Create superuser using the custom UserManager        admin = User.objects.create_superuser(
+        # Create superuser using the custom UserManager
+        admin = User.objects.create_superuser(
             email='admin@admin.com',
             password='admin123'
         )
@@ -861,16 +1061,44 @@ def create_superuser():
         except Exception as e2:
             print(f"  ❌ Alternative method also failed: {e2}")
     
-    # Create test user
-    User.objects.filter(email='test@example.com').delete()
+    # Create test users
+    # Citizen
+    User.objects.filter(email='citizen@example.com').delete()
     try:
-        test_user = User.objects.create_user(
-            email='test@example.com',
-            password='test123'
+        citizen = User.objects.create_user(
+            email='citizen@example.com',
+            password='citizen123',
+            full_name='Test Citizen',
+            phone_number='0712345678',
+            national_id='12345678',
+            date_of_birth=timezone.now().date() - timedelta(days=365*25),
+            gender='M',
+            county='Nairobi',
+            user_type='citizen',
+            status='approved'
         )
-        print("  ✅ Created test user: test@example.com / test123")
+        print("  ✅ Created citizen user: citizen@example.com / citizen123")
     except Exception as e:
-        print(f"  ❌ Failed to create test user: {e}")
+        print(f"  ❌ Failed to create citizen user: {e}")
+    
+    # Employer user
+    User.objects.filter(email='employer@example.com').delete()
+    try:
+        employer = User.objects.create_user(
+            email='employer@example.com',
+            password='employer123',
+            full_name='Test Employer',
+            phone_number='0712345679',
+            national_id='87654321',
+            date_of_birth=timezone.now().date() - timedelta(days=365*30),
+            gender='M',
+            county='Nairobi',
+            user_type='employer',
+            status='approved'
+        )
+        print("  ✅ Created employer user: employer@example.com / employer123")
+    except Exception as e:
+        print(f"  ❌ Failed to create employer user: {e}")
     
     # Verify superuser was created
     if User.objects.filter(email='admin@admin.com').exists():
@@ -879,42 +1107,6 @@ def create_superuser():
         print(f"  ✅ Can login with: admin@admin.com / admin123")
     else:
         print("  ❌ Verification: Superuser NOT found in database!")
-
-
-def create_payment_settings():
-    """Create default payment settings"""
-    try:
-        from payments.models import PaymentSettings
-    except ImportError:
-        print("  ⚠️ PaymentSettings model not found, skipping...")
-        return 0
-    
-    print("📊 Creating payment settings...")
-    
-    settings_data = [
-        {'key': 'payment_gateway', 'value': {'mpesa': True, 'bank_transfer': True, 'card': True}, 'description': 'Enabled payment gateways'},
-        {'key': 'default_currency', 'value': 'KES', 'description': 'Default currency for payments'},
-        {'key': 'enable_payments', 'value': True, 'description': 'Enable/disable payment system'},
-        {'key': 'payment_fee_percentage', 'value': 2.5, 'description': 'Payment processing fee percentage'},
-        {'key': 'tax_percentage', 'value': 0, 'description': 'Tax percentage on payments'},
-        {'key': 'mpesa_shortcode', 'value': '174379', 'description': 'M-Pesa shortcode for payments'},
-        {'key': 'callback_url', 'value': 'https://government-jobs-portal.onrender.com/payment/mpesa-callback/', 'description': 'M-Pesa callback URL'},
-    ]
-    
-    created_count = 0
-    for setting_data in settings_data:
-        setting, created = PaymentSettings.objects.get_or_create(
-            key=setting_data['key'],
-            defaults={'value': setting_data['value'], 'description': setting_data['description']}
-        )
-        if created:
-            created_count += 1
-            print(f"  ✅ Created setting: {setting.key}")
-        else:
-            print(f"  ℹ️ Setting already exists: {setting.key}")
-    
-    print(f"✅ Loaded {created_count} payment settings")
-    return created_count
 
 
 @transaction.atomic
@@ -928,15 +1120,15 @@ def load_all_data():
         # Load everything in order
         load_countries()
         print()
-        load_job_categories()
+        load_categories()
+        print()
+        load_employers()
         print()
         load_agencies()
         print()
         load_sample_jobs()
         print()
         load_payment_plans()
-        print()
-        create_payment_settings()
         print()
         create_superuser()
         
@@ -945,28 +1137,33 @@ def load_all_data():
         print("📊 FINAL VERIFICATION")
         print("="*60)
         
+        # Check if data loaded correctly
+        from jobs.models import Country, Category, Job
+        from agencies.models import RecruitmentAgency
+        from employers.models import EmployerProfile
+        from payments.models import PaymentPlan
+        
+        print(f"  ✅ Countries: {Country.objects.count()}")
+        print(f"  ✅ Categories: {Category.objects.count()}")
+        print(f"  ✅ Employers: {EmployerProfile.objects.count()}")
+        print(f"  ✅ Agencies: {RecruitmentAgency.objects.count()}")
+        print(f"  ✅ Jobs: {Job.objects.count()}")
+        print(f"  ✅ Payment Plans: {PaymentPlan.objects.count()}")
+        
         # Check if superuser exists
         if User.objects.filter(email='admin@admin.com').exists():
             admin = User.objects.get(email='admin@admin.com')
             print(f"  ✅ Superuser: {admin.email} (ID: {admin.id})")
-            print(f"     - Is Staff: {admin.is_staff}")
-            print(f"     - Is Superuser: {admin.is_superuser}")
         else:
             print("  ❌ Superuser NOT found!")
         
         print("\n" + "="*60)
         print("✅ DATA LOADING COMPLETE!")
         print("="*60)
-        print("\n📊 Data Summary:")
-        print("  ✅ Payment Plans: 5")
-        print("  ✅ Countries: 10")
-        print("  ✅ Job Categories: 18")
-        print("  ✅ Recruitment Agencies: 10")
-        print("  ✅ Sample Jobs: 15+")
-        print("  ✅ Payment Settings: 7")
         print("\n🔑 Login credentials:")
-        print("  Admin: admin@admin.com / admin123")
-        print("  Test:  test@example.com / test123")
+        print("  Admin:     admin@admin.com / admin123")
+        print("  Citizen:   citizen@example.com / citizen123")
+        print("  Employer:  employer@example.com / employer123")
         print("="*60 + "\n")
         
     except Exception as e:
