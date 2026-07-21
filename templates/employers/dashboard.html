@@ -647,10 +647,10 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-                    <a href="{% url 'create_job' %}" class="btn-gov-action btn-gov-primary">
+                    <a href="{% url 'employers:create_job' %}" class="btn-gov-action btn-gov-primary">
                         <i class="fas fa-plus"></i> Post New Job
                     </a>
-                    <a href="{% url 'employer_profile_update' %}" class="btn-gov-action btn-gov-outline">
+                    <a href="{% url 'employers:employer_profile_update' %}" class="btn-gov-action btn-gov-outline">
                         <i class="fas fa-cog"></i> Settings
                     </a>
                 </div>
@@ -738,7 +738,7 @@
                 <h3>
                     <i class="fas fa-list"></i> Recent Job Postings
                 </h3>
-                <a href="{% url 'employer_job_list' %}" class="view-all">
+                <a href="{% url 'employers:employer_job_list' %}" class="view-all">
                     View All <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
@@ -769,10 +769,10 @@
                                 <span class="status-badge status-{{ job.status|slugify }}">
                                     {{ job.get_status_display }}
                                 </span>
-                                <a href="{% url 'job_applications' job.id %}" class="btn-sm btn-sm-primary">
+                                <a href="{% url 'employers:job_applications' job.id %}" class="btn-sm btn-sm-primary">
                                     <i class="fas fa-users"></i> View Apps
                                 </a>
-                                <a href="{% url 'edit_job' job.id %}" class="btn-sm btn-sm-edit" title="Edit Job">
+                                <a href="{% url 'employers:edit_job' job.id %}" class="btn-sm btn-sm-edit" title="Edit Job">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </div>
@@ -785,7 +785,7 @@
                         </div>
                         <p class="empty-text">No jobs posted yet. Start posting your first job today!</p>
                         <div class="empty-action">
-                            <a href="{% url 'create_job' %}" class="btn-gov-action btn-gov-primary" style="display: inline-block;">
+                            <a href="{% url 'employers:create_job' %}" class="btn-gov-action btn-gov-primary" style="display: inline-block;">
                                 <i class="fas fa-plus"></i> Post Your First Job
                             </a>
                         </div>
@@ -800,7 +800,7 @@
                 <h3>
                     <i class="fas fa-file-alt"></i> Recent Applications
                 </h3>
-                <a href="{% url 'employer_job_list' %}" class="view-all">
+                <a href="{% url 'employers:employer_job_list' %}" class="view-all">
                     View All <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
@@ -824,7 +824,7 @@
                                 <span class="app-status-badge app-status-{{ app.status|slugify }}">
                                     {{ app.get_status_display }}
                                 </span>
-                                <a href="{% url 'update_application_status' app.id %}" class="btn-sm btn-sm-outline">
+                                <a href="{% url 'employers:update_application_status' app.id %}" class="btn-sm btn-sm-outline">
                                     <i class="fas fa-cog"></i> Manage
                                 </a>
                             </div>
@@ -916,7 +916,7 @@
                 .catch(error => console.error('Error fetching notifications:', error));
         }, 30000);
         
-        console.log('🏛️ Government Jobs Portal - Employer Dashboard loaded successfully!');
+        console.log('Government Jobs Portal - Employer Dashboard loaded successfully!');
     });
 </script>
 {% endblock %}
