@@ -26,6 +26,7 @@ class PaymentPlan(models.Model):
         ('USD', 'US Dollar'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     plan_type = models.CharField(max_length=20, choices=PLAN_TYPES, unique=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
@@ -79,6 +80,9 @@ class Payment(models.Model):
         ('ecitizen', 'eCitizen'),
         ('bank_transfer', 'Bank Transfer'),
     ]
+    
+    # ADDED: UUID primary key
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
     plan = models.ForeignKey(PaymentPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name='payments')
@@ -165,6 +169,7 @@ class PaymentTransaction(models.Model):
         ('error', 'Error'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='transactions')
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -196,6 +201,7 @@ class PaymentTransaction(models.Model):
 
 class UserPaymentAccess(models.Model):
     """User payment access model"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='payment_access')
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='access_grants')
     
@@ -276,6 +282,7 @@ class PaymentWebhook(models.Model):
         ('bank', 'Bank Transfer'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     webhook_type = models.CharField(max_length=20, choices=WEBHOOK_TYPES)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='webhooks')
     
@@ -313,6 +320,7 @@ class Invoice(models.Model):
         ('cancelled', 'Cancelled'),
     ]
     
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     invoice_number = models.CharField(max_length=50, unique=True, db_index=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='invoices')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invoices')
@@ -361,6 +369,7 @@ class Invoice(models.Model):
 
 class PaymentSettings(models.Model):
     """Payment settings model"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     key = models.CharField(max_length=100, unique=True, db_index=True)
     value = models.JSONField()
     description = models.TextField(blank=True, null=True)
