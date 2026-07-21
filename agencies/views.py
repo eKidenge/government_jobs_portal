@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
+from datetime import timedelta  # ADDED: Import for timedelta
 
 from .models import RecruitmentAgency, AgencyDocument, AgencyApplication, AgencyContract, AgencyRecruitmentProcess
 from .forms import AgencyProfileForm
@@ -118,10 +119,11 @@ def agency_register(request):
                 agency_name=form.cleaned_data.get('agency_name', ''),
                 contact_email=user.email,
                 contact_phone=user.phone_number,
+                # Set default license expiry to 1 year from now
+                license_expiry=timezone.now().date() + timedelta(days=365)
             )
             
             messages.success(request, 'Agency account created! Please complete your profile setup.')
-            # FIXED: Added namespace
             return redirect('agencies:agency_setup')
     else:
         form = AgencyRegistrationForm()
@@ -140,7 +142,11 @@ def agency_setup(request):
     try:
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
-        agency = RecruitmentAgency.objects.create(user=request.user)
+        # FIXED: Create with default license_expiry to avoid NOT NULL constraint error
+        agency = RecruitmentAgency.objects.create(
+            user=request.user,
+            license_expiry=timezone.now().date() + timedelta(days=365)  # Default: 1 year from now
+        )
     
     if request.method == 'POST':
         form = AgencyProfileForm(request.POST, request.FILES, instance=agency)
@@ -160,7 +166,6 @@ def agency_setup(request):
                 agency.active_countries.set(country_ids)
             
             messages.success(request, 'Agency profile completed successfully!')
-            # FIXED: Added namespace
             return redirect('agencies:agency_dashboard')
     else:
         form = AgencyProfileForm(instance=agency)
@@ -186,7 +191,6 @@ def agency_verification(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
@@ -204,7 +208,6 @@ def agency_verification(request):
         else:
             messages.error(request, 'Please select a document type and file.')
         
-        # FIXED: Added namespace
         return redirect('agencies:agency_verification')
     
     documents = AgencyDocument.objects.filter(agency=agency)
@@ -228,7 +231,6 @@ def agency_profile_update(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
@@ -250,7 +252,6 @@ def agency_profile_update(request):
             user.save()
             
             messages.success(request, 'Profile updated successfully!')
-            # FIXED: Added namespace
             return redirect('agencies:agency_dashboard')
     else:
         form = AgencyProfileForm(instance=agency)
@@ -329,13 +330,11 @@ def delete_accreditation_document(request, doc_id):
     """Delete an accreditation document"""
     if request.user.user_type != 'agency':
         messages.error(request, 'Access denied.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_dashboard')
     
     doc = get_object_or_404(AgencyDocument, id=doc_id, agency__user=request.user)
     doc.delete()
     messages.success(request, 'Document deleted successfully.')
-    # FIXED: Added namespace
     return redirect('agencies:agency_verification')
 
 
@@ -350,7 +349,6 @@ def agency_job_list(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     jobs = Job.objects.filter(agency=agency).order_by('-posted_date')
@@ -383,11 +381,9 @@ def agency_create_job(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
         if not agency.is_verified:
             messages.error(request, 'Your agency must be verified before posting jobs.')
-            # FIXED: Added namespace
             return redirect('agencies:agency_dashboard')
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
@@ -400,7 +396,6 @@ def agency_create_job(request):
             job.save()
             
             messages.success(request, 'Job posted successfully! It will be reviewed by the admin.')
-            # FIXED: Added namespace
             return redirect('agencies:agency_job_list')
     else:
         form = JobForm()
@@ -422,14 +417,12 @@ def agency_edit_job(request, job_id):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     job = get_object_or_404(Job, id=job_id, agency=agency)
     
     if job.status in ['approved', 'active']:
         messages.warning(request, 'This job is already live. Only pending jobs can be edited.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_job_list')
     
     if request.method == 'POST':
@@ -437,7 +430,6 @@ def agency_edit_job(request, job_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Job updated successfully!')
-            # FIXED: Added namespace
             return redirect('agencies:agency_job_list')
     else:
         form = JobForm(instance=job)
@@ -459,7 +451,6 @@ def agency_delete_job(request, job_id):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     job = get_object_or_404(Job, id=job_id, agency=agency)
@@ -475,7 +466,6 @@ def agency_delete_job(request, job_id):
         job.delete()
         messages.success(request, f'Job "{job_title}" deleted successfully.')
     
-    # FIXED: Added namespace
     return redirect('agencies:agency_job_list')
 
 
@@ -490,7 +480,6 @@ def agency_dashboard(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        # FIXED: Added namespace
         return redirect('agencies:agency_setup')
     
     # Get statistics
@@ -550,7 +539,7 @@ def agency_stats_ajax(request):
         'total_views': jobs.aggregate(Sum('views_count'))['views_count__sum'] or 0,
         'active_countries': agency.active_countries.count(),
         'is_verified': agency.is_verified,
-        'license_valid': agency.is_license_valid(),
+        'license_valid': agency.is_license_valid() if hasattr(agency, 'is_license_valid') else False,
         'license_expiry': agency.license_expiry.strftime('%Y-%m-%d') if agency.license_expiry else None,
     }
     return JsonResponse(stats)
@@ -583,7 +572,8 @@ def admin_register_agency(request):
                 contact_email=user.email,
                 contact_phone=user.phone_number,
                 is_verified=True,
-                verification_date=timezone.now()
+                verification_date=timezone.now(),
+                license_expiry=timezone.now().date() + timedelta(days=365)  # ADDED: Default license expiry
             )
             
             messages.success(request, f'Agency {user.full_name} registered successfully!')
@@ -644,7 +634,7 @@ def admin_agency_stats(request, agency_id):
         'agency_name': agency.agency_name,
         'is_verified': agency.is_verified,
         'verification_date': agency.verification_date.strftime('%Y-%m-%d') if agency.verification_date else None,
-        'license_valid': agency.is_license_valid(),
+        'license_valid': agency.is_license_valid() if hasattr(agency, 'is_license_valid') else False,
         'license_expiry': agency.license_expiry.strftime('%Y-%m-%d') if agency.license_expiry else None,
         'total_jobs': jobs.count(),
         'active_jobs': jobs.filter(status='active').count(),
