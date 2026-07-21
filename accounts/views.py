@@ -211,7 +211,8 @@ def employer_dashboard(request):
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         messages.error(request, 'Please complete your employer profile first.')
-        return redirect('employer_setup')
+        #return redirect('employer_setup')
+        return redirect('employers:employer_setup')
     
     jobs = Job.objects.filter(employer=employer)
     applications = JobApplication.objects.filter(job__employer=employer)
