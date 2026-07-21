@@ -906,8 +906,7 @@
                     <a href="{% url 'home' %}" class="nav-link">Home</a>
                     <a href="{% url 'job_list' %}" class="nav-link">Jobs</a>
                     <a href="{% url 'countries' %}" class="nav-link">Countries</a>
-                    <a href="{% url 'employers' %}" class="nav-link">Employers</a>
-                    <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
+                    <a href="{% url 'employers:employer_list' %}" class="nav-link">Employers</a>
                     <a href="{% url 'agencies:agency_list' %}" class="nav-link">Recruitment Agencies</a>
                     <a href="{% url 'about' %}" class="nav-link">About Us</a>
                     <a href="{% url 'contact' %}" class="nav-link">Contact</a>
@@ -992,7 +991,7 @@
     <!-- Mobile Menu Overlay -->
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
-    <!-- Mobile Menu - FIXED -->
+    <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
             <div class="flex items-center space-x-3">
@@ -1017,10 +1016,9 @@
             <a href="{% url 'countries' %}" class="mobile-menu-link">
                 <i class="fas fa-globe-africa"></i> Countries
             </a>
-            <a href="{% url 'employers' %}" class="mobile-menu-link">
+            <a href="{% url 'employers:employer_list' %}" class="mobile-menu-link">
                 <i class="fas fa-building"></i> Employers
             </a>
-            <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
             <a href="{% url 'agencies:agency_list' %}" class="mobile-menu-link">
                 <i class="fas fa-handshake"></i> Recruitment Agencies
             </a>
@@ -1142,8 +1140,7 @@
                     <ul class="space-y-2 text-gray-400">
                         <li><a href="{% url 'job_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Browse Jobs</a></li>
                         <li><a href="{% url 'countries' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Countries</a></li>
-                        <li><a href="{% url 'employers' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Employers</a></li>
-                        <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
+                        <li><a href="{% url 'employers:employer_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Employers</a></li>
                         <li><a href="{% url 'agencies:agency_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Recruitment Agencies</a></li>
                         <li><a href="{% url 'about' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> About Us</a></li>
                     </ul>
@@ -1261,7 +1258,7 @@
         });
 
         // ============================================
-        // MOBILE MENU - FIXED
+        // MOBILE MENU
         // ============================================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const closeMobileMenu = document.getElementById('closeMobileMenu');
