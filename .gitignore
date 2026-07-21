@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+
+# Environment variables
+.env
+
+# Database
+db.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Media uploads
+media/
+
+# Static files (if collected during deployment)
+staticfiles/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
