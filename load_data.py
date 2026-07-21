@@ -2,7 +2,7 @@
 import os
 import sys
 
-# ✅ FIX: Add the project root to Python path
+# Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Set up Django environment
@@ -33,12 +33,13 @@ def load_payment_plans():
             'amount': Decimal('300.00'),
             'currency': 'KES',
             'duration_days': 30,
-            'description': 'Apply to 1 job',
+            'description': 'Apply to 1 job with full access to job details and application tracking.',
             'features': [
                 'Apply to 1 job',
                 'Valid for 30 days',
                 'Access to job details',
-                'Application tracking'
+                'Application tracking',
+                'Email notifications'
             ],
             'is_active': True,
             'popular': False,
@@ -51,14 +52,15 @@ def load_payment_plans():
             'amount': Decimal('1000.00'),
             'currency': 'KES',
             'duration_days': 30,
-            'description': 'Full monthly access to all jobs',
+            'description': 'Full monthly access to all jobs with unlimited applications.',
             'features': [
                 'Unlimited applications',
                 'Valid for 30 days',
                 'Full job access',
                 'Priority support',
                 'Application tracking',
-                'Email notifications'
+                'Email notifications',
+                'Job alerts'
             ],
             'is_active': True,
             'popular': True,
@@ -71,7 +73,7 @@ def load_payment_plans():
             'amount': Decimal('2500.00'),
             'currency': 'KES',
             'duration_days': 90,
-            'description': 'Three months of full access',
+            'description': 'Three months of full access with unlimited applications.',
             'features': [
                 'Unlimited applications',
                 'Valid for 90 days',
@@ -79,6 +81,7 @@ def load_payment_plans():
                 'Priority support',
                 'Application tracking',
                 'Email notifications',
+                'Job alerts',
                 'Save up to 17%'
             ],
             'is_active': True,
@@ -92,7 +95,7 @@ def load_payment_plans():
             'amount': Decimal('8000.00'),
             'currency': 'KES',
             'duration_days': 365,
-            'description': 'Full year of unlimited access',
+            'description': 'Full year of unlimited access with premium features.',
             'features': [
                 'Unlimited applications',
                 'Valid for 365 days',
@@ -100,6 +103,7 @@ def load_payment_plans():
                 'Priority support',
                 'Application tracking',
                 'Email notifications',
+                'Job alerts',
                 'Save up to 33%',
                 'Early access to jobs'
             ],
@@ -114,7 +118,7 @@ def load_payment_plans():
             'amount': Decimal('15000.00'),
             'currency': 'KES',
             'duration_days': 365,
-            'description': 'Premium full-year access with extras',
+            'description': 'Premium full-year access with exclusive benefits.',
             'features': [
                 'Unlimited applications',
                 'Valid for 365 days',
@@ -122,6 +126,7 @@ def load_payment_plans():
                 'VIP support',
                 'Application tracking',
                 'Email notifications',
+                'Job alerts',
                 'Early access to jobs',
                 'CV review service',
                 'Interview coaching'
@@ -143,7 +148,6 @@ def load_payment_plans():
             created_count += 1
             print(f"  ✅ Created plan: {plan.name}")
         else:
-            # Update existing plan if needed
             updated = False
             for key, value in plan_data.items():
                 if getattr(plan, key) != value:
@@ -181,6 +185,11 @@ def load_countries():
         {'name': 'Rwanda', 'code': 'RW', 'currency': 'RWF', 'currency_symbol': 'FRw', 'description': 'East African nation', 'is_active': True},
         {'name': 'India', 'code': 'IN', 'currency': 'INR', 'currency_symbol': '₹', 'description': 'South Asian country', 'is_active': True},
         {'name': 'China', 'code': 'CN', 'currency': 'CNY', 'currency_symbol': '¥', 'description': 'East Asian country', 'is_active': True},
+        {'name': 'Brazil', 'code': 'BR', 'currency': 'BRL', 'currency_symbol': 'R$', 'description': 'South American country', 'is_active': True},
+        {'name': 'France', 'code': 'FR', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Western European country', 'is_active': True},
+        {'name': 'Italy', 'code': 'IT', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Southern European country', 'is_active': True},
+        {'name': 'Spain', 'code': 'ES', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Southwestern European country', 'is_active': True},
+        {'name': 'Japan', 'code': 'JP', 'currency': 'JPY', 'currency_symbol': '¥', 'description': 'East Asian country', 'is_active': True},
     ]
     
     created_count = 0
@@ -248,8 +257,16 @@ def load_employers():
     """Load employers into the database"""
     from employers.models import EmployerProfile
     from accounts.models import User
+    from jobs.models import Country
     
     print("📊 Loading employers...")
+    
+    # Get country
+    try:
+        kenya = Country.objects.get(code='KE')
+    except Country.DoesNotExist:
+        print("  ⚠️ Countries not found, run load_countries first")
+        return 0
     
     # Create employer users first
     employer_users_data = [
@@ -262,61 +279,96 @@ def load_employers():
         {
             'company_name': 'Kenya Commercial Bank',
             'registration_number': 'KCB/2024/001',
-            'industry': 'Banking & Finance',
-            'phone_number': '0712345678',
+            'license_number': 'KCB-LIC-001',
+            'industry': 'finance',
+            'contact_phone': '0712345678',
+            'contact_email': 'info@kcb.co.ke',
             'address': 'KCB Towers, Nairobi, Kenya',
+            'country': kenya,
             'is_verified': True,
             'description': 'Leading commercial bank in East Africa',
-            'website': 'https://www.kcb.co.ke'
+            'website': 'https://www.kcb.co.ke',
+            'company_size': '500+'
         },
         {
             'company_name': 'Safaricom PLC',
             'registration_number': 'SAF/2024/002',
-            'industry': 'Telecommunications',
-            'phone_number': '0712345679',
+            'license_number': 'SAF-LIC-002',
+            'industry': 'ict',
+            'contact_phone': '0712345679',
+            'contact_email': 'info@safaricom.co.ke',
             'address': 'Safaricom House, Nairobi, Kenya',
+            'country': kenya,
             'is_verified': True,
             'description': 'Leading telecommunications company in Kenya',
-            'website': 'https://www.safaricom.co.ke'
+            'website': 'https://www.safaricom.co.ke',
+            'company_size': '500+'
         },
         {
             'company_name': 'Equity Bank Kenya',
             'registration_number': 'EQT/2024/003',
-            'industry': 'Banking & Finance',
-            'phone_number': '0712345680',
+            'license_number': 'EQT-LIC-003',
+            'industry': 'finance',
+            'contact_phone': '0712345680',
+            'contact_email': 'info@equitybank.co.ke',
             'address': 'Equity Centre, Nairobi, Kenya',
+            'country': kenya,
             'is_verified': True,
             'description': 'Leading financial services provider',
-            'website': 'https://www.equitybank.co.ke'
+            'website': 'https://www.equitybank.co.ke',
+            'company_size': '500+'
         },
         {
             'company_name': 'Kenya Airways',
             'registration_number': 'KQ/2024/004',
-            'industry': 'Aviation & Transport',
-            'phone_number': '0712345681',
+            'license_number': 'KQ-LIC-004',
+            'industry': 'transport',
+            'contact_phone': '0712345681',
+            'contact_email': 'info@kenya-airways.com',
             'address': 'Embakasi, Nairobi, Kenya',
+            'country': kenya,
             'is_verified': True,
             'description': 'Flag carrier airline of Kenya',
-            'website': 'https://www.kenya-airways.com'
+            'website': 'https://www.kenya-airways.com',
+            'company_size': '500+'
         },
         {
             'company_name': 'Nation Media Group',
             'registration_number': 'NMG/2024/005',
-            'industry': 'Media & Communications',
-            'phone_number': '0712345682',
+            'license_number': 'NMG-LIC-005',
+            'industry': 'other',
+            'contact_phone': '0712345682',
+            'contact_email': 'info@nationmedia.com',
             'address': 'Nation Centre, Nairobi, Kenya',
+            'country': kenya,
             'is_verified': True,
             'description': 'Leading media house in East Africa',
-            'website': 'https://www.nationmedia.com'
+            'website': 'https://www.nationmedia.com',
+            'company_size': '500+'
         },
+        {
+            'company_name': 'KCB Insurance Agency',
+            'registration_number': 'KCB/2024/006',
+            'license_number': 'KCB-LIC-006',
+            'industry': 'finance',
+            'contact_phone': '0712345683',
+            'contact_email': 'info@kcbinsurance.co.ke',
+            'address': 'KCB Towers, Nairobi, Kenya',
+            'country': kenya,
+            'is_verified': False,
+            'description': 'Leading insurance provider',
+            'website': 'https://www.kcbinsurance.co.ke',
+            'company_size': '201-500'
+        }
     ]
     
     created_count = 0
     for i, employer_data in enumerate(employers_data):
         try:
             # Get or create user for employer
-            user_data = employer_users_data[i] if i < len(employer_users_data) else employer_users_data[0]
+            user_data = employer_users_data[i % len(employer_users_data)]
             
+            # Create user with proper fields
             user, user_created = User.objects.get_or_create(
                 email=user_data['email'],
                 defaults={
@@ -348,7 +400,8 @@ def load_employers():
             else:
                 # Update existing employer
                 for key, value in employer_data.items():
-                    setattr(employer, key, value)
+                    if key != 'user' and key != 'country':
+                        setattr(employer, key, value)
                 employer.save()
                 print(f"  🔄 Updated employer: {employer.company_name}")
                 
@@ -398,123 +451,143 @@ def load_agencies():
     agencies_data = [
         {
             'agency_name': 'Public Service Commission',
-            'license_number': 'PSC/2024/001',
-            'phone_number': '+254-20-222-3333',
-            'agency_email': 'info@psc.go.ke',
+            'registration_number': 'PSC-REG-001',
+            'license_number': 'PSC-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+254-20-222-3333',
+            'contact_email': 'info@psc.go.ke',
             'address': 'P.O. Box 30095-00100, Nairobi, Kenya',
-            'services': 'Government recruitment, Public service placements, Career guidance',
-            'is_verified': True,
             'country': kenya,
+            'is_verified': True,
             'website': 'https://www.psc.go.ke',
-            'description': 'Kenya Public Service Commission - Government recruitment agency'
+            'description': 'Kenya Public Service Commission - Government recruitment agency',
+            'specializations': ['Government', 'Administration', 'Public Service']
         },
         {
             'agency_name': 'Kenya Medical Recruitment Agency',
-            'license_number': 'KMRA/2024/001',
-            'phone_number': '+254-20-222-4444',
-            'agency_email': 'info@kmra.go.ke',
+            'registration_number': 'KMRA-REG-001',
+            'license_number': 'KMRA-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+254-20-222-4444',
+            'contact_email': 'info@kmra.go.ke',
             'address': 'P.O. Box 45678-00100, Nairobi, Kenya',
-            'services': 'Healthcare recruitment, Medical placements, Nursing recruitment',
-            'is_verified': True,
             'country': kenya,
+            'is_verified': True,
             'website': 'https://www.kmra.go.ke',
-            'description': 'Specialized in healthcare recruitment for local and international positions'
+            'description': 'Specialized in healthcare recruitment for local and international positions',
+            'specializations': ['Healthcare', 'Medical', 'Nursing']
         },
         {
             'agency_name': 'Global Recruitment Solutions',
-            'license_number': 'GRS/2024/001',
-            'phone_number': '+254-20-222-5555',
-            'agency_email': 'info@globalrecruit.com',
+            'registration_number': 'GRS-REG-001',
+            'license_number': 'GRS-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+254-20-222-5555',
+            'contact_email': 'info@globalrecruit.com',
             'address': 'P.O. Box 56789-00100, Nairobi, Kenya',
-            'services': 'International recruitment, Skilled professionals, Executive search',
-            'is_verified': True,
             'country': kenya,
+            'is_verified': True,
             'website': 'https://www.globalrecruit.com',
-            'description': 'International recruitment agency for skilled professionals'
+            'description': 'International recruitment agency for skilled professionals',
+            'specializations': ['IT', 'Engineering', 'Finance']
         },
         {
             'agency_name': 'UK Healthcare Recruitment',
-            'license_number': 'UKHR/2024/001',
-            'phone_number': '+44-20-222-6666',
-            'agency_email': 'info@ukhealthcare.co.uk',
+            'registration_number': 'UKHR-REG-001',
+            'license_number': 'UKHR-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+44-20-222-6666',
+            'contact_email': 'info@ukhealthcare.co.uk',
             'address': 'London, United Kingdom',
-            'services': 'NHS recruitment, Healthcare placements, Nursing recruitment',
-            'is_verified': True,
             'country': uk,
+            'is_verified': True,
             'website': 'https://www.ukhealthcare.co.uk',
-            'description': 'Recruitment agency specializing in UK healthcare placements'
+            'description': 'Recruitment agency specializing in UK healthcare placements',
+            'specializations': ['Healthcare', 'Nursing', 'Doctors']
         },
         {
             'agency_name': 'Canada Immigration Recruitment',
-            'license_number': 'CIR/2024/001',
-            'phone_number': '+1-416-222-7777',
-            'agency_email': 'info@canadaimmigration.ca',
+            'registration_number': 'CIR-REG-001',
+            'license_number': 'CIR-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+1-416-222-7777',
+            'contact_email': 'info@canadaimmigration.ca',
             'address': 'Toronto, Canada',
-            'services': 'Canadian work visas, Job placement, Immigration services',
-            'is_verified': True,
             'country': canada,
+            'is_verified': True,
             'website': 'https://www.canadaimmigration.ca',
-            'description': 'Specialized in Canadian work visas and job placement'
+            'description': 'Specialized in Canadian work visas and job placement',
+            'specializations': ['Immigration', 'Skilled Workers', 'Healthcare']
         },
         {
             'agency_name': 'Gulf Recruitment Services',
-            'license_number': 'GRS/2024/002',
-            'phone_number': '+971-4-222-8888',
-            'agency_email': 'info@gulfrecruit.ae',
+            'registration_number': 'GRS-REG-002',
+            'license_number': 'GRS-LIC-002',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+971-4-222-8888',
+            'contact_email': 'info@gulfrecruit.ae',
             'address': 'Dubai, United Arab Emirates',
-            'services': 'Gulf country recruitment, Construction, Engineering, Hospitality',
-            'is_verified': True,
             'country': uae,
+            'is_verified': True,
             'website': 'https://www.gulfrecruit.ae',
-            'description': 'Recruitment for Middle East and Gulf countries'
+            'description': 'Recruitment for Middle East and Gulf countries',
+            'specializations': ['Construction', 'Engineering', 'Hospitality']
         },
         {
             'agency_name': 'Australian Skills Recruitment',
-            'license_number': 'ASR/2024/001',
-            'phone_number': '+61-2-222-9999',
-            'agency_email': 'info@australianskills.com.au',
+            'registration_number': 'ASR-REG-001',
+            'license_number': 'ASR-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+61-2-222-9999',
+            'contact_email': 'info@australianskills.com.au',
             'address': 'Sydney, Australia',
-            'services': 'Skilled worker programs, IT recruitment, Engineering placements',
-            'is_verified': True,
             'country': australia,
+            'is_verified': True,
             'website': 'https://www.australianskills.com.au',
-            'description': 'Recruitment for Australian skilled worker programs'
+            'description': 'Recruitment for Australian skilled worker programs',
+            'specializations': ['IT', 'Engineering', 'Construction']
         },
         {
             'agency_name': 'US Work Solutions',
-            'license_number': 'USWS/2024/001',
-            'phone_number': '+1-202-222-0000',
-            'agency_email': 'info@usworksolutions.com',
+            'registration_number': 'USWS-REG-001',
+            'license_number': 'USWS-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+1-202-222-0000',
+            'contact_email': 'info@usworksolutions.com',
             'address': 'Washington DC, USA',
-            'services': 'US work visas, Technology recruitment, Healthcare placements',
-            'is_verified': True,
             'country': usa,
+            'is_verified': True,
             'website': 'https://www.usworksolutions.com',
-            'description': 'Recruitment for US work visas and job placements'
+            'description': 'Recruitment for US work visas and job placements',
+            'specializations': ['Technology', 'Healthcare', 'Finance']
         },
         {
             'agency_name': 'German Technical Recruitment',
-            'license_number': 'GTR/2024/001',
-            'phone_number': '+49-30-222-1111',
-            'agency_email': 'info@germantech.de',
+            'registration_number': 'GTR-REG-001',
+            'license_number': 'GTR-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+49-30-222-1111',
+            'contact_email': 'info@germantech.de',
             'address': 'Berlin, Germany',
-            'services': 'Technical recruitment, Engineering, Technology, Manufacturing',
-            'is_verified': True,
             'country': germany,
+            'is_verified': True,
             'website': 'https://www.germantech.de',
-            'description': 'Specialized in technical recruitment for Germany'
+            'description': 'Specialized in technical recruitment for Germany',
+            'specializations': ['Engineering', 'Technology', 'Manufacturing']
         },
         {
             'agency_name': 'South African Employment Services',
-            'license_number': 'SAES/2024/001',
-            'phone_number': '+27-11-222-2222',
-            'agency_email': 'info@saes.co.za',
+            'registration_number': 'SAES-REG-001',
+            'license_number': 'SAES-LIC-001',
+            'license_expiry': timezone.now().date() + timedelta(days=365),
+            'contact_phone': '+27-11-222-2222',
+            'contact_email': 'info@saes.co.za',
             'address': 'Johannesburg, South Africa',
-            'services': 'SADC region recruitment, Mining, Healthcare, Education',
-            'is_verified': True,
             'country': south_africa,
+            'is_verified': True,
             'website': 'https://www.saes.co.za',
-            'description': 'Recruitment for South African and SADC region'
+            'description': 'Recruitment for South African and SADC region',
+            'specializations': ['Mining', 'Healthcare', 'Education']
         }
     ]
     
@@ -522,7 +595,7 @@ def load_agencies():
     for i, agency_data in enumerate(agencies_data):
         try:
             # Get or create user for agency
-            user_data = agency_users_data[i] if i < len(agency_users_data) else agency_users_data[0]
+            user_data = agency_users_data[i % len(agency_users_data)]
             
             user, user_created = User.objects.get_or_create(
                 email=user_data['email'],
@@ -583,6 +656,7 @@ def load_sample_jobs():
         engineering_category = Category.objects.get(name='Engineering')
         hospitality_category = Category.objects.get(name='Hospitality & Tourism')
         construction_category = Category.objects.get(name='Construction & Building')
+        sales_category = Category.objects.get(name='Sales & Marketing')
     except Category.DoesNotExist:
         print("  ⚠️ Categories not found, run load_categories first")
         return 0
@@ -626,6 +700,7 @@ def load_sample_jobs():
         equity = EmployerProfile.objects.get(company_name='Equity Bank Kenya')
         kq = EmployerProfile.objects.get(company_name='Kenya Airways')
         nmg = EmployerProfile.objects.get(company_name='Nation Media Group')
+        kcb_insurance = EmployerProfile.objects.get(company_name='KCB Insurance Agency')
     except EmployerProfile.DoesNotExist:
         print("  ⚠️ Employers not found, run load_employers first")
         return 0
@@ -633,7 +708,7 @@ def load_sample_jobs():
     jobs_data = [
         # Kenya Jobs - Agency
         {
-            'title': 'Senior Administrative Officer',
+            'title': 'Senior Administrative Officer - Government',
             'agency': psc,
             'country': kenya,
             'category': admin_category,
@@ -678,8 +753,7 @@ def load_sample_jobs():
             'closing_date': timezone.now() + timedelta(days=25),
             'status': 'active',
             'is_featured': False,
-            'is_verified': True
-        },
+            'is_verified': True        },
         {
             'title': 'Healthcare Administrator - County Government',
             'agency': kmra,
@@ -705,7 +779,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'IT Systems Administrator',
+            'title': 'IT Systems Administrator - Government',
             'agency': global_recruit,
             'country': kenya,
             'category': it_category,
@@ -724,6 +798,30 @@ def load_sample_jobs():
             'visa_requirements': 'Kenyan citizenship or valid work permit',
             'required_languages': ['English'],
             'closing_date': timezone.now() + timedelta(days=20),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
+        {
+            'title': 'Human Resources Manager - Public Sector',
+            'agency': global_recruit,
+            'country': kenya,
+            'category': hr_category,
+            'description': 'Lead HR operations including recruitment, training, performance management, and employee relations.',
+            'responsibilities': 'Recruitment, training, performance management, employee relations, policy development',
+            'requirements': 'Bachelors in HR Management. 5+ years experience. CHRP certification preferred.',
+            'benefits': 'Medical cover, Pension, Performance bonuses',
+            'salary_min': Decimal('90000'),
+            'salary_max': Decimal('130000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'senior',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=35),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -801,33 +899,9 @@ def load_sample_jobs():
             'is_featured': False,
             'is_verified': True
         },
-        {
-            'title': 'Flight Operations Manager - Kenya Airways',
-            'employer': kq,
-            'country': kenya,
-            'category': transport_category,
-            'description': 'Manage flight operations and ensure safety compliance.',
-            'responsibilities': 'Flight scheduling, crew management, safety oversight, regulatory compliance',
-            'requirements': 'Degree in Aviation Management or related. 5+ years experience.',
-            'benefits': 'Medical cover, Pension, Flight benefits, Training',
-            'salary_min': Decimal('150000'),
-            'salary_max': Decimal('200000'),
-            'salary_currency': 'KES',
-            'is_salary_negotiable': False,
-            'employment_type': 'full_time',
-            'experience_level': 'senior',
-            'location': 'Nairobi, Kenya',
-            'is_remote': False,
-            'visa_requirements': 'Kenyan citizenship',
-            'required_languages': ['English', 'Swahili'],
-            'closing_date': timezone.now() + timedelta(days=40),
-            'status': 'active',
-            'is_featured': True,
-            'is_verified': True
-        },
         # International Jobs - Agencies
         {
-            'title': 'Registered Nurse - NHS',
+            'title': 'Registered Nurse - NHS UK',
             'agency': uk_healthcare,
             'country': uk,
             'category': health_category,
@@ -851,7 +925,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Data Scientist - Tech Firm',
+            'title': 'Data Scientist - Tech Firm USA',
             'agency': us_works,
             'country': usa,
             'category': it_category,
@@ -875,7 +949,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Civil Engineer - Construction',
+            'title': 'Civil Engineer - Canada',
             'agency': canada_recruit,
             'country': canada,
             'category': engineering_category,
@@ -899,7 +973,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'IT Project Manager',
+            'title': 'IT Project Manager - Australia',
             'agency': australia_recruit,
             'country': australia,
             'category': it_category,
@@ -923,7 +997,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Hospitality Manager - Hotel Chain',
+            'title': 'Hospitality Manager - Dubai',
             'agency': gulf_recruit,
             'country': uae,
             'category': hospitality_category,
@@ -947,7 +1021,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Mechanical Engineer - Automotive',
+            'title': 'Mechanical Engineer - Germany',
             'agency': german_tech,
             'country': germany,
             'category': engineering_category,
@@ -971,7 +1045,7 @@ def load_sample_jobs():
             'is_verified': True
         },
         {
-            'title': 'Mining Engineer',
+            'title': 'Mining Engineer - South Africa',
             'agency': sa_services,
             'country': south_africa,
             'category': engineering_category,
@@ -990,6 +1064,30 @@ def load_sample_jobs():
             'visa_requirements': 'South African Work Permit',
             'required_languages': ['English'],
             'closing_date': timezone.now() + timedelta(days=30),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
+        {
+            'title': 'Legal Counsel - Multinational',
+            'agency': global_recruit,
+            'country': kenya,
+            'category': legal_category,
+            'description': 'Provide legal advice and representation for multinational corporations.',
+            'responsibilities': 'Legal advisory, contract review, compliance, dispute resolution',
+            'requirements': 'Bachelor of Laws (LLB). 5+ years experience in corporate law.',
+            'benefits': 'Medical cover, Pension, Performance bonuses',
+            'salary_min': Decimal('150000'),
+            'salary_max': Decimal('200000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'senior',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship or valid work permit',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=38),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1027,16 +1125,19 @@ def load_sample_jobs():
 
 
 def create_superuser():
-    """Create admin superuser if it doesn't exist"""
+    """Create admin superuser and test users"""
     from accounts.models import User
     
-    print("👤 Checking superuser...")
+    print("👤 Creating users...")
     
-    # Delete existing admin if exists to avoid conflicts
+    # Delete existing users to avoid conflicts
     User.objects.filter(email='admin@admin.com').delete()
+    User.objects.filter(email='citizen@example.com').delete()
+    User.objects.filter(email='employer@example.com').delete()
+    User.objects.filter(email='agency@example.com').delete()
     
     try:
-        # Create superuser using the custom UserManager
+        # Create superuser
         admin = User.objects.create_superuser(
             email='admin@admin.com',
             password='admin123'
@@ -1047,24 +1148,9 @@ def create_superuser():
         print(f"  📋 Is Superuser: {admin.is_superuser}")
     except Exception as e:
         print(f"  ❌ Failed to create superuser: {e}")
-        # Try alternative method if first fails
-        try:
-            admin = User.objects.create_user(
-                email='admin@admin.com',
-                password='admin123',
-                is_staff=True,
-                is_superuser=True,
-                user_type='admin',
-                status='approved'
-            )
-            print("  ✅ Created superuser (alternative method): admin@admin.com / admin123")
-        except Exception as e2:
-            print(f"  ❌ Alternative method also failed: {e2}")
     
-    # Create test users
-    # Citizen
-    User.objects.filter(email='citizen@example.com').delete()
     try:
+        # Create citizen user
         citizen = User.objects.create_user(
             email='citizen@example.com',
             password='citizen123',
@@ -1077,13 +1163,12 @@ def create_superuser():
             user_type='citizen',
             status='approved'
         )
-        print("  ✅ Created citizen user: citizen@example.com / citizen123")
+        print("  ✅ Created citizen: citizen@example.com / citizen123")
     except Exception as e:
-        print(f"  ❌ Failed to create citizen user: {e}")
+        print(f"  ❌ Failed to create citizen: {e}")
     
-    # Employer user
-    User.objects.filter(email='employer@example.com').delete()
     try:
+        # Create employer user
         employer = User.objects.create_user(
             email='employer@example.com',
             password='employer123',
@@ -1096,9 +1181,27 @@ def create_superuser():
             user_type='employer',
             status='approved'
         )
-        print("  ✅ Created employer user: employer@example.com / employer123")
+        print("  ✅ Created employer: employer@example.com / employer123")
     except Exception as e:
-        print(f"  ❌ Failed to create employer user: {e}")
+        print(f"  ❌ Failed to create employer: {e}")
+    
+    try:
+        # Create agency user
+        agency = User.objects.create_user(
+            email='agency@example.com',
+            password='agency123',
+            full_name='Test Agency',
+            phone_number='0712345680',
+            national_id='98765432',
+            date_of_birth=timezone.now().date() - timedelta(days=365*28),
+            gender='F',
+            county='Nairobi',
+            user_type='agency',
+            status='approved'
+        )
+        print("  ✅ Created agency: agency@example.com / agency123")
+    except Exception as e:
+        print(f"  ❌ Failed to create agency: {e}")
     
     # Verify superuser was created
     if User.objects.filter(email='admin@admin.com').exists():
@@ -1137,11 +1240,11 @@ def load_all_data():
         print("📊 FINAL VERIFICATION")
         print("="*60)
         
-        # Check if data loaded correctly
         from jobs.models import Country, Category, Job
         from agencies.models import RecruitmentAgency
         from employers.models import EmployerProfile
         from payments.models import PaymentPlan
+        from accounts.models import User
         
         print(f"  ✅ Countries: {Country.objects.count()}")
         print(f"  ✅ Categories: {Category.objects.count()}")
@@ -1149,6 +1252,7 @@ def load_all_data():
         print(f"  ✅ Agencies: {RecruitmentAgency.objects.count()}")
         print(f"  ✅ Jobs: {Job.objects.count()}")
         print(f"  ✅ Payment Plans: {PaymentPlan.objects.count()}")
+        print(f"  ✅ Users: {User.objects.count()}")
         
         # Check if superuser exists
         if User.objects.filter(email='admin@admin.com').exists():
@@ -1164,6 +1268,7 @@ def load_all_data():
         print("  Admin:     admin@admin.com / admin123")
         print("  Citizen:   citizen@example.com / citizen123")
         print("  Employer:  employer@example.com / employer123")
+        print("  Agency:    agency@example.com / agency123")
         print("="*60 + "\n")
         
     except Exception as e:
