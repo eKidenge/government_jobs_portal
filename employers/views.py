@@ -124,7 +124,7 @@ def employer_register(request):
             )
             
             messages.success(request, 'Employer account created! Please complete your profile setup.')
-            return redirect('employer_setup')
+            return redirect('employers:employer_setup')  # FIXED: Added namespace
     else:
         form = EmployerRegistrationForm()
     
@@ -157,7 +157,7 @@ def employer_setup(request):
             employer.save()
             
             messages.success(request, 'Employer profile completed successfully!')
-            return redirect('employer_dashboard')
+            return redirect('employers:employer_dashboard')  # FIXED: Added namespace
     else:
         form = EmployerProfileForm(instance=employer)
     
@@ -179,7 +179,7 @@ def employer_verification(request):
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         messages.error(request, 'Please complete your employer profile first.')
-        return redirect('employer_setup')
+        return redirect('employers:employer_setup')  # FIXED: Added namespace
     
     if request.method == 'POST':
         form = EmployerDocumentForm(request.POST, request.FILES)
@@ -188,7 +188,7 @@ def employer_verification(request):
             doc.employer = employer
             doc.save()
             messages.success(request, 'Document uploaded successfully!')
-            return redirect('employer_verification')
+            return redirect('employers:employer_verification')  # FIXED: Added namespace
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
@@ -216,7 +216,7 @@ def employer_profile_update(request):
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         messages.error(request, 'Please complete your employer profile first.')
-        return redirect('employer_setup')
+        return redirect('employers:employer_setup')  # FIXED: Added namespace
     
     if request.method == 'POST':
         form = EmployerProfileForm(request.POST, request.FILES, instance=employer)
@@ -232,7 +232,7 @@ def employer_profile_update(request):
             user.save()
             
             messages.success(request, 'Profile updated successfully!')
-            return redirect('employer_dashboard')
+            return redirect('employers:employer_dashboard')  # FIXED: Added namespace
     else:
         form = EmployerProfileForm(instance=employer)
     
@@ -307,12 +307,12 @@ def delete_verification_document(request, doc_id):
     """Delete a verification document"""
     if request.user.user_type != 'employer':
         messages.error(request, 'Access denied.')
-        return redirect('employer_dashboard')
+        return redirect('employers:employer_dashboard')  # FIXED: Added namespace
     
     doc = get_object_or_404(EmployerDocument, id=doc_id, employer__user=request.user)
     doc.delete()
     messages.success(request, 'Document deleted successfully.')
-    return redirect('employer_verification')
+    return redirect('employers:employer_verification')  # FIXED: Added namespace
 
 
 @login_required
@@ -357,8 +357,8 @@ def employer_dashboard(request):
     try:
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
-        messages.error(request, 'Please complete your employer profile first.')
-        return redirect('employer_setup')
+        messages.warning(request, 'Please complete your employer profile setup first.')
+        return redirect('employers:employer_setup')  # FIXED: Added namespace
     
     # Get statistics
     jobs = Job.objects.filter(employer=employer)
@@ -435,11 +435,11 @@ def create_job(request):
         employer = EmployerProfile.objects.get(user=request.user)
     except EmployerProfile.DoesNotExist:
         messages.error(request, 'Please complete your employer profile first.')
-        return redirect('employer_setup')
+        return redirect('employers:employer_setup')  # FIXED: Added namespace
     
     if not employer.is_verified:
         messages.warning(request, 'Your account needs to be verified before you can post jobs.')
-        return redirect('employer_verification')
+        return redirect('employers:employer_verification')  # FIXED: Added namespace
     
     if request.method == 'POST':
         form = JobForm(request.POST)
@@ -458,7 +458,7 @@ def create_job(request):
             
             job.save()
             messages.success(request, f'Job "{job.title}" posted successfully!')
-            return redirect('employer_job_list')
+            return redirect('employers:employer_job_list')  # FIXED: Added namespace
     else:
         form = JobForm()
     
@@ -486,7 +486,7 @@ def edit_job(request, job_id):
             job.updated_at = timezone.now()
             job.save()
             messages.success(request, f'Job "{job.title}" updated successfully!')
-            return redirect('employer_job_list')
+            return redirect('employers:employer_job_list')  # FIXED: Added namespace
     else:
         form = JobForm(instance=job)
     
@@ -568,7 +568,7 @@ def update_application_status(request, app_id):
         else:
             messages.error(request, 'Invalid status selected.')
         
-        return redirect('job_applications', job_id=application.job.id)
+        return redirect('employers:job_applications', job_id=application.job.id)  # FIXED: Added namespace
     
     context = {
         'application': application,
@@ -644,7 +644,7 @@ def delete_job(request, job_id):
     job.save()
     
     messages.success(request, f'Job "{job.title}" has been closed.')
-    return redirect('employer_job_list')
+    return redirect('employers:employer_job_list')  # FIXED: Added namespace
 
 
 @login_required
