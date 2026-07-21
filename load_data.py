@@ -215,6 +215,16 @@ def load_countries():
         {'name': 'Belgium', 'code': 'BE', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Western European country', 'is_active': True},
         {'name': 'Switzerland', 'code': 'CH', 'currency': 'CHF', 'currency_symbol': 'Fr', 'description': 'Central European country', 'is_active': True},
         {'name': 'Austria', 'code': 'AT', 'currency': 'EUR', 'currency_symbol': '€', 'description': 'Central European country', 'is_active': True},
+        {'name': 'Egypt', 'code': 'EG', 'currency': 'EGP', 'currency_symbol': '£', 'description': 'North African country', 'is_active': True},
+        {'name': 'Morocco', 'code': 'MA', 'currency': 'MAD', 'currency_symbol': 'د.م.', 'description': 'North African country', 'is_active': True},
+        {'name': 'Pakistan', 'code': 'PK', 'currency': 'PKR', 'currency_symbol': '₨', 'description': 'South Asian country', 'is_active': True},
+        {'name': 'Bangladesh', 'code': 'BD', 'currency': 'BDT', 'currency_symbol': '৳', 'description': 'South Asian country', 'is_active': True},
+        {'name': 'Sri Lanka', 'code': 'LK', 'currency': 'LKR', 'currency_symbol': 'Rs', 'description': 'South Asian country', 'is_active': True},
+        {'name': 'Nepal', 'code': 'NP', 'currency': 'NPR', 'currency_symbol': 'Rs', 'description': 'South Asian country', 'is_active': True},
+        {'name': 'Vietnam', 'code': 'VN', 'currency': 'VND', 'currency_symbol': '₫', 'description': 'Southeast Asian country', 'is_active': True},
+        {'name': 'Thailand', 'code': 'TH', 'currency': 'THB', 'currency_symbol': '฿', 'description': 'Southeast Asian country', 'is_active': True},
+        {'name': 'Indonesia', 'code': 'ID', 'currency': 'IDR', 'currency_symbol': 'Rp', 'description': 'Southeast Asian country', 'is_active': True},
+        {'name': 'Philippines', 'code': 'PH', 'currency': 'PHP', 'currency_symbol': '₱', 'description': 'Southeast Asian country', 'is_active': True},
     ]
     
     created_count = 0
@@ -298,17 +308,6 @@ def load_employers():
     
     try:
         kenya = Country.objects.get(code='KE')
-        uk = Country.objects.get(code='GB')
-        usa = Country.objects.get(code='US')
-        canada = Country.objects.get(code='CA')
-        australia = Country.objects.get(code='AU')
-        south_africa = Country.objects.get(code='ZA')
-        nigeria = Country.objects.get(code='NG')
-        tanzania = Country.objects.get(code='TZ')
-        uganda = Country.objects.get(code='UG')
-        rwanda = Country.objects.get(code='RW')
-        uae = Country.objects.get(code='AE')
-        germany = Country.objects.get(code='DE')
     except Country.DoesNotExist:
         print("  ⚠️ Countries not found, run load_countries first")
         return 0
@@ -487,7 +486,7 @@ def load_employers():
     created_count = 0
     for employer_data in employers_data:
         try:
-            email = f"{employer_data['company_name'].lower().replace(' ', '').replace('&', '').replace('.', '')}@employer.com"
+            email = f"{employer_data['company_name'].lower().replace(' ', '').replace('&', '').replace('.', '').replace('-', '')}@employer.com"
             user, user_created = User.objects.get_or_create(
                 email=email,
                 defaults={
@@ -778,7 +777,7 @@ def load_agencies():
     created_count = 0
     for agency_data in agencies_data:
         try:
-            email = f"{agency_data['agency_name'].lower().replace(' ', '').replace('&', '').replace('.', '')}@agency.com"
+            email = f"{agency_data['agency_name'].lower().replace(' ', '').replace('&', '').replace('.', '').replace('-', '')}@agency.com"
             user, user_created = User.objects.get_or_create(
                 email=email,
                 defaults={
@@ -851,10 +850,15 @@ def load_sample_jobs():
             'communications': Category.objects.get(name='Communications & Media'),
             'research': Category.objects.get(name='Research & Development'),
             'customer_service': Category.objects.get(name='Customer Service'),
-            'real_estate': Category.objects.get(name='Real Estate & Property')
+            'real_estate': Category.objects.get(name='Real Estate & Property'),
+            'energy': Category.objects.get(name='Energy & Utilities'),
+            'telecommunications': Category.objects.get(name='Telecommunications'),
+            'insurance': Category.objects.get(name='Insurance'),
+            'mining': Category.objects.get(name='Mining & Resources'),
         }
-    except Category.DoesNotExist:
-        print("  ⚠️ Categories not found, run load_categories first")
+    except Category.DoesNotExist as e:
+        print(f"  ⚠️ Categories not found: {e}")
+        print("  Run load_categories first")
         return 0
     
     try:
@@ -867,16 +871,14 @@ def load_sample_jobs():
         uae = Country.objects.get(code='AE')
         south_africa = Country.objects.get(code='ZA')
         nigeria = Country.objects.get(code='NG')
-        tanzania = Country.objects.get(code='TZ')
-        uganda = Country.objects.get(code='UG')
-        rwanda = Country.objects.get(code='RW')
         singapore = Country.objects.get(code='SG')
         switzerland = Country.objects.get(code='CH')
         netherlands = Country.objects.get(code='NL')
         sweden = Country.objects.get(code='SE')
         new_zealand = Country.objects.get(code='NZ')
-    except Country.DoesNotExist:
-        print("  ⚠️ Countries not found, run load_countries first")
+    except Country.DoesNotExist as e:
+        print(f"  ⚠️ Countries not found: {e}")
+        print("  Run load_countries first")
         return 0
     
     # Get all agencies
@@ -896,8 +898,9 @@ def load_sample_jobs():
         swiss_recruit = RecruitmentAgency.objects.get(agency_name='Swiss International Recruitment')
         dutch_tech = RecruitmentAgency.objects.get(agency_name='Dutch Tech Recruitment')
         nordic_recruit = RecruitmentAgency.objects.get(agency_name='Nordic Recruitment Services')
-    except RecruitmentAgency.DoesNotExist:
-        print("  ⚠️ Agencies not found, run load_agencies first")
+    except RecruitmentAgency.DoesNotExist as e:
+        print(f"  ⚠️ Agencies not found: {e}")
+        print("  Run load_agencies first")
         return 0
     
     # Get employers
@@ -913,8 +916,9 @@ def load_sample_jobs():
         kakuzi = EmployerProfile.objects.get(company_name='Kakuzi PLC')
         bat_kenya = EmployerProfile.objects.get(company_name='British American Tobacco Kenya')
         shell_kenya = EmployerProfile.objects.get(company_name='Shell Kenya Limited')
-    except EmployerProfile.DoesNotExist:
-        print("  ⚠️ Employers not found, run load_employers first")
+    except EmployerProfile.DoesNotExist as e:
+        print(f"  ⚠️ Employers not found: {e}")
+        print("  Run load_employers first")
         return 0
     
     jobs_data = [
@@ -922,6 +926,7 @@ def load_sample_jobs():
         {
             'title': 'Senior Administrative Officer - Government',
             'agency': psc,
+            'employer': None,
             'country': kenya,
             'category': categories['admin'],
             'description': 'Lead administrative operations and coordinate government services delivery across multiple departments.',
@@ -946,6 +951,7 @@ def load_sample_jobs():
         {
             'title': 'Finance Officer - Government Treasury',
             'agency': psc,
+            'employer': None,
             'country': kenya,
             'category': categories['finance'],
             'description': 'Manage financial operations, budgeting, and reporting for government departments.',
@@ -970,6 +976,7 @@ def load_sample_jobs():
         {
             'title': 'Healthcare Administrator - County Government',
             'agency': kmra,
+            'employer': None,
             'country': kenya,
             'category': categories['health'],
             'description': 'Coordinate healthcare services and administration at county level.',
@@ -994,6 +1001,7 @@ def load_sample_jobs():
         {
             'title': 'IT Systems Administrator - Government',
             'agency': global_recruit,
+            'employer': None,
             'country': kenya,
             'category': categories['it'],
             'description': 'Manage and maintain government IT systems, networks, and infrastructure.',
@@ -1018,6 +1026,7 @@ def load_sample_jobs():
         {
             'title': 'Human Resources Manager - Public Sector',
             'agency': global_recruit,
+            'employer': None,
             'country': kenya,
             'category': categories['hr'],
             'description': 'Lead HR operations including recruitment, training, performance management, and employee relations.',
@@ -1042,6 +1051,7 @@ def load_sample_jobs():
         {
             'title': 'Legal Counsel - Government',
             'agency': psc,
+            'employer': None,
             'country': kenya,
             'category': categories['legal'],
             'description': 'Provide legal advice and representation for government departments.',
@@ -1067,6 +1077,7 @@ def load_sample_jobs():
         # === KENYA EMPLOYER JOBS ===
         {
             'title': 'Branch Manager - KCB',
+            'agency': None,
             'employer': kcb,
             'country': kenya,
             'category': categories['finance'],
@@ -1091,9 +1102,10 @@ def load_sample_jobs():
         },
         {
             'title': 'Network Engineer - Safaricom',
+            'agency': None,
             'employer': safaricom,
             'country': kenya,
-            'category': categories['it'],
+            'category': categories['telecommunications'],
             'description': 'Design and maintain telecommunications network infrastructure.',
             'responsibilities': 'Network design, maintenance, troubleshooting, capacity planning, security implementation',
             'requirements': 'Degree in Telecommunications or IT. 4+ years experience. CCNA/CCNP preferred.',
@@ -1115,6 +1127,7 @@ def load_sample_jobs():
         },
         {
             'title': 'Relationship Manager - Equity Bank',
+            'agency': None,
             'employer': equity,
             'country': kenya,
             'category': categories['finance'],
@@ -1139,6 +1152,7 @@ def load_sample_jobs():
         },
         {
             'title': 'Pilot - Kenya Airways',
+            'agency': None,
             'employer': kq,
             'country': kenya,
             'category': categories['transport'],
@@ -1163,9 +1177,10 @@ def load_sample_jobs():
         },
         {
             'title': 'Digital Marketing Manager - Nation Media Group',
+            'agency': None,
             'employer': nmg,
             'country': kenya,
-            'category': categories['sales'],
+            'category': categories['communications'],
             'description': 'Lead digital marketing strategy for media group.',
             'responsibilities': 'Digital marketing strategy, content marketing, social media management, analytics, team leadership',
             'requirements': 'Degree in Marketing or Communications. 5+ years digital marketing experience.',
@@ -1187,6 +1202,7 @@ def load_sample_jobs():
         },
         {
             'title': 'Production Manager - Brookside Dairy',
+            'agency': None,
             'employer': brookside,
             'country': kenya,
             'category': categories['manufacturing'],
@@ -1211,9 +1227,10 @@ def load_sample_jobs():
         },
         {
             'title': 'Insurance Underwriter - Jubilee Holdings',
+            'agency': None,
             'employer': jubilee,
             'country': kenya,
-            'category': categories['finance'],
+            'category': categories['insurance'],
             'description': 'Assess and underwrite insurance risks for corporate clients.',
             'responsibilities': 'Risk assessment, policy underwriting, pricing, claims analysis, client advisory',
             'requirements': 'Degree in Actuarial Science or Finance. 4+ years insurance experience. ACII/FCII preferred.',
@@ -1235,6 +1252,7 @@ def load_sample_jobs():
         },
         {
             'title': 'Farm Manager - Kakuzi PLC',
+            'agency': None,
             'employer': kakuzi,
             'country': kenya,
             'category': categories['agriculture'],
@@ -1257,11 +1275,37 @@ def load_sample_jobs():
             'is_featured': False,
             'is_verified': True
         },
+        {
+            'title': 'Sales Executive - Shell Kenya',
+            'agency': None,
+            'employer': shell_kenya,
+            'country': kenya,
+            'category': categories['sales'],
+            'description': 'Drive sales of petroleum products and develop new business opportunities.',
+            'responsibilities': 'Sales strategy, client acquisition, relationship management, market analysis, reporting',
+            'requirements': 'Degree in Business or Marketing. 3+ years sales experience in energy sector.',
+            'benefits': 'Medical cover, Pension, Performance bonuses, Car allowance, Fuel allowance',
+            'salary_min': Decimal('60000'),
+            'salary_max': Decimal('90000'),
+            'salary_currency': 'KES',
+            'is_salary_negotiable': True,
+            'employment_type': 'full_time',
+            'experience_level': 'mid',
+            'location': 'Nairobi, Kenya',
+            'is_remote': False,
+            'visa_requirements': 'Kenyan citizenship required',
+            'required_languages': ['English', 'Swahili'],
+            'closing_date': timezone.now() + timedelta(days=25),
+            'status': 'active',
+            'is_featured': False,
+            'is_verified': True
+        },
         
         # === INTERNATIONAL AGENCY JOBS ===
         {
             'title': 'Registered Nurse - NHS UK',
             'agency': uk_healthcare,
+            'employer': None,
             'country': uk,
             'category': categories['health'],
             'description': 'Join the UK National Health Service as a registered nurse.',
@@ -1286,6 +1330,7 @@ def load_sample_jobs():
         {
             'title': 'Data Scientist - Tech Firm USA',
             'agency': us_works,
+            'employer': None,
             'country': usa,
             'category': categories['it'],
             'description': 'Analyze big data and develop machine learning models.',
@@ -1310,6 +1355,7 @@ def load_sample_jobs():
         {
             'title': 'Civil Engineer - Canada',
             'agency': canada_recruit,
+            'employer': None,
             'country': canada,
             'category': categories['engineering'],
             'description': 'Lead civil engineering projects for infrastructure development.',
@@ -1334,6 +1380,7 @@ def load_sample_jobs():
         {
             'title': 'IT Project Manager - Australia',
             'agency': australia_recruit,
+            'employer': None,
             'country': australia,
             'category': categories['it'],
             'description': 'Lead IT projects and teams for enterprise solutions.',
@@ -1358,6 +1405,7 @@ def load_sample_jobs():
         {
             'title': 'Hospitality Manager - Dubai',
             'agency': gulf_recruit,
+            'employer': None,
             'country': uae,
             'category': categories['hospitality'],
             'description': 'Manage hotel operations and guest services for 5-star property.',
@@ -1382,6 +1430,7 @@ def load_sample_jobs():
         {
             'title': 'Mechanical Engineer - Germany',
             'agency': german_tech,
+            'employer': None,
             'country': germany,
             'category': categories['engineering'],
             'description': 'Design and develop automotive systems for leading car manufacturer.',
@@ -1406,8 +1455,9 @@ def load_sample_jobs():
         {
             'title': 'Mining Engineer - South Africa',
             'agency': sa_services,
+            'employer': None,
             'country': south_africa,
-            'category': categories['engineering'],
+            'category': categories['mining'],
             'description': 'Lead mining operations and resource extraction projects.',
             'responsibilities': 'Mine planning, operations management, safety compliance, team leadership, cost management',
             'requirements': 'Mining Engineering degree. 5+ years experience in mining operations.',
@@ -1430,6 +1480,7 @@ def load_sample_jobs():
         {
             'title': 'Software Engineer - Singapore',
             'agency': singapore_talent,
+            'employer': None,
             'country': singapore,
             'category': categories['it'],
             'description': 'Develop enterprise software solutions for financial services.',
@@ -1454,6 +1505,7 @@ def load_sample_jobs():
         {
             'title': 'Financial Analyst - Switzerland',
             'agency': swiss_recruit,
+            'employer': None,
             'country': switzerland,
             'category': categories['finance'],
             'description': 'Analyze financial data and provide strategic insights for international banking.',
@@ -1478,6 +1530,7 @@ def load_sample_jobs():
         {
             'title': 'Cloud Architect - Netherlands',
             'agency': dutch_tech,
+            'employer': None,
             'country': netherlands,
             'category': categories['it'],
             'description': 'Design and implement cloud infrastructure for European clients.',
@@ -1502,14 +1555,15 @@ def load_sample_jobs():
         {
             'title': 'Renewable Energy Engineer - Sweden',
             'agency': nordic_recruit,
+            'employer': None,
             'country': sweden,
-            'category': categories['engineering'],
+            'category': categories['energy'],
             'description': 'Design and implement renewable energy solutions.',
             'responsibilities': 'Project design, energy systems analysis, implementation, compliance, team coordination',
             'requirements': 'Degree in Renewable Energy or Electrical Engineering. 5+ years experience.',
             'benefits': 'Medical insurance, Pension, 30 days holiday, Training, Green energy bonus',
-            'salary_min': Decimal('60000'),
-            'salary_max': Decimal('90000'),
+            'salary_min': Decimal('600000'),
+            'salary_max': Decimal('900000'),
             'salary_currency': 'SEK',
             'is_salary_negotiable': True,
             'employment_type': 'full_time',
@@ -1527,26 +1581,28 @@ def load_sample_jobs():
     
     created_count = 0
     for job_data in jobs_data:
-        agency = job_data.pop('agency', None)
-        employer = job_data.pop('employer', None)
-        category = job_data.pop('category', None)
-        country = job_data.pop('country', None)
-        
         try:
+            # Extract fields
+            title = job_data.pop('title')
+            agency = job_data.pop('agency')
+            employer = job_data.pop('employer')
+            country = job_data.pop('country')
+            category = job_data.pop('category')
+            
             # Check if job already exists
             existing_job = Job.objects.filter(
-                title=job_data['title'],
+                title=title,
                 country=country,
                 category=category
             ).first()
             
             if existing_job:
-                print(f"  ℹ️ Job already exists: {job_data['title']}")
+                print(f"  ℹ️ Job already exists: {title}")
                 continue
             
-            # Create the job
+            # Create the job (only one title field)
             job = Job(
-                title=job_data['title'],
+                title=title,
                 agency=agency,
                 employer=employer,
                 country=country,
@@ -1559,7 +1615,7 @@ def load_sample_jobs():
             print(f"  ✅ Created job: {job.title} ({source})")
             
         except Exception as e:
-            print(f"  ⚠️ Error creating job {job_data['title']}: {e}")
+            print(f"  ⚠️ Error creating job {job_data.get('title', 'Unknown')}: {e}")
     
     print(f"✅ Loaded {created_count} sample jobs")
     return created_count
