@@ -140,7 +140,7 @@ def initiate_payment(request):
     
     elif payment_method == 'bank_transfer':
         messages.info(request, 'Please complete the bank transfer with the provided details.')
-        return redirect('payments:payment_confirmation', payment_id=payment.id)
+        return redirect('payments:payment_confirmation', payment_id=str(payment.id))  # FIXED: Added str()
     
     messages.error(request, 'Invalid payment method selected.')
     return redirect('payments:payment_page')
@@ -175,7 +175,7 @@ def process_mpesa_payment(request, payment, phone_number, plan):
             )
             
             messages.info(request, 'Please check your phone and enter your M-Pesa PIN.')
-            return redirect('payments:payment_confirmation', payment_id=payment.id)
+            return redirect('payments:payment_confirmation', payment_id=str(payment.id))  # FIXED: Added str()
         else:
             payment.status = 'failed'
             payment.metadata = {'error': response}
@@ -199,7 +199,7 @@ def payment_confirmation(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, user=request.user)
     
     if payment.status == 'completed':
-        return redirect('payments:payment_success', payment_id=payment.id)
+        return redirect('payments:payment_success', payment_id=str(payment.id))
     
     if payment.status == 'cancelled':
         messages.warning(request, 'This payment was cancelled.')
@@ -255,7 +255,7 @@ def payment_confirmation(request, payment_id):
                     logger.error(f"Failed to create notification: {str(e)}")
                 
                 messages.success(request, 'Payment confirmed successfully!')
-                return redirect('payments:payment_success', payment_id=payment.id)
+                return redirect('payments:payment_success', payment_id=str(payment.id))
                 
             elif response.get('ResultCode') == '2001':
                 messages.info(request, 'Payment is still being processed. Please wait or refresh.')
@@ -310,7 +310,7 @@ def payment_success(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, user=request.user)
     
     if payment.status != 'completed':
-        return redirect('payments:payment_confirmation', payment_id=payment.id)
+        return redirect('payments:payment_confirmation', payment_id=str(payment.id))
     
     try:
         access = UserPaymentAccess.objects.get(user=request.user)
@@ -517,7 +517,6 @@ def payment_plans(request):
         'plans': list(plans)
     })
 
-# PART 2 OF 3
 
 # ==============================================
 # PAYMENT STATUS (AJAX)
@@ -1061,9 +1060,6 @@ def renew_subscription(request):
     return redirect('payments:payment_page')
 
 
-# PART 3 OF 3
-
-
 # ==============================================
 # ADMIN VIEWS
 # ==============================================
@@ -1396,7 +1392,7 @@ def api_payment_history(request):
     data = []
     for payment in payments:
         data.append({
-            'id': payment.id,
+            'id': str(payment.id),  # FIXED: Convert UUID to string
             'amount': float(payment.amount),
             'currency': payment.currency,
             'payment_method': payment.get_payment_method_display(),
@@ -1522,49 +1518,3 @@ def get_phone_number_from_request(request):
         phone = '254' + phone
     
     return phone if len(phone) == 12 else None
-
-from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.decorators import login_required
-
-
-@login_required
-def check_access(request):
-    return JsonResponse({
-        "success": True,
-        "authenticated": request.user.is_authenticated,
-    })
-
-
-@login_required
-def payment_status(request):
-    return JsonResponse({
-        "status": "pending"
-    })
-
-
-@login_required
-def payment_history(request):
-    return HttpResponse("Payment history page coming soon.")
-
-
-@login_required
-def verify_payment(request):
-    return JsonResponse({
-        "verified": True
-    })
-
-
-@login_required
-def retry_payment(request):
-    return JsonResponse({
-        "success": True,
-        "message": "Retry initiated."
-    })
-
-
-@login_required
-def download_receipt(request, payment_id):
-    return HttpResponse(
-        f"Receipt for payment {payment_id}",
-        content_type="text/plain",
-    )
