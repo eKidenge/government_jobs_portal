@@ -144,6 +144,11 @@
         box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.08);
     }
     
+    .filter-section .filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
     .filter-section .btn-filter {
         padding: 10px 20px;
         border-radius: 10px;
@@ -157,12 +162,12 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        flex: 1;
     }
     
     .filter-section .btn-filter.apply {
         background: linear-gradient(135deg, #1a365d, #2b6cb0);
         color: white;
-        flex: 1;
     }
     
     .filter-section .btn-filter.apply:hover {
@@ -173,7 +178,6 @@
     .filter-section .btn-filter.clear {
         background: #e2e8f0;
         color: #4a5568;
-        flex: 1;
     }
     
     .filter-section .btn-filter.clear:hover {
@@ -440,6 +444,7 @@
         gap: 6px;
         justify-content: center;
         margin-top: 30px;
+        flex-wrap: wrap;
     }
     
     .pagination a, .pagination span {
@@ -591,7 +596,8 @@
                         <button type="submit" class="btn-filter apply">
                             <i class="fas fa-sliders-h"></i> Filter
                         </button>
-                        <a href="{% url 'employers' %}" class="btn-filter clear">
+                        <!-- FIXED: Changed 'employers' to 'employer_list' -->
+                        <a href="{% url 'employer_list' %}" class="btn-filter clear">
                             <i class="fas fa-undo"></i> Clear
                         </a>
                     </div>
@@ -661,7 +667,8 @@
                     <i class="fas fa-building"></i>
                     <h3>No Employers Found</h3>
                     <p>Try adjusting your filters or search terms to find employers.</p>
-                    <a href="{% url 'employers' %}" class="clear-link">
+                    <!-- FIXED: Changed 'employers' to 'employer_list' -->
+                    <a href="{% url 'employer_list' %}" class="clear-link">
                         <i class="fas fa-undo"></i> Clear all filters
                     </a>
                 </div>
