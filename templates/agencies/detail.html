@@ -451,6 +451,108 @@
         color: white;
     }
     
+    /* Pagination */
+    .pagination {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .pagination a:hover {
+        background: #805ad5;
+        color: white;
+        border-color: #805ad5;
+    }
+    
+    .pagination .current {
+        background: #805ad5;
+        color: white;
+        border-color: #805ad5;
+    }
+    
+    /* Contact Form */
+    .contact-form-section {
+        background: white;
+        border-radius: 16px;
+        padding: 28px 32px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-top: 24px;
+    }
+    
+    .contact-form-section h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.3rem;
+        margin-bottom: 16px;
+    }
+    
+    .contact-form-section .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .contact-form-section label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #4a5568;
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .contact-form-section input,
+    .contact-form-section textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+    }
+    
+    .contact-form-section input:focus,
+    .contact-form-section textarea:focus {
+        outline: none;
+        border-color: #805ad5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(128, 90, 213, 0.08);
+    }
+    
+    .contact-form-section .btn-submit {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .contact-form-section .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.25);
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
         .agency-detail-hero h1 {
@@ -616,6 +718,7 @@
         </div>
     </div>
     
+    
     <!-- Description -->
     {% if agency.description %}
     <div class="description-section">
@@ -623,6 +726,33 @@
         <p>{{ agency.description }}</p>
     </div>
     {% endif %}
+    
+    <!-- Contact Form with CSRF Token - FIXED -->
+    <div class="contact-form-section">
+        <h3><i class="fas fa-paper-plane mr-2 text-purple-600"></i> Send a Message to {{ agency.agency_name }}</h3>
+        <form method="POST" action="{% url 'agencies:agency_contact' agency.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+            </div>
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" placeholder="What is this about?" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" placeholder="Describe your inquiry..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Send Message
+            </button>
+        </form>
+    </div>
     
     <!-- Jobs Section -->
     <div class="jobs-section">
@@ -660,25 +790,21 @@
             
             <!-- Pagination for jobs -->
             {% if jobs.has_other_pages %}
-            <div class="pagination mt-6 flex justify-center gap-2">
+            <div class="pagination">
                 {% if jobs.has_previous %}
-                    <a href="?page={{ jobs.previous_page_number }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-sans text-sm">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
+                    <a href="?page={{ jobs.previous_page_number }}">&laquo; Previous</a>
                 {% endif %}
                 
                 {% for num in jobs.paginator.page_range %}
                     {% if jobs.number == num %}
-                        <span class="px-4 py-2 bg-purple-600 text-white rounded-lg font-sans text-sm">{{ num }}</span>
+                        <span class="current">{{ num }}</span>
                     {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
-                        <a href="?page={{ num }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-sans text-sm">{{ num }}</a>
+                        <a href="?page={{ num }}">{{ num }}</a>
                     {% endif %}
                 {% endfor %}
                 
                 {% if jobs.has_next %}
-                    <a href="?page={{ jobs.next_page_number }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-sans text-sm">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
+                    <a href="?page={{ jobs.next_page_number }}">Next &raquo;</a>
                 {% endif %}
             </div>
             {% endif %}
