@@ -1,20 +1,25 @@
 # load_data.py
 import os
-import django
-from decimal import Decimal
-from datetime import datetime, timedelta
+import sys
+
+# ✅ FIX: Add the project root to Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'government_jobs_portal.settings')
+
+import django
 django.setup()
 
+from decimal import Decimal
+from datetime import datetime, timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.db import transaction
 
 User = get_user_model()
 
-#PART 2
+
 def load_payment_plans():
     """Load payment plans into the database"""
     from payments.models import PaymentPlan
@@ -153,7 +158,7 @@ def load_payment_plans():
     print(f"✅ Loaded {created_count} new payment plans")
     return created_count
 
-#PART 3
+
 def load_countries():
     """Load countries into the database"""
     from jobs.models import Country
@@ -409,7 +414,7 @@ def load_agencies():
     print(f"✅ Loaded {created_count} new agencies")
     return created_count
 
-#PART 4
+
 def load_sample_jobs():
     """Load sample job listings into the database"""
     try:
@@ -820,10 +825,10 @@ def load_sample_jobs():
         else:
             print(f"  ℹ️ Job already exists: {job.title}")
     
-    print(f" Loaded {created_count} sample jobs")
+    print(f"✅ Loaded {created_count} sample jobs")
     return created_count
 
-#PART 5
+
 def create_superuser():
     """Create admin superuser if it doesn't exist"""
     print("👤 Checking superuser...")
@@ -832,8 +837,7 @@ def create_superuser():
     User.objects.filter(email='admin@admin.com').delete()
     
     try:
-        # Create superuser using the custom UserManager
-        admin = User.objects.create_superuser(
+        # Create superuser using the custom UserManager        admin = User.objects.create_superuser(
             email='admin@admin.com',
             password='admin123'
         )

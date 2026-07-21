@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 echo "🚀 Starting build process..."
 
+# ✅ FIX: Set Python path so Django can find the project
+export PYTHONPATH=/opt/render/project/src:$PYTHONPATH
+export DJANGO_SETTINGS_MODULE=government_jobs_portal.settings
+
 # 1. Remove everything - database and all migrations
 echo "🧹 Cleaning up..."
 rm -f db.sqlite3
@@ -29,6 +33,8 @@ python manage.py collectstatic --noinput
 # 6. Force create superuser
 echo "👤 Creating superuser..."
 python manage.py shell << EOF
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'government_jobs_portal.settings')
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
