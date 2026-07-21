@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ agency.agency_name }} - Recruitment Agency{% endblock %}
+{% block title %}{{ agency.agency_name }} - Licensed Recruitment Agency{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -401,12 +401,54 @@
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s ease;
-        margin-bottom: 16px;
+        margin-top: 24px;
     }
     
     .back-link:hover {
         color: #6b46c1;
         gap: 12px;
+    }
+    
+    /* Contact Actions */
+    .contact-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+    }
+    
+    .contact-actions .btn-contact {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .contact-actions .btn-contact.primary {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+    }
+    
+    .contact-actions .btn-contact.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.25);
+    }
+    
+    .contact-actions .btn-contact.outline {
+        border: 2px solid #805ad5;
+        color: #805ad5;
+        background: transparent;
+    }
+    
+    .contact-actions .btn-contact.outline:hover {
+        background: #805ad5;
+        color: white;
     }
     
     /* Responsive */
@@ -460,6 +502,16 @@
             flex-direction: column;
             align-items: flex-start;
         }
+        
+        .contact-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .contact-actions .btn-contact {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
@@ -497,12 +549,28 @@
                     </span>
                 </div>
                 <div class="agency-meta mt-2">
-                    <p><i class="fas fa-envelope"></i> {{ agency.user.email }}</p>
+                    {% if agency.user.email %}
+                        <p><i class="fas fa-envelope"></i> {{ agency.user.email }}</p>
+                    {% endif %}
                     {% if agency.phone %}
                         <p><i class="fas fa-phone"></i> {{ agency.phone }}</p>
                     {% endif %}
                     {% if agency.website %}
                         <p><i class="fas fa-globe"></i> <a href="{{ agency.website }}" target="_blank" class="text-purple-600 hover:text-purple-800">{{ agency.website }}</a></p>
+                    {% endif %}
+                </div>
+                
+                <!-- Contact Actions -->
+                <div class="contact-actions">
+                    {% if agency.phone %}
+                        <a href="tel:{{ agency.phone }}" class="btn-contact primary">
+                            <i class="fas fa-phone"></i> Call Agency
+                        </a>
+                    {% endif %}
+                    {% if agency.user.email %}
+                        <a href="mailto:{{ agency.user.email }}" class="btn-contact outline">
+                            <i class="fas fa-envelope"></i> Email Agency
+                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -625,7 +693,7 @@
     </div>
     
     <!-- Back Button -->
-    <div class="mt-8">
+    <div>
         <a href="{% url 'agencies:agency_list' %}" class="back-link">
             <i class="fas fa-arrow-left"></i> Back to Agencies
         </a>
