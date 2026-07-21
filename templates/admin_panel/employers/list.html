@@ -448,7 +448,7 @@
         box-shadow: 0 4px 12px rgba(153, 27, 27, 0.15);
     }
     
-    /* Action Forms - FIXED */
+    /* Action Forms */
     .action-form {
         display: inline-block !important;
         margin: 0 !important;
@@ -505,6 +505,11 @@
         font-family: 'Merriweather', serif;
         color: #718096;
         font-size: 0.9rem;
+    }
+    
+    .empty-state .btn-action {
+        margin-top: 16px;
+        display: inline-flex;
     }
     
     /* Pagination */
@@ -662,7 +667,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header -->
-        <div class="page-header">
+        <div class="page-header" data-aos="fade-up">
             <div>
                 <h1 class="header-title">
                     <i class="fas fa-building"></i> Manage Employers
@@ -682,7 +687,7 @@
         </div>
 
         <!-- Filters -->
-        <div class="filter-section">
+        <div class="filter-section" data-aos="fade-up" data-aos-delay="100">
             <form method="GET" class="filter-form">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
@@ -704,7 +709,7 @@
         </div>
 
         <!-- Employer Grid -->
-        <div class="employer-grid">
+        <div class="employer-grid" data-aos="fade-up" data-aos-delay="200">
             {% for employer in employers %}
                 <div class="employer-card">
                     <div class="card-header">
@@ -751,7 +756,7 @@
                         {% if not employer.is_verified %}
                             <form method="post" action="{% url 'admin_panel:admin_verify_employer' employer.id %}" class="action-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-action btn-verify" onclick="return confirm('Verify this employer?')">
+                                <button type="submit" class="btn-action btn-verify" onclick="return confirm('Are you sure you want to verify this employer?')">
                                     <i class="fas fa-check"></i> Verify
                                 </button>
                             </form>
@@ -759,21 +764,21 @@
                         {% if employer.user.status != 'suspended' %}
                             <form method="post" action="{% url 'admin_panel:admin_suspend_employer' employer.id %}" class="action-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-action btn-suspend" onclick="return confirm('Suspend this employer?')">
+                                <button type="submit" class="btn-action btn-suspend" onclick="return confirm('Are you sure you want to suspend this employer?')">
                                     <i class="fas fa-pause"></i> Suspend
                                 </button>
                             </form>
                         {% else %}
                             <form method="post" action="{% url 'admin_panel:admin_activate_employer' employer.id %}" class="action-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-action btn-activate" onclick="return confirm('Activate this employer?')">
+                                <button type="submit" class="btn-action btn-activate" onclick="return confirm('Are you sure you want to activate this employer?')">
                                     <i class="fas fa-play"></i> Activate
                                 </button>
                             </form>
                         {% endif %}
-                        <form method="post" action="{% url 'admin_panel:admin_delete_employer' employer.id %}" class="action-form" onsubmit="return confirm('Delete this employer permanently?')">
+                        <form method="post" action="{% url 'admin_panel:admin_delete_employer' employer.id %}" class="action-form">
                             {% csrf_token %}
-                            <button type="submit" class="btn-action btn-delete">
+                            <button type="submit" class="btn-action btn-delete" onclick="return confirm('Are you sure you want to permanently delete this employer? This action cannot be undone!')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </form>
@@ -784,7 +789,7 @@
                     <i class="fas fa-building"></i>
                     <h3>No Employers Found</h3>
                     <p>Try adjusting your filters or search terms to find more employers.</p>
-                    <a href="{% url 'admin_panel:admin_employer_list' %}" class="btn-action btn-view" style="margin-top:16px;display:inline-flex;">
+                    <a href="{% url 'admin_panel:admin_employer_list' %}" class="btn-action btn-view">
                         <i class="fas fa-undo"></i> Clear Filters
                     </a>
                 </div>
@@ -830,4 +835,26 @@
         
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🏛️ Admin Panel - Employers List loaded successfully!');
+        
+        // Auto-dismiss messages
+        setTimeout(function() {
+            const messages = document.querySelectorAll('#messageContainer > div');
+            messages.forEach(function(message, index) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(50px)';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, index * 1000);
+            });
+        }, 5000);
+    });
+</script>
 {% endblock %}
