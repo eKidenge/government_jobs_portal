@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment History - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+    }
+    
+    .history-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .history-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #1a365d;
+    }
+    
+    .history-title i {
+        color: #c9a33d;
+        margin-right: 10px;
+    }
+    
+    .history-stats {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .history-stat {
+        background: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+    
+    .history-stat strong {
+        color: #1a365d;
+        font-weight: 700;
+    }
+    
+    .history-stat .stat-number {
+        font-weight: 700;
+        color: #c9a33d;
+    }
+    
+    .history-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(26, 54, 93, 0.05);
+        overflow: hidden;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .history-table-wrap {
+        overflow-x: auto;
+    }
+    
+    .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .history-table th {
+        background: #f7fafc;
+        padding: 14px 18px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4a5568;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .history-table td {
+        padding: 14px 18px;
+        border-bottom: 1px solid #edf2f7;
+        font-size: 0.9rem;
+        color: #2d3748;
+    }
+    
+    .history-table tr:hover td {
+        background: #f7fafc;
+    }
+    
+    .history-table .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.completed { background: #c6f6d5; color: #22543d; }
+    .status-badge.pending { background: #fefcbf; color: #975a16; }
+    .status-badge.failed { background: #fed7d7; color: #742a2a; }
+    .status-badge.refunded { background: #e9d8fd; color: #44337a; }
+    
+    .history-table .amount {
+        font-weight: 700;
+        color: #1a365d;
+    }
+    
+    .history-table .action-link {
+        color: #c9a33d;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+    
+    .history-table .action-link:hover {
+        color: #b8860b;
+    }
+    
+    .no-payments {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .no-payments i {
+        font-size: 48px;
+        color: #cbd5e0;
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    .no-payments h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.2rem;
+    }
+    
+    .no-payments p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+    }
+    
+    .no-payments .btn-pay {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 30px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .no-payments .btn-pay:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.3);
+    }
+    
+    /* Pagination */
+    .pagination-wrap {
+        padding: 16px 20px;
+        border-top: 1px solid #edf2f7;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .pagination-wrap .info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+    
+    .pagination-wrap .pagination-links {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .pagination-wrap .pagination-links a,
+    .pagination-wrap .pagination-links span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+    }
+    
+    .pagination-wrap .pagination-links a:hover {
+        background: #f7fafc;
+        border-color: #c9a33d;
+    }
+    
+    .pagination-wrap .pagination-links .current {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    
+    @media (max-width: 768px) {
+        .history-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .history-stats {
+            width: 100%;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 10px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .history-table .status-badge {
+            font-size: 0.65rem;
+            padding: 3px 10px;
+        }
+        
+        .pagination-wrap {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .history-title {
+            font-size: 1.3rem;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 8px 10px;
+            font-size: 0.7rem;
+        }
+        
+        .history-stat {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="history-section">
+    <div class="history-container">
+        <!-- Header -->
+        <div class="history-header">
+            <h1 class="history-title">
+                <i class="fas fa-history"></i> Payment History
+            </h1>
+            <div class="history-stats">
+                <span class="history-stat">
+                    Total: <strong class="stat-number">{{ payments.paginator.count }}</strong>
+                </span>
+                <span class="history-stat">
+                    Completed: <strong class="stat-number">{{ completed_count|default:0 }}</strong>
+                </span>
+                <span class="history-stat">
+                    Pending: <strong class="stat-number">{{ pending_count|default:0 }}</strong>
+                </span>
+            </div>
+        </div>
+        
+        <!-- Payment List -->
+        <div class="history-card">
+            {% if payments %}
+                <div class="history-table-wrap">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Date</th>
+                                <th>Plan</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                            <tr>
+                                <td>
+                                    <span style="font-weight: 500; font-size: 0.8rem;">
+                                        {{ payment.transaction_reference|truncatechars:12 }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.8rem; color: #718096;">
+                                    {{ payment.payment_date|date:"M d, Y" }}
+                                </td>
+                                <td style="font-size: 0.85rem;">
+                                    {{ payment.plan.name|default:'N/A' }}
+                                </td>
+                                <td class="amount">
+                                    {{ payment.currency }} {{ payment.amount|floatformat:2 }}
+                                </td>
+                                <td style="font-size: 0.8rem;">
+                                    {{ payment.get_payment_method_display }}
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ payment.status }}">
+                                        {{ payment.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if payment.status == 'completed' %}
+                                        <a href="{% url 'payments:download_receipt' payment.id %}" class="action-link">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    {% else %}
+                                        <span style="color: #a0aec0; font-size: 0.75rem;">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if payments.has_other_pages %}
+                <div class="pagination-wrap">
+                    <span class="info">
+                        Showing {{ payments.start_index }} - {{ payments.end_index }} of {{ payments.paginator.count }}
+                    </span>
+                    <div class="pagination-links">
+                        {% if payments.has_previous %}
+                            <a href="?page={{ payments.previous_page_number }}">&laquo;</a>
+                        {% endif %}
+                        
+                        {% for num in payments.paginator.page_range %}
+                            {% if payments.number == num %}
+                                <span class="current">{{ num }}</span>
+                            {% elif num > payments.number|add:'-3' and num < payments.number|add:'3' %}
+                                <a href="?page={{ num }}">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if payments.has_next %}
+                            <a href="?page={{ payments.next_page_number }}">&raquo;</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="no-payments">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>No Payment History</h3>
+                    <p>You haven't made any payments yet.</p>
+                    <a href="{% url 'payments:payment_page' %}" class="btn-pay">
+                        <i class="fas fa-credit-card"></i> Make a Payment
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

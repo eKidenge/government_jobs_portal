@@ -5,59 +5,460 @@
 
 {% block extra_css %}
 <style>
+    /* ============================================
+       GOVERNMENT-STYLED DASHBOARD
+       ============================================ */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+    
+    .dashboard-header {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 30px 0;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #c9a33d;
+    }
+    
+    .dashboard-header::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: -20%;
+        right: 5%;
+        font-size: 180px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .dashboard-header .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .dashboard-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2.2rem;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    }
+    
+    .dashboard-header p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
+        margin-top: 4px;
+    }
+    
+    .dashboard-header .gov-seal {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        background: rgba(201, 163, 61, 0.15);
+        border-radius: 50%;
+        text-align: center;
+        line-height: 60px;
+        color: #c9a33d;
+        font-size: 28px;
+        border: 2px solid rgba(201, 163, 61, 0.3);
+        margin-right: 16px;
+    }
+    
     .agency-stats {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         margin-bottom: 30px;
     }
-    .license-status {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e8ecf1;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        border-color: #c9a33d;
+    }
+    
+    .stat-card .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1a365d;
+        line-height: 1.2;
+    }
+    
+    .stat-card .stat-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        font-weight: 500;
+        margin-top: 4px;
+    }
+    
+    .stat-card .stat-icon {
+        float: right;
+        font-size: 2rem;
+        color: #c9a33d;
+        opacity: 0.3;
+    }
+    
+    .license-status {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
     .license-valid {
         background: #c6f6d5;
         color: #22543d;
     }
+    
     .license-expiring {
         background: #fefcbf;
         color: #975a16;
     }
+    
     .license-expired {
         background: #fed7d7;
         color: #742a2a;
     }
+    
     .agency-job-card {
+        background: #f7fafc;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 16px;
+        padding: 16px 20px;
         transition: all 0.3s ease;
     }
+    
     .agency-job-card:hover {
-        border-color: #2b6cb0;
-        box-shadow: 0 4px 12px rgba(43, 108, 176, 0.1);
+        border-color: #c9a33d;
+        box-shadow: 0 4px 16px rgba(201, 163, 61, 0.08);
+        background: white;
+        transform: translateX(4px);
+    }
+    
+    .agency-job-card .job-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.05rem;
+    }
+    
+    .agency-job-card .job-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .agency-job-card .job-meta i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    
+    .country-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #fdf8f0;
+        border: 1px solid rgba(201, 163, 61, 0.15);
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1a365d;
+        transition: all 0.3s ease;
+    }
+    
+    .country-tag:hover {
+        background: #fdf8f0;
+        border-color: #c9a33d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(201, 163, 61, 0.1);
+    }
+    
+    .country-tag i {
+        color: #c9a33d;
+    }
+    
+    .btn-post-job {
+        background: linear-gradient(135deg, #c9a33d, #d4af37);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-post-job:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(201, 163, 61, 0.3);
+        color: white;
+    }
+    
+    .btn-documents {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-documents:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-view-all {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #c9a33d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .btn-view-all:hover {
+        color: #b8860b;
+        transform: translateX(4px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    
+    .empty-state i {
+        font-size: 3.5rem;
+        color: #cbd5e0;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #1a365d;
+        font-size: 1.3rem;
+    }
+    
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        max-width: 400px;
+        margin: 8px auto;
+    }
+    
+    .section-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e8ecf1;
+        margin-bottom: 24px;
+    }
+    
+    .section-card .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.15rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-card .section-title i {
+        color: #c9a33d;
+    }
+    
+    .status-badge {
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
+    
+    .status-active {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .status-pending {
+        background: #fefcbf;
+        color: #744210;
+    }
+    
+    .status-closed {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .status-draft {
+        background: #e2e8f0;
+        color: #4a5568;
+    }
+    
+    .status-approved {
+        background: #bee3f8;
+        color: #2b6cb0;
+    }
+    
+    .status-rejected {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .dashboard-header .gov-seal {
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            font-size: 22px;
+        }
+        
+        .agency-stats {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .stat-card {
+            padding: 16px;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1.6rem;
+        }
+        
+        .section-card {
+            padding: 16px;
+        }
+        
+        .agency-job-card {
+            padding: 12px 16px;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .dashboard-header {
+            padding: 20px 0;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 1.3rem;
+        }
+        
+        .agency-stats {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1.4rem;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+        }
+        
+        .btn-post-job,
+        .btn-documents {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .country-tag {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 min-h-screen py-8">
+<!-- Dashboard Header -->
+<section class="dashboard-header">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Welcome Header -->
-        <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-6 md:p-8 text-white mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div class="flex items-center">
+                <div class="gov-seal">
+                    <i class="fas fa-gavel"></i>
+                </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold">Welcome, {{ agency.agency_name }}</h1>
-                    <p class="text-purple-200 mt-2">
+                    <h1>Welcome, {{ agency.agency_name }}</h1>
+                    <p>
                         {% if agency.is_verified %}
-                            <i class="fas fa-check-circle mr-2"></i> Verified Agency
+                            <i class="fas fa-check-circle mr-2" style="color:#48bb78;"></i> Verified Agency
                             <span class="mx-2">•</span>
                             License: 
-                            <span class="license-status {% if agency.license_expiry > now %}license-valid{% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}license-expiring{% else %}license-expired{% endif %}">
+                            <span class="license-status 
+                                {% if agency.license_expiry > now %}license-valid
+                                {% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}license-expiring
+                                {% else %}license-expired{% endif %}">
+                                <i class="fas fa-id-card"></i>
                                 {% if agency.license_expiry > now %}
                                     Valid until {{ agency.license_expiry|date:"M d, Y" }}
+                                {% elif agency.license_expiry > now|date:'Y-m-d'|add:'-30 days' %}
+                                    Expiring Soon
                                 {% else %}
                                     Expired
                                 {% endif %}
@@ -67,94 +468,176 @@
                         {% endif %}
                     </p>
                 </div>
-                <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
-                    <a href="{% url 'agency_create_job' %}" class="bg-white text-purple-600 px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition">
-                        <i class="fas fa-plus mr-2"></i> Post Overseas Job
-                    </a>
-                    <a href="{% url 'agency_verification' %}" class="bg-white/20 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-white/30 transition">
-                        <i class="fas fa-file-alt mr-2"></i> Documents
-                    </a>
-                </div>
+            </div>
+            <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
+                <!-- FIXED: Added agencies namespace -->
+                <a href="{% url 'agencies:agency_create_job' %}" class="btn-post-job">
+                    <i class="fas fa-plus-circle"></i> Post Overseas Job
+                </a>
+                <!-- FIXED: Added agencies namespace -->
+                <a href="{% url 'agencies:agency_verification' %}" class="btn-documents">
+                    <i class="fas fa-file-alt"></i> Documents
+                </a>
             </div>
         </div>
+    </div>
+</section>
 
+<!-- Main Content -->
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Statistics -->
         <div class="agency-stats">
             <div class="stat-card">
-                <div class="stat-number">{{ jobs_count }}</div>
+                <span class="stat-icon"><i class="fas fa-briefcase"></i></span>
+                <div class="stat-number">{{ total_jobs|default:0 }}</div>
                 <div class="stat-label">Jobs Posted</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ active_jobs }}</div>
+            <div class="stat-card" style="border-left: 3px solid #48bb78;">
+                <span class="stat-icon"><i class="fas fa-check-circle" style="color:#48bb78;"></i></span>
+                <div class="stat-number">{{ active_jobs|default:0 }}</div>
                 <div class="stat-label">Active Positions</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ total_applications }}</div>
+            <div class="stat-card" style="border-left: 3px solid #4299e1;">
+                <span class="stat-icon"><i class="fas fa-users" style="color:#4299e1;"></i></span>
+                <div class="stat-number">{{ total_applications|default:0 }}</div>
                 <div class="stat-label">Total Applications</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ placements }}</div>
+            <div class="stat-card" style="border-left: 3px solid #c9a33d;">
+                <span class="stat-icon"><i class="fas fa-trophy" style="color:#c9a33d;"></i></span>
+                <div class="stat-number">{{ placements|default:0 }}</div>
                 <div class="stat-label">Successful Placements</div>
             </div>
         </div>
 
         <!-- Active Countries -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm mb-8">
-            <h3 class="font-bold text-gray-800 mb-4">Active Recruiting Countries</h3>
+        <div class="section-card">
+            <div class="section-title">
+                <i class="fas fa-globe-africa"></i> Active Recruiting Countries
+            </div>
             <div class="flex flex-wrap gap-3">
                 {% for country in agency.active_countries.all %}
-                    <span class="inline-flex items-center px-4 py-2 bg-blue-50 text-primary-light rounded-xl text-sm font-semibold">
-                        <i class="fas fa-flag mr-2"></i> {{ country.name }}
+                    <span class="country-tag">
+                        <i class="fas fa-flag"></i> {{ country.name }}
                     </span>
                 {% empty %}
-                    <p class="text-gray-500">No countries added yet.</p>
+                    <p class="text-gray-500 font-inter">No countries added yet. <a href="{% url 'agencies:agency_profile_update' %}" class="text-gold hover:underline">Add countries</a></p>
                 {% endfor %}
             </div>
         </div>
 
         <!-- Recent Jobs -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="section-card">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-gray-800">Recent Overseas Job Postings</h3>
-                <a href="{% url 'agency_job_list' %}" class="text-sm text-purple-600 hover:underline">View All</a>
+                <div class="section-title" style="margin-bottom:0;">
+                    <i class="fas fa-clock"></i> Recent Overseas Job Postings
+                </div>
+                <!-- FIXED: Added agencies namespace -->
+                <a href="{% url 'agencies:agency_job_list' %}" class="btn-view-all">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
             
             <div class="space-y-3">
                 {% for job in recent_jobs %}
                     <div class="agency-job-card">
-                        <div class="flex flex-wrap justify-between items-start gap-4">
-                            <div>
-                                <h4 class="font-semibold text-gray-800">{{ job.title }}</h4>
-                                <p class="text-sm text-gray-600">
-                                    <i class="fas fa-map-marker-alt mr-1 text-purple-600"></i> {{ job.country.name }}
+                        <div class="flex flex-wrap justify-between items-start gap-3">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="job-title">{{ job.title }}</h4>
+                                <div class="job-meta mt-1">
+                                    <i class="fas fa-map-marker-alt"></i> {{ job.country.name|default:"Not specified" }}
                                     <span class="mx-2">•</span>
-                                    <i class="fas fa-users mr-1 text-purple-600"></i> {{ job.applications_count }} applications
-                                </p>
-                                <p class="text-xs text-gray-500 mt-1">
-                                    Destination: {{ job.country.name }}
+                                    <i class="fas fa-users"></i> {{ job.applications_count|default:0 }} applications
+                                </div>
+                                <div class="job-meta mt-1">
+                                    <i class="fas fa-calendar-alt"></i> Posted: {{ job.posted_date|date:"M d, Y" }}
                                     <span class="mx-2">•</span>
-                                    Posted: {{ job.posted_date|date:"M d, Y" }}
-                                </p>
+                                    <i class="fas fa-clock"></i> 
+                                    {% if job.closing_date %}
+                                        Closes: {{ job.closing_date|date:"M d, Y" }}
+                                    {% else %}
+                                        No closing date
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
                                 <span class="status-badge status-{{ job.status|slugify }}">
                                     {{ job.get_status_display }}
                                 </span>
-                                <a href="{% url 'job_applications' job.id %}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                                <a href="{% url 'job_applications' job.id %}" class="text-gold hover:text-gold-dark text-sm font-semibold font-inter">
                                     <i class="fas fa-users mr-1"></i> View Apps
                                 </a>
                             </div>
                         </div>
                     </div>
                 {% empty %}
-                    <div class="text-center py-8">
-                        <i class="fas fa-plane text-4xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500">No overseas jobs posted yet.</p>
-                        <a href="{% url 'agency_create_job' %}" class="inline-block mt-3 bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition text-sm">
-                            <i class="fas fa-plus mr-2"></i> Post Your First Job
+                    <div class="empty-state">
+                        <i class="fas fa-plane"></i>
+                        <h3>No Overseas Jobs Posted</h3>
+                        <p>You haven't posted any overseas job opportunities yet. Start connecting citizens to international employment.</p>
+                        <!-- FIXED: Added agencies namespace -->
+                        <a href="{% url 'agencies:agency_create_job' %}" class="inline-block mt-4 btn-post-job">
+                            <i class="fas fa-plus-circle"></i> Post Your First Job
                         </a>
                     </div>
                 {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <!-- FIXED: Added agencies namespace -->
+            <a href="{% url 'agencies:agency_profile_update' %}" class="quick-action-btn">
+                <i class="fas fa-user-edit text-gold text-xl"></i>
+                <div>
+                    <div class="font-semibold text-gray-800 font-inter">Update Profile</div>
+                    <div class="text-xs text-gray-500 font-inter">Edit your agency information</div>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+            </a>
+            <!-- FIXED: Added agencies namespace -->
+            <a href="{% url 'agencies:agency_job_list' %}" class="quick-action-btn">
+                <i class="fas fa-briefcase text-gold text-xl"></i>
+                <div>
+                    <div class="font-semibold text-gray-800 font-inter">Manage Jobs</div>
+                    <div class="text-xs text-gray-500 font-inter">View and manage all postings</div>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+            </a>
+            <!-- FIXED: Added agencies namespace -->
+            <a href="{% url 'agencies:agency_verification' %}" class="quick-action-btn">
+                <i class="fas fa-shield-alt text-gold text-xl"></i>
+                <div>
+                    <div class="font-semibold text-gray-800 font-inter">Verification</div>
+                    <div class="text-xs text-gray-500 font-inter">Upload accreditation documents</div>
+                </div>
+                <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+            </a>
+        </div>
+
+        <!-- Agency Stats Summary -->
+        <div class="mt-6 bg-white rounded-2xl p-4 border border-gray-200">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                    <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Documents</div>
+                    <div class="text-lg font-bold text-gray-800 font-playfair">{{ documents_count|default:0 }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Active Countries</div>
+                    <div class="text-lg font-bold text-gray-800 font-playfair">{{ agency.active_countries.count }}</div>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">License Status</div>
+                    <div class="text-lg font-bold text-gray-800 font-playfair">
+                        {% if agency.is_license_valid %}✅ Valid{% else %}❌ Expired{% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Verification</div>
+                    <div class="text-lg font-bold text-gray-800 font-playfair">
+                        {% if agency.is_verified %}✅ Verified{% else %}⏳ Pending{% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

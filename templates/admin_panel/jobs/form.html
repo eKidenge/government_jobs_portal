@@ -1,0 +1,840 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Add{% endif %} Job - Admin Panel{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       GOVERNMENT-STYLED ADMIN FORM
+       ============================================ */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+    
+    .page-header {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 30px 0;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #c9a33d;
+    }
+    
+    .page-header::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: -20%;
+        right: 5%;
+        font-size: 150px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .page-header .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .page-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    }
+    
+    .page-header p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
+        margin-top: 4px;
+    }
+    
+    .page-header .gov-seal {
+        display: inline-block;
+        width: 56px;
+        height: 56px;
+        background: rgba(201, 163, 61, 0.15);
+        border-radius: 50%;
+        text-align: center;
+        line-height: 56px;
+        color: #c9a33d;
+        font-size: 24px;
+        border: 2px solid rgba(201, 163, 61, 0.3);
+        margin-right: 16px;
+        flex-shrink: 0;
+    }
+    
+    .admin-form-container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .admin-form-container .form-header {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #1a365d;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .admin-form-container .form-header i {
+        color: #c9a33d;
+    }
+    
+    .admin-form-container .form-subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+    }
+    
+    .admin-form-container .gov-divider {
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        margin: 8px 0 24px;
+        border-radius: 2px;
+        position: relative;
+    }
+    
+    .admin-form-container .gov-divider::after {
+        content: '◆';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #c9a33d;
+        font-size: 8px;
+    }
+    
+    .admin-form-container label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+        display: block;
+    }
+    
+    .admin-form-container label .required {
+        color: #e53e3e;
+        font-weight: 700;
+    }
+    
+    .admin-form-container label i {
+        color: #c9a33d;
+        width: 18px;
+    }
+    
+    .admin-form-container .form-control,
+    .admin-form-container input[type="text"],
+    .admin-form-container input[type="number"],
+    .admin-form-container input[type="date"],
+    .admin-form-container input[type="datetime-local"],
+    .admin-form-container select,
+    .admin-form-container textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .admin-form-container .form-control:focus,
+    .admin-form-container input:focus,
+    .admin-form-container select:focus,
+    .admin-form-container textarea:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+    }
+    
+    .admin-form-container .form-control.error,
+    .admin-form-container input.error,
+    .admin-form-container select.error,
+    .admin-form-container textarea.error {
+        border-color: #e53e3e;
+        background: #fff5f5;
+    }
+    
+    .admin-form-container textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .admin-form-container .help-text {
+        font-size: 0.75rem;
+        color: #718096;
+        font-family: 'Inter', sans-serif;
+        margin-top: 4px;
+    }
+    
+    .admin-form-container .error-text {
+        color: #e53e3e;
+        font-size: 0.8rem;
+        font-family: 'Inter', sans-serif;
+        margin-top: 4px;
+        display: none;
+    }
+    
+    .admin-form-container .form-group.error .error-text {
+        display: block;
+    }
+    
+    .admin-form-container .form-group.error .form-control,
+    .admin-form-container .form-group.error input,
+    .admin-form-container .form-group.error select,
+    .admin-form-container .form-group.error textarea {
+        border-color: #e53e3e;
+        background: #fff5f5;
+    }
+    
+    .admin-form-container .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .admin-form-container .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .admin-form-container .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+    
+    .admin-form-container .notice-box {
+        background: linear-gradient(135deg, #fefcbf, #f6e05e);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        border-left: 4px solid #d69e2e;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .admin-form-container .notice-box i {
+        color: #d69e2e;
+        font-size: 1.3rem;
+        margin-top: 2px;
+    }
+    
+    .admin-form-container .notice-box h4 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        color: #744210;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .admin-form-container .notice-box p {
+        font-family: 'Merriweather', serif;
+        color: #744210;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin: 2px 0 0;
+    }
+    
+    .admin-form-container .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 24px;
+        border-top: 2px solid #e2e8f0;
+    }
+    
+    .admin-form-container .btn-submit {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        padding: 12px 36px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .admin-form-container .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(43, 108, 176, 0.25);
+    }
+    
+    .admin-form-container .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .admin-form-container .btn-cancel {
+        background: #e2e8f0;
+        color: #4a5568;
+        padding: 12px 28px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .admin-form-container .btn-cancel:hover {
+        background: #cbd5e0;
+        transform: translateY(-2px);
+    }
+    
+    .admin-form-container .checkbox-group {
+        padding-top: 8px;
+    }
+    
+    .admin-form-container .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #c9a33d;
+        cursor: pointer;
+    }
+    
+    .admin-form-container .checkbox-group label {
+        display: inline;
+        font-weight: 400;
+        color: #4a5568;
+        font-size: 0.9rem;
+        margin-left: 8px;
+        cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .admin-form-container {
+            padding: 20px;
+            margin: 16px;
+        }
+        
+        .admin-form-container .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .admin-form-container .form-actions {
+            flex-direction: column;
+        }
+        
+        .admin-form-container .form-actions button,
+        .admin-form-container .form-actions a {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .page-header {
+            padding: 20px 0;
+        }
+        
+        .page-header h1 {
+            font-size: 1.3rem;
+        }
+        
+        .page-header .gov-seal {
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+            font-size: 18px;
+        }
+        
+        .admin-form-container {
+            padding: 16px;
+        }
+        
+        .admin-form-container input,
+        .admin-form-container select,
+        .admin-form-container textarea {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center">
+            <div class="gov-seal">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div>
+                <h1>{% if is_edit %}Edit Job{% else %}Add New Job{% endif %}</h1>
+                <p>{% if is_edit %}Update job details{% else %}Create a new job posting{% endif %}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Form Section -->
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="admin-form-container">
+            <div class="form-header">
+                <i class="fas {% if is_edit %}fa-edit{% else %}fa-plus-circle{% endif %}"></i>
+                {% if is_edit %}Edit Job Details{% else %}Job Information{% endif %}
+            </div>
+            <div class="form-subtitle">Provide comprehensive details about the job opportunity</div>
+            <div class="gov-divider"></div>
+
+            <!-- Notice -->
+            <div class="notice-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <h4>Important Note</h4>
+                    <p>Please specify only one: either an employer OR a recruitment agency. Do not select both.</p>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="jobForm" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded">
+                        {% for error in form.non_field_errors %}
+                            <p class="error-text" style="display:block;">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Row 1: Title and Status -->
+                <div class="form-row">
+                    <div class="form-group {% if form.title.errors %}error{% endif %}">
+                        <label for="{{ form.title.id_for_label }}">
+                            <i class="fas fa-briefcase"></i> {{ form.title.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.help_text %}
+                            <p class="help-text">{{ form.title.help_text }}</p>
+                        {% endif %}
+                        {% if form.title.errors %}
+                            <p class="error-text">{{ form.title.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.status.errors %}error{% endif %}">
+                        <label for="{{ form.status.id_for_label }}">
+                            <i class="fas fa-circle"></i> {{ form.status.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.help_text %}
+                            <p class="help-text">{{ form.status.help_text }}</p>
+                        {% endif %}
+                        {% if form.status.errors %}
+                            <p class="error-text">{{ form.status.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Row 2: Employer and Agency -->
+                <div class="form-row">
+                    <div class="form-group {% if form.employer.errors %}error{% endif %}">
+                        <label for="{{ form.employer.id_for_label }}">
+                            <i class="fas fa-building"></i> {{ form.employer.label }}
+                        </label>
+                        {{ form.employer }}
+                        {% if form.employer.help_text %}
+                            <p class="help-text">{{ form.employer.help_text }}</p>
+                        {% endif %}
+                        {% if form.employer.errors %}
+                            <p class="error-text">{{ form.employer.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.agency.errors %}error{% endif %}">
+                        <label for="{{ form.agency.id_for_label }}">
+                            <i class="fas fa-handshake"></i> {{ form.agency.label }}
+                        </label>
+                        {{ form.agency }}
+                        {% if form.agency.help_text %}
+                            <p class="help-text">{{ form.agency.help_text }}</p>
+                        {% endif %}
+                        {% if form.agency.errors %}
+                            <p class="error-text">{{ form.agency.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Row 3: Country and Category -->
+                <div class="form-row">
+                    <div class="form-group {% if form.country.errors %}error{% endif %}">
+                        <label for="{{ form.country.id_for_label }}">
+                            <i class="fas fa-map-marker-alt"></i> {{ form.country.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.country }}
+                        {% if form.country.help_text %}
+                            <p class="help-text">{{ form.country.help_text }}</p>
+                        {% endif %}
+                        {% if form.country.errors %}
+                            <p class="error-text">{{ form.country.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.category.errors %}error{% endif %}">
+                        <label for="{{ form.category.id_for_label }}">
+                            <i class="fas fa-tags"></i> {{ form.category.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.help_text %}
+                            <p class="help-text">{{ form.category.help_text }}</p>
+                        {% endif %}
+                        {% if form.category.errors %}
+                            <p class="error-text">{{ form.category.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Row 4: Location and Remote -->
+                <div class="form-row">
+                    <div class="form-group {% if form.location.errors %}error{% endif %}">
+                        <label for="{{ form.location.id_for_label }}">
+                            <i class="fas fa-map-pin"></i> {{ form.location.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.location }}
+                        {% if form.location.help_text %}
+                            <p class="help-text">{{ form.location.help_text }}</p>
+                        {% endif %}
+                        {% if form.location.errors %}
+                            <p class="error-text">{{ form.location.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-home"></i> Remote Work</label>
+                        <div class="checkbox-group">
+                            {{ form.is_remote }}
+                            <label for="{{ form.is_remote.id_for_label }}">This is a remote position</label>
+                        </div>
+                        {% if form.is_remote.help_text %}
+                            <p class="help-text">{{ form.is_remote.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Row 5: Employment Type and Experience Level -->
+                <div class="form-row">
+                    <div class="form-group {% if form.employment_type.errors %}error{% endif %}">
+                        <label for="{{ form.employment_type.id_for_label }}">
+                            <i class="fas fa-clock"></i> {{ form.employment_type.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.employment_type }}
+                        {% if form.employment_type.help_text %}
+                            <p class="help-text">{{ form.employment_type.help_text }}</p>
+                        {% endif %}
+                        {% if form.employment_type.errors %}
+                            <p class="error-text">{{ form.employment_type.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.experience_level.errors %}error{% endif %}">
+                        <label for="{{ form.experience_level.id_for_label }}">
+                            <i class="fas fa-chart-line"></i> {{ form.experience_level.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.experience_level }}
+                        {% if form.experience_level.help_text %}
+                            <p class="help-text">{{ form.experience_level.help_text }}</p>
+                        {% endif %}
+                        {% if form.experience_level.errors %}
+                            <p class="error-text">{{ form.experience_level.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Description (full width) -->
+                <div class="form-group full-width {% if form.description.errors %}error{% endif %}">
+                    <label for="{{ form.description.id_for_label }}">
+                        <i class="fas fa-align-left"></i> {{ form.description.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.help_text %}
+                        <p class="help-text">{{ form.description.help_text }}</p>
+                    {% endif %}
+                    {% if form.description.errors %}
+                        <p class="error-text">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Responsibilities (full width) -->
+                <div class="form-group full-width {% if form.responsibilities.errors %}error{% endif %}">
+                    <label for="{{ form.responsibilities.id_for_label }}">
+                        <i class="fas fa-tasks"></i> {{ form.responsibilities.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.responsibilities }}
+                    {% if form.responsibilities.help_text %}
+                        <p class="help-text">{{ form.responsibilities.help_text }}</p>
+                    {% endif %}
+                    {% if form.responsibilities.errors %}
+                        <p class="error-text">{{ form.responsibilities.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Salary Row -->
+                <div class="form-row">
+                    <div class="form-group {% if form.salary_min.errors %}error{% endif %}">
+                        <label for="{{ form.salary_min.id_for_label }}">
+                            <i class="fas fa-arrow-down"></i> {{ form.salary_min.label }}
+                        </label>
+                        {{ form.salary_min }}
+                        {% if form.salary_min.help_text %}
+                            <p class="help-text">{{ form.salary_min.help_text }}</p>
+                        {% endif %}
+                        {% if form.salary_min.errors %}
+                            <p class="error-text">{{ form.salary_min.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.salary_max.errors %}error{% endif %}">
+                        <label for="{{ form.salary_max.id_for_label }}">
+                            <i class="fas fa-arrow-up"></i> {{ form.salary_max.label }}
+                        </label>
+                        {{ form.salary_max }}
+                        {% if form.salary_max.help_text %}
+                            <p class="help-text">{{ form.salary_max.help_text }}</p>
+                        {% endif %}
+                        {% if form.salary_max.errors %}
+                            <p class="error-text">{{ form.salary_max.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Salary Currency and Negotiable -->
+                <div class="form-row">
+                    <div class="form-group {% if form.salary_currency.errors %}error{% endif %}">
+                        <label for="{{ form.salary_currency.id_for_label }}">
+                            <i class="fas fa-money-bill"></i> {{ form.salary_currency.label }}
+                        </label>
+                        {{ form.salary_currency }}
+                        {% if form.salary_currency.help_text %}
+                            <p class="help-text">{{ form.salary_currency.help_text }}</p>
+                        {% endif %}
+                        {% if form.salary_currency.errors %}
+                            <p class="error-text">{{ form.salary_currency.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-handshake"></i> Salary Negotiable</label>
+                        <div class="checkbox-group">
+                            {{ form.is_salary_negotiable }}
+                            <label for="{{ form.is_salary_negotiable.id_for_label }}">Salary is negotiable</label>
+                        </div>
+                        {% if form.is_salary_negotiable.help_text %}
+                            <p class="help-text">{{ form.is_salary_negotiable.help_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Requirements (full width) -->
+                <div class="form-group full-width {% if form.requirements.errors %}error{% endif %}">
+                    <label for="{{ form.requirements.id_for_label }}">
+                        <i class="fas fa-check-circle"></i> {{ form.requirements.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.requirements }}
+                    {% if form.requirements.help_text %}
+                        <p class="help-text">{{ form.requirements.help_text }}</p>
+                    {% endif %}
+                    {% if form.requirements.errors %}
+                        <p class="error-text">{{ form.requirements.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Benefits (full width) -->
+                <div class="form-group full-width {% if form.benefits.errors %}error{% endif %}">
+                    <label for="{{ form.benefits.id_for_label }}">
+                        <i class="fas fa-gift"></i> {{ form.benefits.label }}
+                    </label>
+                    {{ form.benefits }}
+                    {% if form.benefits.help_text %}
+                        <p class="help-text">{{ form.benefits.help_text }}</p>
+                    {% endif %}
+                    {% if form.benefits.errors %}
+                        <p class="error-text">{{ form.benefits.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Required Languages (full width) -->
+                <div class="form-group full-width {% if form.required_languages.errors %}error{% endif %}">
+                    <label for="{{ form.required_languages.id_for_label }}">
+                        <i class="fas fa-language"></i> {{ form.required_languages.label }}
+                    </label>
+                    {{ form.required_languages }}
+                    {% if form.required_languages.help_text %}
+                        <p class="help-text">{{ form.required_languages.help_text }}</p>
+                    {% endif %}
+                    {% if form.required_languages.errors %}
+                        <p class="error-text">{{ form.required_languages.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Visa Requirements (full width) -->
+                <div class="form-group full-width {% if form.visa_requirements.errors %}error{% endif %}">
+                    <label for="{{ form.visa_requirements.id_for_label }}">
+                        <i class="fas fa-passport"></i> {{ form.visa_requirements.label }}
+                    </label>
+                    {{ form.visa_requirements }}
+                    {% if form.visa_requirements.help_text %}
+                        <p class="help-text">{{ form.visa_requirements.help_text }}</p>
+                    {% endif %}
+                    {% if form.visa_requirements.errors %}
+                        <p class="error-text">{{ form.visa_requirements.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Row: Posted Date and Closing Date -->
+                <div class="form-row">
+                    <div class="form-group {% if form.posted_date.errors %}error{% endif %}">
+                        <label for="{{ form.posted_date.id_for_label }}">
+                            <i class="fas fa-calendar-plus"></i> {{ form.posted_date.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.posted_date }}
+                        {% if form.posted_date.help_text %}
+                            <p class="help-text">{{ form.posted_date.help_text }}</p>
+                        {% endif %}
+                        {% if form.posted_date.errors %}
+                            <p class="error-text">{{ form.posted_date.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group {% if form.closing_date.errors %}error{% endif %}">
+                        <label for="{{ form.closing_date.id_for_label }}">
+                            <i class="fas fa-calendar-times"></i> {{ form.closing_date.label }} <span class="required">*</span>
+                        </label>
+                        {{ form.closing_date }}
+                        {% if form.closing_date.help_text %}
+                            <p class="help-text">{{ form.closing_date.help_text }}</p>
+                        {% endif %}
+                        {% if form.closing_date.errors %}
+                            <p class="error-text">{{ form.closing_date.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i> {% if is_edit %}Update{% else %}Save{% endif %} Job
+                    </button>
+                    <a href="{% url 'admin_panel:admin_job_list' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('jobForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Clear errors on input
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', function() {
+                this.closest('.form-group').classList.remove('error');
+            });
+            field.addEventListener('change', function() {
+                this.closest('.form-group').classList.remove('error');
+            });
+        });
+        
+        // Validate employer/agency selection
+        function validateEmployerAgency() {
+            const employer = document.getElementById('{{ form.employer.id_for_label }}');
+            const agency = document.getElementById('{{ form.agency.id_for_label }}');
+            const employerVal = employer ? employer.value : '';
+            const agencyVal = agency ? agency.value : '';
+            
+            if (employerVal && agencyVal) {
+                alert('Please specify only one: either an employer OR a recruitment agency. Do not select both.');
+                return false;
+            }
+            if (!employerVal && !agencyVal) {
+                alert('Please specify either an employer OR a recruitment agency.');
+                return false;
+            }
+            return true;
+        }
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Validate required fields
+            document.querySelectorAll('[required]').forEach(field => {
+                if (!field.value || !field.value.trim()) {
+                    field.closest('.form-group').classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            // Validate employer/agency
+            if (!validateEmployerAgency()) {
+                isValid = false;
+            }
+            
+            // Validate closing date
+            const closingDate = document.getElementById('{{ form.closing_date.id_for_label }}');
+            if (closingDate && closingDate.value) {
+                const selectedDate = new Date(closingDate.value);
+                const today = new Date();
+                const minDate = new Date();
+                minDate.setDate(minDate.getDate() + 7);
+                
+                if (selectedDate < today) {
+                    closingDate.closest('.form-group').classList.add('error');
+                    const errorText = closingDate.closest('.form-group').querySelector('.error-text');
+                    if (errorText) errorText.textContent = 'Closing date cannot be in the past.';
+                    isValid = false;
+                } else if (selectedDate < minDate) {
+                    closingDate.closest('.form-group').classList.add('error');
+                    const errorText = closingDate.closest('.form-group').querySelector('.error-text');
+                    if (errorText) errorText.textContent = 'Closing date must be at least 7 days from today.';
+                    isValid = false;
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                const firstError = document.querySelector('.form-group.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.querySelector('input, select, textarea').focus();
+                }
+                return false;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

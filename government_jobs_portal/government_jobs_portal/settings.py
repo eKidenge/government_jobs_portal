@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*kncs1+#0o%kw%-n8rw_!l+@w_)yi1c(+muw(x(h^&avqs(eea'
+SECRET_KEY = 'django-insecure-*kncs1+#0o%kw%-8nrw_!l+@w_)yi1c(+muw(x(h^&avqs(eea'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,10 +31,12 @@ ALLOWED_HOSTS = [
     "government-jobs-portal.onrender.com",
     "127.0.0.1",
     "localhost",
+    "dc-backend-6xlc.onrender.com",  # Added your backend domain
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://government-jobs-portal.onrender.com",
+    "https://dc-backend-6xlc.onrender.com",
 ]
 
 # Application definition
@@ -59,7 +61,7 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'jobs',
-    'payments',
+    'payments',  # ✅ Payments app is installed
     'employers',
     'agencies',
     'admin_panel',
@@ -135,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'  # ✅ Changed to Nairobi time for M-Pesa
 
 USE_I18N = True
 
@@ -239,6 +241,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://government-jobs-portal.onrender.com",
+    "https://dc-backend-6xlc.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -266,23 +270,65 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For developm
 # DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@governmentjobs.gov')
 
 # ==============================================
-# M-PESA SETTINGS
+# M-PESA SETTINGS - ✅ FIXED FOR YOUR DOMAIN
 # ==============================================
 
-MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
-MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
-MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
-MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '174379')
-MPESA_ENVIRONMENT = 'sandbox'  # or 'production'
+# M-PESA Configuration - Sandbox
+MPESA_CONSUMER_KEY = 'Gxfrx4GQOdeg3earbJuJj5FQVmc1KSLnr7AUJsKxKlWyRpFE'
+MPESA_CONSUMER_SECRET = 'TGkcwoe6ir6U1glEZ7BA7tRNuxLVaSck5birEfhMDjy8Ae46ZcGewnUAYbyDfKZ9'
+MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+MPESA_SHORTCODE = '174379'  # Default sandbox shortcode
+MPESA_ENVIRONMENT = 'sandbox'  # Use 'sandbox' for testing
+
+# ✅ FIXED: Your main domain for the portal
+SITE_URL = 'https://government-jobs-portal.onrender.com'
+
+# ✅ FIXED: Callback URLs using your main domain
+MPESA_CALLBACK_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-callback/'
+MPESA_RESULT_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-result/'
+MPESA_TIMEOUT_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-timeout/'
+
+# ✅ FIXED: For backend API calls (if different from main site)
+#BACKEND_URL = 'https://dc-backend-6xlc.onrender.com'
+BACKEND_URL = 'https://government-jobs-portal.onrender.com'
+
+# Alternative: Use environment variables for production
+# MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
+# MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
+# MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
+# MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '174379')
+# MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
+# SITE_URL = os.getenv('SITE_URL', 'https://government-jobs-portal.onrender.com')
 
 # ==============================================
 # PAYMENT SETTINGS
 # ==============================================
 
 PAYMENT_PLANS = {
-    'single': {'amount': 300, 'currency': 'KES', 'description': 'Single Job Application'},
-    'monthly': {'amount': 1000, 'currency': 'KES', 'description': 'Monthly Employment Access'},
-    'quarterly': {'amount': 2500, 'currency': 'KES', 'description': 'Quarterly Employment Access'},
+    'single': {
+        'amount': 300, 
+        'currency': 'KES', 
+        'description': 'Single Job Application',
+        'duration_days': 30
+    },
+    'monthly': {
+        'amount': 1000, 
+        'currency': 'KES', 
+        'description': 'Monthly Employment Access',
+        'duration_days': 30
+    },
+    'quarterly': {
+        'amount': 2500, 
+        'currency': 'KES', 
+        'description': 'Quarterly Employment Access',
+        'duration_days': 90
+    },
+    'annual': {
+        'amount': 8000, 
+        'currency': 'KES', 
+        'description': 'Annual Employment Access',
+        'duration_days': 365
+    },
 }
 
 # ==============================================
@@ -324,6 +370,12 @@ LOGGING = {
             'filename': BASE_DIR / 'logs/django.log',
             'formatter': 'verbose',
         },
+        'mpesa_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs/mpesa.log',
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
@@ -336,6 +388,16 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
+        'payments': {
+            'handlers': ['console', 'file', 'mpesa_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'payments.mpesa_service': {
+            'handlers': ['console', 'mpesa_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
 
@@ -344,7 +406,6 @@ LOGGING = {
 # ==============================================
 
 SITE_NAME = "Government Jobs Portal"
-SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@governmentjobs.gov')
 
 # ==============================================

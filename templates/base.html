@@ -410,16 +410,40 @@
         }
         
         /* ============================================
-           MOBILE MENU
+           MOBILE MENU - FIXED
            ============================================ */
         .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 9999;
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
+            height: 100vh;
+            width: 100%;
         }
         
         .mobile-menu.open {
             transform: translateX(0);
+        }
+        
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+        }
+        
+        .mobile-menu-overlay.active {
+            display: block;
         }
         
         /* ============================================
@@ -815,6 +839,36 @@
             background: linear-gradient(90deg, var(--gold-dark), var(--gold));
             transition: width 0.5s ease;
         }
+
+        /* ============================================
+           MOBILE MENU LINK STYLES - FIXED
+           ============================================ */
+        .mobile-menu-link {
+            display: block;
+            padding: 14px 20px;
+            color: #1a365d;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mobile-menu-link:hover {
+            background: #fdf8f0;
+            color: #b8860b;
+            padding-left: 28px;
+        }
+        
+        .mobile-menu-link i {
+            width: 24px;
+            color: #c9a33d;
+            margin-right: 12px;
+        }
+        
+        /* Fix for mobile menu scrolling */
+        .mobile-menu-content {
+            padding-bottom: 100px;
+        }
     </style>
     
     {% block extra_css %}{% endblock %}
@@ -853,16 +907,17 @@
                     <a href="{% url 'job_list' %}" class="nav-link">Jobs</a>
                     <a href="{% url 'countries' %}" class="nav-link">Countries</a>
                     <a href="{% url 'employers' %}" class="nav-link">Employers</a>
-                    <a href="{% url 'agencies' %}" class="nav-link">Recruitment Agencies</a>
+                    <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
+                    <a href="{% url 'agencies:agency_list' %}" class="nav-link">Recruitment Agencies</a>
                     <a href="{% url 'about' %}" class="nav-link">About Us</a>
                     <a href="{% url 'contact' %}" class="nav-link">Contact</a>
                 </div>
 
-                <!-- Auth Buttons -->
-                <div class="flex items-center space-x-4">
+                <!-- Auth Buttons + Mobile Menu Toggle -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     {% if user.is_authenticated %}
                         <!-- Notification Bell -->
-                        <div class="relative notification-badge">
+                        <div class="relative notification-badge hidden sm:block">
                             <button class="text-gray-600 hover:text-gold-dark transition-colors p-2 rounded-full hover:bg-gray-100" id="notificationToggle">
                                 <i class="fas fa-bell text-xl"></i>
                                 <span class="badge" id="notificationCount">{{ unread_notifications|default:0 }}</span>
@@ -884,18 +939,18 @@
 
                         <!-- User Dropdown -->
                         <div class="relative dropdown">
-                            <button class="flex items-center space-x-3 focus:outline-none group">
-                                <div class="w-10 h-10 rounded-full gradient-gold flex items-center justify-center text-white font-semibold text-sm gov-font">
+                            <button class="flex items-center space-x-2 sm:space-x-3 focus:outline-none group">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full gradient-gold flex items-center justify-center text-white font-semibold text-xs sm:text-sm gov-font">
                                     {{ user.full_name|slice:":1"|upper }}
                                 </div>
                                 <div class="hidden lg:block text-left">
                                     <p class="text-sm font-semibold text-gray-800 gov-font-sans">{{ user.full_name|truncatechars:15 }}</p>
                                     <p class="text-xs text-gray-500 gov-font-sans">{{ user.user_type|title }}</p>
                                 </div>
-                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180"></i>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180 hidden sm:inline-block"></i>
                             </button>
                             
-                            <div class="dropdown-menu absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-2xl py-2 border border-gray-100">
+                            <div class="dropdown-menu absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-2xl py-2 border border-gray-100">
                                 <a href="{% url 'dashboard' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
                                     <i class="fas fa-home w-6 text-gold"></i> Dashboard
                                 </a>
@@ -905,7 +960,7 @@
                                 <a href="{% url 'my_applications' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
                                     <i class="fas fa-file-alt w-6 text-gold"></i> My Applications
                                 </a>
-                                <a href="{% url 'payment_page' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
+                                <a href="{% url 'payments:payment_page' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
                                     <i class="fas fa-credit-card w-6 text-gold"></i> Payments
                                 </a>
                                 <hr class="my-1 border-gray-200">
@@ -915,80 +970,95 @@
                             </div>
                         </div>
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-gold-dark font-medium transition-colors px-4 py-2 rounded-lg hover:bg-gray-100 gov-font-sans">
-                            <i class="fas fa-sign-in-alt mr-2"></i> Login
+                        <a href="{% url 'login' %}" class="hidden sm:inline-block text-gray-700 hover:text-gold-dark font-medium transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 gov-font-sans text-sm">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Login
                         </a>
-                        <a href="{% url 'register' %}" class="btn-gold px-6 py-2.5 rounded-lg hover:shadow-lg transition-all duration-300 font-semibold gov-font-sans">
-                            <i class="fas fa-user-plus mr-2"></i> Register
+                        <a href="{% url 'register' %}" class="btn-gold px-3 sm:px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300 font-semibold gov-font-sans text-xs sm:text-sm whitespace-nowrap">
+                            <i class="fas fa-user-plus mr-1"></i> <span class="hidden xs:inline">Register</span>
                         </a>
                     {% endif %}
-                </div>
 
-                <!-- Mobile Menu Button -->
-                <button class="lg:hidden text-gray-700 hover:text-gold-dark transition-colors p-2" id="mobileMenuBtn">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="lg:hidden fixed inset-0 z-50 mobile-menu bg-white" id="mobileMenu">
-            <div class="flex justify-between items-center p-4 border-b border-gray-200">
-                <div class="flex items-center space-x-3">
-                    <img src="{% static 'images/coat-of-arms.png' %}" alt="Logo" class="h-10 w-auto">
-                    <div>
-                        <div class="text-[10px] text-gray-600 font-semibold gov-font-sans">Republic of Kenya</div>
-                        <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                    <!-- Mobile Menu Button (Hamburger) -->
+                    <div class="lg:hidden flex items-center">
+                        <button class="text-gray-700 hover:text-gold-dark transition-colors p-2 focus:outline-none" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
                     </div>
-                </div>
-                <button class="text-gray-700 hover:text-gold-dark transition-colors p-2" id="closeMobileMenu">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
-            </div>
-            
-            <div class="p-4 space-y-4">
-                <a href="{% url 'home' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-home mr-3 text-gold"></i> Home
-                </a>
-                <a href="{% url 'job_list' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-briefcase mr-3 text-gold"></i> Jobs
-                </a>
-                <a href="{% url 'countries' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-globe-africa mr-3 text-gold"></i> Countries
-                </a>
-                <a href="{% url 'employers' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-building mr-3 text-gold"></i> Employers
-                </a>
-                <a href="{% url 'agencies' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-handshake mr-3 text-gold"></i> Recruitment Agencies
-                </a>
-                <a href="{% url 'about' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-info-circle mr-3 text-gold"></i> About Us
-                </a>
-                <a href="{% url 'contact' %}" class="block text-gray-700 hover:text-gold-dark font-medium py-2 border-b border-gray-100 gov-font-sans">
-                    <i class="fas fa-envelope mr-3 text-gold"></i> Contact
-                </a>
-                
-                <div class="pt-4 space-y-3">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="block text-center btn-primary py-3 rounded-lg font-semibold gov-font-sans">
-                            <i class="fas fa-home mr-2"></i> Dashboard
-                        </a>
-                        <a href="{% url 'logout' %}" class="block text-center border border-red-500 text-red-500 py-3 rounded-lg font-semibold gov-font-sans">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
-                            <i class="fas fa-sign-in-alt mr-2"></i> Login
-                        </a>
-                        <a href="{% url 'register' %}" class="block text-center btn-gold py-3 rounded-lg font-semibold gov-font-sans">
-                            <i class="fas fa-user-plus mr-2"></i> Register
-                        </a>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- Mobile Menu - FIXED -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+            <div class="flex items-center space-x-3">
+                <img src="{% static 'images/coat-of-arms.png' %}" alt="Logo" class="h-10 w-auto">
+                <div>
+                    <div class="text-[10px] text-gray-600 font-semibold gov-font-sans">Republic of Kenya</div>
+                    <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                </div>
+            </div>
+            <button class="text-gray-700 hover:text-gold-dark transition-colors p-2" id="closeMobileMenu">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        
+        <div class="p-4 space-y-1 mobile-menu-content">
+            <a href="{% url 'home' %}" class="mobile-menu-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'job_list' %}" class="mobile-menu-link">
+                <i class="fas fa-briefcase"></i> Jobs
+            </a>
+            <a href="{% url 'countries' %}" class="mobile-menu-link">
+                <i class="fas fa-globe-africa"></i> Countries
+            </a>
+            <a href="{% url 'employers' %}" class="mobile-menu-link">
+                <i class="fas fa-building"></i> Employers
+            </a>
+            <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
+            <a href="{% url 'agencies:agency_list' %}" class="mobile-menu-link">
+                <i class="fas fa-handshake"></i> Recruitment Agencies
+            </a>
+            <a href="{% url 'about' %}" class="mobile-menu-link">
+                <i class="fas fa-info-circle"></i> About Us
+            </a>
+            <a href="{% url 'contact' %}" class="mobile-menu-link">
+                <i class="fas fa-envelope"></i> Contact
+            </a>
+            
+            <div class="pt-6 mt-4 border-t border-gray-200 space-y-3">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="block text-center btn-primary py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-home mr-2"></i> Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-user mr-2"></i> Profile
+                    </a>
+                    <a href="{% url 'my_applications' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-file-alt mr-2"></i> My Applications
+                    </a>
+                    <a href="{% url 'payments:payment_page' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-credit-card mr-2"></i> Payments
+                    </a>
+                    <a href="{% url 'logout' %}" class="block text-center border border-red-500 text-red-500 py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login
+                    </a>
+                    <a href="{% url 'register' %}" class="block text-center btn-gold py-3 rounded-lg font-semibold gov-font-sans">
+                        <i class="fas fa-user-plus mr-2"></i> Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
     <!-- ============================================ -->
     <!-- MESSAGES -->
@@ -1073,7 +1143,8 @@
                         <li><a href="{% url 'job_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Browse Jobs</a></li>
                         <li><a href="{% url 'countries' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Countries</a></li>
                         <li><a href="{% url 'employers' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Employers</a></li>
-                        <li><a href="{% url 'agencies' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Recruitment Agencies</a></li>
+                        <!-- FIXED: Changed 'agencies' to 'agencies:agency_list' -->
+                        <li><a href="{% url 'agencies:agency_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Recruitment Agencies</a></li>
                         <li><a href="{% url 'about' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> About Us</a></li>
                     </ul>
                 </div>
@@ -1190,28 +1261,39 @@
         });
 
         // ============================================
-        // MOBILE MENU
+        // MOBILE MENU - FIXED
         // ============================================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const closeMobileMenu = document.getElementById('closeMobileMenu');
         const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
-        mobileMenuBtn?.addEventListener('click', function() {
+        function openMobileMenu() {
             mobileMenu.classList.add('open');
+            mobileMenuOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-        });
+        }
 
-        closeMobileMenu?.addEventListener('click', function() {
+        function closeMobileMenuFn() {
             mobileMenu.classList.remove('open');
+            mobileMenuOverlay.classList.remove('active');
             document.body.style.overflow = 'auto';
-        });
+        }
+
+        mobileMenuBtn?.addEventListener('click', openMobileMenu);
+        closeMobileMenu?.addEventListener('click', closeMobileMenuFn);
+        mobileMenuOverlay?.addEventListener('click', closeMobileMenuFn);
 
         // Close mobile menu on link click
         document.querySelectorAll('#mobileMenu a').forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('open');
-                document.body.style.overflow = 'auto';
-            });
+            link.addEventListener('click', closeMobileMenuFn);
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+                closeMobileMenuFn();
+            }
         });
 
         // ============================================

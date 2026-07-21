@@ -8,21 +8,29 @@ from . import views
 # app_name = 'jobs'  # Comment this out
 
 urlpatterns = [
-    # Job Listings
+    # ==============================================
+    # PUBLIC JOB LISTINGS
+    # ==============================================
     path('jobs/', views.job_list, name='job_list'),
     path('jobs/<uuid:job_id>/', views.job_detail, name='job_detail'),
     
-    # Job Applications
+    # ==============================================
+    # JOB APPLICATIONS (Citizen)
+    # ==============================================
     path('jobs/<uuid:job_id>/apply/', views.apply_to_job, name='apply_to_job'),
     path('my-applications/', views.my_applications, name='my_applications'),
     path('application/<uuid:app_id>/', views.application_detail, name='application_detail'),
     path('application/<uuid:app_id>/withdraw/', views.withdraw_application, name='withdraw_application'),
     
-    # Browse by Country
+    # ==============================================
+    # BROWSE BY COUNTRY
+    # ==============================================
     path('countries/', views.country_list, name='countries'),
     path('countries/<slug:country_slug>/', views.country_jobs, name='country_jobs'),
     
-    # Browse by Category
+    # ==============================================
+    # BROWSE BY CATEGORY
+    # ==============================================
     path('categories/', views.category_list, name='categories'),
     path('categories/<slug:category_slug>/', views.category_jobs, name='category_jobs'),
     
@@ -36,7 +44,9 @@ urlpatterns = [
     path('employer/jobs/<uuid:job_id>/toggle-status/', views.toggle_job_status, name='toggle_job_status'),
     path('employer/jobs/<uuid:job_id>/applications/', views.job_applications, name='job_applications'),
     
-    # Application Status Management
+    # ==============================================
+    # APPLICATION STATUS MANAGEMENT (Employer/Agency)
+    # ==============================================
     path('employer/application/<uuid:app_id>/update-status/', views.update_application_status, name='update_application_status'),
     path('employer/application/<uuid:app_id>/notes/', views.add_application_notes, name='add_application_notes'),
     path('employer/application/<uuid:app_id>/download-cv/', views.download_cv, name='download_cv'),
@@ -46,4 +56,9 @@ urlpatterns = [
     # ==============================================
     path('featured-jobs/', views.featured_jobs_ajax, name='featured_jobs_ajax'),
     path('job-stats/', views.job_statistics_ajax, name='job_statistics_ajax'),
+    
+    # ==============================================
+    # API ENDPOINT
+    # ==============================================
+    path('api/jobs/', views.job_list_api, name='job_list_api'),
 ]

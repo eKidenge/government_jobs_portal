@@ -5,17 +5,72 @@
 
 {% block extra_css %}
 <style>
+    /* ============================================
+       GOVERNMENT CONFIRMATION STYLES
+       ============================================ */
+    
+    .confirmation-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+    }
+    
     .confirmation-container {
         max-width: 600px;
         margin: 0 auto;
+        padding: 0 20px;
     }
+    
     .confirmation-card {
         background: white;
         border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        padding: 40px;
+        box-shadow: 0 20px 60px rgba(26, 54, 93, 0.1);
+        padding: 40px 35px;
         text-align: center;
+        border: 1px solid rgba(201, 163, 61, 0.1);
+        position: relative;
+        overflow: hidden;
     }
+    
+    .confirmation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1a365d, #c9a33d, #1a365d);
+    }
+    
+    /* Government Seal */
+    .gov-seal {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid #c9a33d;
+        position: relative;
+    }
+    
+    .gov-seal i {
+        font-size: 40px;
+        color: #c9a33d;
+    }
+    
+    .gov-seal::after {
+        content: '☯';
+        position: absolute;
+        font-size: 12px;
+        color: rgba(255,255,255,0.1);
+        bottom: -5px;
+        right: -5px;
+    }
+    
+    /* Status Icons */
     .status-icon {
         width: 100px;
         height: 100px;
@@ -25,32 +80,54 @@
         justify-content: center;
         margin: 0 auto 20px;
         font-size: 48px;
+        position: relative;
+        transition: all 0.3s ease;
     }
+    
     .status-icon.pending {
-        background: #fefcbf;
+        background: #fffbeb;
         color: #d69e2e;
+        border: 3px solid #fefcbf;
+        animation: pulse-gold 2s ease-in-out infinite;
     }
+    
     .status-icon.completed {
-        background: #c6f6d5;
-        color: #48bb78;
+        background: #f0fff4;
+        color: #38a169;
+        border: 3px solid #c6f6d5;
     }
+    
     .status-icon.failed {
-        background: #fed7d7;
-        color: #fc8181;
+        background: #fff5f5;
+        color: #e53e3e;
+        border: 3px solid #fed7d7;
     }
-    .loading-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #2b6cb0;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
+    
+    @keyframes pulse-gold {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    
+    /* Titles */
+    .confirmation-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
     }
+    
+    .confirmation-title.pending { color: #1a365d; }
+    .confirmation-title.completed { color: #22543d; }
+    .confirmation-title.failed { color: #742a2a; }
+    
+    .confirmation-subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+    
+    /* Progress Ring */
     .progress-ring {
         width: 100%;
         height: 4px;
@@ -58,159 +135,601 @@
         border-radius: 2px;
         overflow: hidden;
         margin: 20px 0;
+        position: relative;
     }
+    
     .progress-ring .progress-bar {
         height: 100%;
-        background: linear-gradient(90deg, #2b6cb0, #4299e1);
+        background: linear-gradient(90deg, #c9a33d, #d4af37, #c9a33d);
+        background-size: 200% 100%;
         border-radius: 2px;
         animation: progress 3s ease-in-out infinite;
     }
+    
     @keyframes progress {
         0% { width: 0%; }
         50% { width: 70%; }
         100% { width: 100%; }
     }
+    
+    /* Details Box */
+    .details-box {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 20px 24px;
+        text-align: left;
+        border: 1px solid #e2e8f0;
+        margin: 20px 0;
+    }
+    
+    .details-box .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #edf2f7;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    
+    .details-box .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .details-box .detail-label {
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    .details-box .detail-value {
+        color: #1a365d;
+        font-weight: 600;
+        text-align: right;
+    }
+    
+    .details-box .detail-value .highlight {
+        color: #c9a33d;
+    }
+    
+    /* Status Box */
+    .status-box {
+        border-radius: 12px;
+        padding: 16px 20px;
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 16px 0;
+    }
+    
+    .status-box i {
+        font-size: 20px;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+    
+    .status-box .status-text {
+        flex: 1;
+    }
+    
+    .status-box .status-text h4 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+    }
+    
+    .status-box .status-text p {
+        font-family: 'Merriweather', serif;
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    
+    .status-box.info {
+        background: #ebf8ff;
+        border: 1px solid #bee3f8;
+    }
+    
+    .status-box.info i { color: #2b6cb0; }
+    .status-box.info .status-text h4 { color: #2a4365; }
+    .status-box.info .status-text p { color: #2b6cb0; }
+    
+    .status-box.success {
+        background: #f0fff4;
+        border: 1px solid #c6f6d5;
+    }
+    
+    .status-box.success i { color: #38a169; }
+    .status-box.success .status-text h4 { color: #22543d; }
+    .status-box.success .status-text p { color: #48bb78; }
+    
+    .status-box.error {
+        background: #fff5f5;
+        border: 1px solid #fed7d7;
+    }
+    
+    .status-box.error i { color: #e53e3e; }
+    .status-box.error .status-text h4 { color: #742a2a; }
+    .status-box.error .status-text p { color: #fc8181; }
+    
+    /* Buttons */
+    .btn-gov {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-gov-primary {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+    }
+    
+    .btn-gov-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(43, 108, 176, 0.3);
+    }
+    
+    .btn-gov-gold {
+        background: linear-gradient(135deg, #b8860b, #c9a33d);
+        color: white;
+    }
+    
+    .btn-gov-gold:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(201, 163, 61, 0.3);
+    }
+    
+    .btn-gov-outline {
+        background: transparent;
+        color: #1a365d;
+        border: 2px solid #1a365d;
+    }
+    
+    .btn-gov-outline:hover {
+        background: #1a365d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-gov-gray {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .btn-gov-gray:hover {
+        background: #edf2f7;
+        transform: translateY(-2px);
+    }
+    
+    .btn-gov-danger {
+        background: linear-gradient(135deg, #c53030, #e53e3e);
+        color: white;
+    }
+    
+    .btn-gov-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(229, 62, 62, 0.3);
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    /* Auto-refresh notice */
+    .auto-refresh-notice {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    
+    .auto-refresh-notice i {
+        color: #c9a33d;
+    }
+    
+    /* Loading spinner */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #e2e8f0;
+        border-top: 3px solid #c9a33d;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 8px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 640px) {
+        .confirmation-card {
+            padding: 24px 18px;
+        }
+        
+        .confirmation-title {
+            font-size: 1.4rem;
+        }
+        
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 36px;
+        }
+        
+        .gov-seal {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .gov-seal i {
+            font-size: 28px;
+        }
+        
+        .details-box {
+            padding: 14px 16px;
+        }
+        
+        .details-box .detail-row {
+            font-size: 0.8rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        
+        .details-box .detail-value {
+            text-align: left;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .btn-gov {
+            justify-content: center;
+        }
+        
+        .status-box {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .confirmation-card {
+            padding: 18px 14px;
+        }
+        
+        .confirmation-title {
+            font-size: 1.2rem;
+        }
+        
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 28px;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 min-h-screen py-12">
-    <div class="confirmation-container px-4 sm:px-6 lg:px-8">
+<section class="confirmation-section">
+    <div class="confirmation-container">
         <div class="confirmation-card">
+            
+            <!-- Government Seal -->
+            <div class="gov-seal">
+                <i class="fas fa-gavel"></i>
+            </div>
+            
             {% if payment.status == 'pending' %}
-                <!-- Pending -->
+                <!-- ============================================
+                     PENDING STATUS
+                     ============================================ -->
                 <div class="status-icon pending">
                     <i class="fas fa-clock"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">Payment in Progress</h2>
-                <p class="text-gray-600 mt-2">Your payment is being processed. Please wait...</p>
                 
+                <h2 class="confirmation-title pending">Payment Processing</h2>
+                <p class="confirmation-subtitle">Your transaction is being processed by the government payment gateway.</p>
+                
+                <!-- Progress Ring -->
                 <div class="progress-ring">
                     <div class="progress-bar"></div>
                 </div>
                 
-                <div class="bg-blue-50 rounded-xl p-4 text-left mt-4">
-                    <p class="text-sm text-gray-600">
-                        <i class="fas fa-info-circle text-primary-light mr-2"></i>
-                        <strong>Transaction Reference:</strong> {{ payment.transaction_reference }}
-                    </p>
-                    <p class="text-sm text-gray-600 mt-1">
-                        <i class="fas fa-phone text-primary-light mr-2"></i>
-                        <strong>Phone:</strong> {{ payment.metadata.phone_number|default:'N/A' }}
-                    </p>
-                    <p class="text-sm text-gray-600 mt-1">
-                        <i class="fas fa-money-bill-wave text-primary-light mr-2"></i>
-                        <strong>Amount:</strong> {{ payment.currency }} {{ payment.amount|floatformat:2 }}
-                    </p>
+                <!-- Details -->
+                <div class="details-box">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction Reference</span>
+                        <span class="detail-value">{{ payment.transaction_reference }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount</span>
+                        <span class="detail-value">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Method</span>
+                        <span class="detail-value">{{ payment.get_payment_method_display }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone Number</span>
+                        <span class="detail-value">{{ payment.metadata.phone_number|default:'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value"><span class="highlight">⏳ Pending</span></span>
+                    </div>
                 </div>
                 
-                <div class="mt-6">
-                    <button onclick="checkStatus()" class="bg-primary-light text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary transition">
-                        <i class="fas fa-sync-alt mr-2"></i> Check Status
+                <div class="status-box info">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="status-text">
+                        <h4>Please Wait</h4>
+                        <p>You will receive a confirmation notification once your payment is verified.</p>
+                    </div>
+                </div>
+                
+                <!-- Check Status Button -->
+                <div class="btn-group">
+                    <button onclick="checkStatus()" class="btn-gov btn-gov-gold">
+                        <i class="fas fa-sync-alt"></i> Check Status
                     </button>
                 </div>
                 
-                <p class="text-xs text-gray-500 mt-4">
-                    <i class="fas fa-info-circle mr-1"></i> This page will auto-refresh every 10 seconds
-                </p>
+                <div class="auto-refresh-notice">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                    Auto-refreshing every 10 seconds
+                </div>
                 
             {% elif payment.status == 'completed' %}
-                <!-- Completed -->
+                <!-- ============================================
+                     COMPLETED STATUS
+                     ============================================ -->
                 <div class="status-icon completed">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-green-600">Payment Successful!</h2>
-                <p class="text-gray-600 mt-2">Your payment has been verified and confirmed.</p>
                 
-                <div class="bg-green-50 rounded-xl p-4 text-left mt-4">
-                    <p class="text-sm text-gray-600">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                        <strong>Reference:</strong> {{ payment.transaction_reference }}
-                    </p>
-                    <p class="text-sm text-gray-600 mt-1">
-                        <i class="fas fa-money-bill-wave text-green-500 mr-2"></i>
-                        <strong>Amount:</strong> {{ payment.currency }} {{ payment.amount|floatformat:2 }}
-                    </p>
+                <h2 class="confirmation-title completed">Payment Successful! 🎉</h2>
+                <p class="confirmation-subtitle">Your payment has been verified and confirmed by the government.</p>
+                
+                <!-- Details -->
+                <div class="details-box">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction Reference</span>
+                        <span class="detail-value">{{ payment.transaction_reference }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount Paid</span>
+                        <span class="detail-value">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Method</span>
+                        <span class="detail-value">{{ payment.get_payment_method_display }}</span>
+                    </div>
                     {% if payment.mpesa_receipt_number %}
-                        <p class="text-sm text-gray-600 mt-1">
-                            <i class="fas fa-receipt text-green-500 mr-2"></i>
-                            <strong>M-Pesa Receipt:</strong> {{ payment.mpesa_receipt_number }}
-                        </p>
+                    <div class="detail-row">
+                        <span class="detail-label">M-Pesa Receipt</span>
+                        <span class="detail-value">{{ payment.mpesa_receipt_number }}</span>
+                    </div>
                     {% endif %}
-                    <p class="text-sm text-gray-600 mt-1">
-                        <i class="fas fa-calendar-check text-green-500 mr-2"></i>
-                        <strong>Date:</strong> {{ payment.completed_date|date:"F d, Y H:i" }}
-                    </p>
+                    <div class="detail-row">
+                        <span class="detail-label">Date Completed</span>
+                        <span class="detail-value">{{ payment.completed_date|date:"F d, Y H:i" }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value"><span style="color: #38a169;">✅ Verified</span></span>
+                    </div>
                 </div>
                 
-                <div class="flex flex-wrap gap-3 mt-6 justify-center">
-                    <a href="{% url 'citizen_dashboard' %}" class="bg-gradient-to-r from-primary-light to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition">
-                        <i class="fas fa-home mr-2"></i> Go to Dashboard
+                <div class="status-box success">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="status-text">
+                        <h4>Payment Verified</h4>
+                        <p>You now have access to apply for government jobs.</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                    <a href="{% url 'citizen_dashboard' %}" class="btn-gov btn-gov-primary">
+                        <i class="fas fa-home"></i> Go to Dashboard
                     </a>
-                    <a href="{% url 'payment_history' %}" class="border border-primary-light text-primary-light px-6 py-3 rounded-xl font-semibold hover:bg-primary-light hover:text-white transition">
-                        <i class="fas fa-history mr-2"></i> View History
+                    <a href="{% url 'job_list' %}" class="btn-gov btn-gov-gold">
+                        <i class="fas fa-search"></i> Browse Jobs
                     </a>
-                    <button onclick="window.print()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
-                        <i class="fas fa-print mr-2"></i> Print Receipt
+                    <button onclick="window.print()" class="btn-gov btn-gov-gray">
+                        <i class="fas fa-print"></i> Print Receipt
                     </button>
                 </div>
                 
             {% elif payment.status == 'failed' %}
-                <!-- Failed -->
+                <!-- ============================================
+                     FAILED STATUS
+                     ============================================ -->
                 <div class="status-icon failed">
                     <i class="fas fa-times-circle"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-red-600">Payment Failed</h2>
-                <p class="text-gray-600 mt-2">Your payment could not be processed.</p>
                 
-                <div class="bg-red-50 rounded-xl p-4 text-left mt-4">
-                    <p class="text-sm text-red-700">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        There was an issue processing your payment. Please try again or contact support.
-                    </p>
+                <h2 class="confirmation-title failed">Payment Failed</h2>
+                <p class="confirmation-subtitle">We were unable to process your payment.</p>
+                
+                <!-- Details -->
+                <div class="details-box">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction Reference</span>
+                        <span class="detail-value">{{ payment.transaction_reference }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount</span>
+                        <span class="detail-value">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value"><span style="color: #e53e3e;">❌ Failed</span></span>
+                    </div>
                 </div>
                 
-                <div class="flex flex-wrap gap-3 mt-6 justify-center">
-                    <a href="{% url 'payment_page' %}" class="bg-gradient-to-r from-primary-light to-secondary text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition">
-                        <i class="fas fa-redo mr-2"></i> Try Again
+                <div class="status-box error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div class="status-text">
+                        <h4>Payment Error</h4>
+                        <p>There was an issue processing your payment. Please try again or contact support.</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                    <a href="{% url 'payments:payment_page' %}" class="btn-gov btn-gov-primary">
+                        <i class="fas fa-redo"></i> Try Again
                     </a>
-                    <a href="{% url 'contact' %}" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
-                        <i class="fas fa-headset mr-2"></i> Contact Support
+                    <a href="{% url 'contact' %}" class="btn-gov btn-gov-outline">
+                        <i class="fas fa-headset"></i> Contact Support
+                    </a>
+                </div>
+                
+            {% elif payment.status == 'refunded' %}
+                <!-- ============================================
+                     REFUNDED STATUS
+                     ============================================ -->
+                <div class="status-icon" style="background: #faf5ff; color: #6b46c1; border: 3px solid #e9d8fd;">
+                    <i class="fas fa-undo-alt"></i>
+                </div>
+                
+                <h2 class="confirmation-title" style="color: #6b46c1;">Payment Refunded</h2>
+                <p class="confirmation-subtitle">Your payment has been refunded.</p>
+                
+                <!-- Details -->
+                <div class="details-box">
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction Reference</span>
+                        <span class="detail-value">{{ payment.transaction_reference }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amount Refunded</span>
+                        <span class="detail-value">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value"><span style="color: #6b46c1;">↩️ Refunded</span></span>
+                    </div>
+                </div>
+                
+                <div class="status-box" style="background: #faf5ff; border: 1px solid #e9d8fd;">
+                    <i class="fas fa-info-circle" style="color: #6b46c1;"></i>
+                    <div class="status-text">
+                        <h4 style="color: #44337a;">Refund Processed</h4>
+                        <p style="color: #805ad5;">The refund will reflect in your account within 5-7 business days.</p>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <a href="{% url 'citizen_dashboard' %}" class="btn-gov btn-gov-primary">
+                        <i class="fas fa-home"></i> Go to Dashboard
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn-gov btn-gov-outline">
+                        <i class="fas fa-headset"></i> Contact Support
                     </a>
                 </div>
             {% endif %}
+            
         </div>
     </div>
-</div>
+</section>
 
 <script>
-// Auto-refresh for pending status
+// ============================================
+// PAYMENT STATUS CHECKER
+// ============================================
+
 {% if payment.status == 'pending' %}
     let checkCount = 0;
+    const maxChecks = 30; // Maximum number of checks (5 minutes with 10s interval)
     
     function checkStatus() {
         const paymentId = '{{ payment.id }}';
-        fetch(`/api/payments/status/${paymentId}/`)
+        
+        fetch(`/payment/status/${paymentId}/`)
             .then(response => response.json())
             .then(data => {
+                console.log('Status check:', data);
+                
                 if (data.status === 'completed') {
                     location.reload();
                 } else if (data.status === 'failed') {
                     location.reload();
                 }
+                
                 checkCount++;
-                if (checkCount < 30) { // Try 30 times (5 minutes)
-                    setTimeout(checkStatus, 10000);
+                if (checkCount < maxChecks) {
+                    setTimeout(checkStatus, 10000); // Check every 10 seconds
                 }
             })
-            .catch(error => console.error('Error checking status:', error));
+            .catch(error => {
+                console.error('Error checking status:', error);
+                // Retry after 10 seconds even on error
+                checkCount++;
+                if (checkCount < maxChecks) {
+                    setTimeout(checkStatus, 10000);
+                }
+            });
     }
     
-    // Start checking after 10 seconds
-    setTimeout(checkStatus, 10000);
+    // Start checking after 5 seconds
+    setTimeout(checkStatus, 5000);
     
-    // Auto-reload every 60 seconds as fallback
-    setTimeout(() => location.reload(), 60000);
+    // Auto-reload after 5 minutes as fallback
+    setTimeout(() => {
+        location.reload();
+    }, 300000); // 5 minutes
 {% endif %}
+
+// ============================================
+// PRINT RECEIPT FUNCTIONALITY
+// ============================================
+
+function printReceipt() {
+    window.print();
+}
+
+// ============================================
+// KEYBOARD SHORTCUTS
+// ============================================
+
+document.addEventListener('keydown', function(e) {
+    // Ctrl+P or Cmd+P for print
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        {% if payment.status == 'completed' %}
+            // Allow print
+        {% else %}
+            e.preventDefault();
+            alert('Printing is only available for completed payments.');
+        {% endif %}
+    }
+});
 </script>
 {% endblock %}

@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.http import JsonResponse
 from django.utils import timezone
 import uuid
@@ -34,30 +34,47 @@ from notifications.models import Notification
 
 
 def register_view(request):
-    """Citizen registration view"""
+    """Registration view - handles all user types (citizen, employer, agency)"""
     if request.user.is_authenticated:
         return redirect('dashboard')
     
+    # Get user_type from POST or GET
+    user_type = request.POST.get('user_type') or request.GET.get('type', 'citizen')
+    
+    # Select form based on user type
+    if user_type == 'employer':
+        form_class = EmployerRegistrationForm
+    elif user_type == 'agency':
+        form_class = AgencyRegistrationForm
+    else:
+        form_class = CitizenRegistrationForm
+    
     if request.method == 'POST':
-        form = CitizenRegistrationForm(request.POST, request.FILES)
+        form = form_class(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             
             # Send welcome email
             try:
-                subject = 'Welcome to Government Jobs Portal'
-                html_message = render_to_string('emails/welcome.html', {'user': user})
+                subject = f'Welcome to Government Jobs Portal - {user.get_user_type_display()}'
+                html_message = render_to_string('emails/welcome.html', {
+                    'user': user,
+                    'site_url': settings.SITE_URL
+                })
                 plain_message = strip_tags(html_message)
                 send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=html_message)
             except Exception as e:
                 print(f"Email sending failed: {e}")
             
-            messages.success(request, 'Account created successfully! Please login.')
+            messages.success(request, f'Account created successfully! Please login as {user.get_user_type_display()}.')
             return redirect('login')
     else:
-        form = CitizenRegistrationForm()
+        form = form_class()
     
-    context = {'form': form}
+    context = {
+        'form': form,
+        'user_type': user_type,
+    }
     return render(request, 'accounts/register.html', context)
 
 
@@ -263,6 +280,14 @@ def profile_view(request):
     except UserProfile.DoesNotExist:
         profile = UserProfile.objects.create(user=user)
     
+    # Get applications count
+    applications_count = JobApplication.objects.filter(applicant=user).count()
+    
+    # Get payments count and total spent
+    payments = Payment.objects.filter(user=user, status='completed')
+    payments_count = payments.count()
+    total_spent = payments.aggregate(Sum('amount'))['amount__sum'] or 0
+    
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile, user=user)
         if form.is_valid():
@@ -286,8 +311,112 @@ def profile_view(request):
         'user': user,
         'profile': profile,
         'form': form,
+        'applications_count': applications_count,
+        'payments_count': payments_count,
+        'total_spent': total_spent,
     }
     return render(request, 'accounts/profile.html', context)
+
+
+@login_required
+def profile_edit(request):
+    """Edit user profile"""
+    user = request.user
+    try:
+        profile = UserProfile.objects.get(user=user)
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=user)
+    
+    if request.method == 'POST':
+        # Update user info
+        full_name = request.POST.get('full_name')
+        phone_number = request.POST.get('phone_number')
+        national_id = request.POST.get('national_id')
+        
+        if full_name:
+            user.full_name = full_name
+        if phone_number:
+            user.phone_number = phone_number
+        if national_id:
+            user.national_id = national_id
+        user.save()
+        
+        # Update profile if needed
+        # You can add more fields here
+        
+        messages.success(request, 'Your profile has been updated successfully!')
+        return redirect('profile')
+    
+    context = {
+        'user': user,
+        'profile': profile,
+    }
+    return render(request, 'accounts/profile_edit.html', context)
+
+
+@login_required
+def profile_update(request):
+    """Profile update AJAX endpoint"""
+    if request.method == 'POST':
+        user = request.user
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+        
+        form = UserProfileForm(request.POST, request.FILES, instance=profile, user=user)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Profile updated successfully!'})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+@login_required
+def upload_document(request):
+    """Upload document via AJAX"""
+    if request.method == 'POST' and request.FILES:
+        user = request.user
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(user=user)
+        
+        document_type = request.POST.get('document_type')
+        file = request.FILES.get('file')
+        
+        if document_type and file:
+            if document_type == 'cv':
+                profile.cv = file
+            elif document_type == 'national_id':
+                profile.national_id_document = file
+            elif document_type == 'passport':
+                profile.passport_document = file
+            elif document_type == 'photo':
+                profile.photo = file
+            elif document_type == 'cover_letter':
+                profile.cover_letter = file
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid document type.'})
+            
+            profile.save()
+            return JsonResponse({
+                'success': True, 
+                'message': 'Document uploaded successfully!',
+                'file_url': file.url if hasattr(file, 'url') else None
+            })
+    
+    return JsonResponse({'success': False, 'message': 'No file provided.'})
+
+
+@login_required
+def delete_document(request, doc_id):
+    """Delete uploaded document"""
+    # Implement document deletion
+    messages.success(request, 'Document deleted successfully.')
+    return redirect('profile')
 
 
 @login_required
@@ -312,7 +441,7 @@ def change_password(request):
         form = PasswordChangeForm()
     
     context = {'form': form}
-    return render(request, 'accounts/change_password.html', context)
+    return render(request, 'accounts/password_change.html', context)
 
 
 def password_reset_request(request):
@@ -408,68 +537,3 @@ def suspend_account(request):
         messages.success(request, f'User {user.full_name} has been suspended.')
         return redirect('admin_user_detail', user_id=user_id)
     return redirect('home')
-
-
-@login_required
-def profile_update(request):
-    """Profile update AJAX endpoint"""
-    if request.method == 'POST':
-        user = request.user
-        try:
-            profile = UserProfile.objects.get(user=user)
-        except UserProfile.DoesNotExist:
-            profile = UserProfile.objects.create(user=user)
-        
-        form = UserProfileForm(request.POST, request.FILES, instance=profile, user=user)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': True, 'message': 'Profile updated successfully!'})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    
-    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
-
-@login_required
-def upload_document(request):
-    """Upload document via AJAX"""
-    if request.method == 'POST' and request.FILES:
-        user = request.user
-        try:
-            profile = UserProfile.objects.get(user=user)
-        except UserProfile.DoesNotExist:
-            profile = UserProfile.objects.create(user=user)
-        
-        document_type = request.POST.get('document_type')
-        file = request.FILES.get('file')
-        
-        if document_type and file:
-            if document_type == 'cv':
-                profile.cv = file
-            elif document_type == 'national_id':
-                profile.national_id_document = file
-            elif document_type == 'passport':
-                profile.passport_document = file
-            elif document_type == 'photo':
-                profile.photo = file
-            elif document_type == 'cover_letter':
-                profile.cover_letter = file
-            else:
-                return JsonResponse({'success': False, 'message': 'Invalid document type.'})
-            
-            profile.save()
-            return JsonResponse({
-                'success': True, 
-                'message': 'Document uploaded successfully!',
-                'file_url': file.url if hasattr(file, 'url') else None
-            })
-    
-    return JsonResponse({'success': False, 'message': 'No file provided.'})
-
-
-@login_required
-def delete_document(request, doc_id):
-    """Delete uploaded document"""
-    # Implement document deletion
-    messages.success(request, 'Document deleted successfully.')
-    return redirect('profile')

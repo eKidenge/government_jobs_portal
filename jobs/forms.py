@@ -65,11 +65,11 @@ class JobSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
         # Populate country choices
         countries = Country.objects.filter(is_active=True).order_by('name')
-        self.fields['country'].choices = [('', 'All Countries')] + [(c.id, c.name) for c in countries]
+        self.fields['country'].choices = [('', 'All Countries')] + [(str(c.id), c.name) for c in countries]
         
         # Populate category choices
         categories = Category.objects.filter(is_active=True).order_by('name')
-        self.fields['category'].choices = [('', 'All Categories')] + [(c.id, c.name) for c in categories]
+        self.fields['category'].choices = [('', 'All Categories')] + [(str(c.id), c.name) for c in categories]
     
     def clean(self):
         cleaned_data = super().clean()
@@ -127,6 +127,25 @@ class JobApplicationForm(forms.ModelForm):
 class JobForm(forms.ModelForm):
     """Form for creating/editing jobs (for employers and agencies)"""
     
+    # Override the country and category fields to use ModelChoiceField
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.filter(is_active=True).order_by('name'),
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent'
+        }),
+        empty_label="Select Country",
+        required=True
+    )
+    
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.filter(is_active=True).order_by('name'),
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent'
+        }),
+        empty_label="Select Category",
+        required=True
+    )
+    
     class Meta:
         model = Job
         fields = [
@@ -140,12 +159,6 @@ class JobForm(forms.ModelForm):
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent',
                 'placeholder': 'e.g., Senior Software Developer'
-            }),
-            'country': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent'
-            }),
-            'category': forms.Select(attrs={
-                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent',
@@ -212,23 +225,31 @@ class JobForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Populate country choices
-        self.fields['country'].choices = [(c.id, c.name) for c in Country.objects.filter(is_active=True).order_by('name')]
-        # Populate category choices
-        self.fields['category'].choices = [(c.id, c.name) for c in Category.objects.filter(is_active=True).order_by('name')]
+        
         # Currency choices
-        self.fields['salary_currency'].choices = [
-            ('KES', 'KES - Kenyan Shilling'),
-            ('USD', 'USD - US Dollar'),
-            ('EUR', 'EUR - Euro'),
-            ('GBP', 'GBP - British Pound'),
-            ('CAD', 'CAD - Canadian Dollar'),
-            ('AUD', 'AUD - Australian Dollar'),
-            ('ZAR', 'ZAR - South African Rand'),
-            ('UGX', 'UGX - Ugandan Shilling'),
-            ('TZS', 'TZS - Tanzanian Shilling'),
-            ('RWF', 'RWF - Rwandan Franc'),
-        ]
+        self.fields['salary_currency'] = forms.ChoiceField(
+            choices=[
+                ('KES', 'KES - Kenyan Shilling'),
+                ('USD', 'USD - US Dollar'),
+                ('EUR', 'EUR - Euro'),
+                ('GBP', 'GBP - British Pound'),
+                ('CAD', 'CAD - Canadian Dollar'),
+                ('AUD', 'AUD - Australian Dollar'),
+                ('ZAR', 'ZAR - South African Rand'),
+                ('UGX', 'UGX - Ugandan Shilling'),
+                ('TZS', 'TZS - Tanzanian Shilling'),
+                ('RWF', 'RWF - Rwandan Franc'),
+            ],
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light focus:border-transparent'
+            })
+        )
+        
+        # Set default currency
+        if not self.instance.pk:
+            self.fields['salary_currency'].initial = 'KES'
+            # Set default closing date to 30 days from now
+            self.fields['closing_date'].initial = timezone.now() + timezone.timedelta(days=30)
     
     def clean(self):
         cleaned_data = super().clean()
@@ -246,12 +267,16 @@ class JobForm(forms.ModelForm):
             if closing_date <= timezone.now():
                 self.add_error('closing_date', 'Closing date must be in the future.')
         
-        # Validate required languages
+        # Validate required languages - handle both string and list
         required_languages = cleaned_data.get('required_languages')
-        if required_languages and isinstance(required_languages, str):
-            # Convert comma-separated string to list
-            languages = [lang.strip() for lang in required_languages.split(',') if lang.strip()]
-            cleaned_data['required_languages'] = languages
+        if required_languages:
+            if isinstance(required_languages, str):
+                # Convert comma-separated string to list
+                languages = [lang.strip() for lang in required_languages.split(',') if lang.strip()]
+                cleaned_data['required_languages'] = languages
+            elif isinstance(required_languages, list):
+                # Already a list, just clean empty values
+                cleaned_data['required_languages'] = [lang.strip() for lang in required_languages if lang and lang.strip()]
         
         return cleaned_data
 

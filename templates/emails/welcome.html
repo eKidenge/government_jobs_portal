@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Government Jobs Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #c9a33d;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #1a365d;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header .logo-text {
+            color: #c9a33d;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .content h2 {
+            color: #1a365d;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-top: 0;
+        }
+        .content p {
+            font-size: 16px;
+            color: #4a5568;
+        }
+        .content .highlight {
+            background-color: #fdf8f0;
+            border-left: 4px solid #c9a33d;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .content .highlight strong {
+            color: #1a365d;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d, #2b6cb0);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #2b6cb0, #1a365d);
+        }
+        .footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #718096;
+        }
+        .footer .contact {
+            margin-top: 10px;
+        }
+        .footer .contact a {
+            color: #c9a33d;
+            text-decoration: none;
+        }
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, #c9a33d, #d4af37);
+            width: 60px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏛️ Government Jobs Portal</h1>
+            <div class="logo-text">Republic of Kenya • Ministry of Labour</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <h2>Welcome, {{ user.full_name }}! 👋</h2>
+            
+            <p>Thank you for registering on the <strong>Government Jobs Portal</strong>. You are now part of a trusted platform connecting citizens to verified employment opportunities.</p>
+
+            <div class="highlight">
+                <strong>📋 Your Account Details:</strong><br>
+                <strong>Name:</strong> {{ user.full_name }}<br>
+                <strong>Email:</strong> {{ user.email }}<br>
+                <strong>User Type:</strong> {{ user.get_user_type_display }}<br>
+                <strong>Status:</strong> {{ user.get_status_display }}
+            </div>
+
+            <p>Your account is currently <strong>{{ user.get_status_display }}</strong>. Once verified, you will be able to:</p>
+            <ul style="color: #4a5568; padding-left: 20px;">
+                <li>Apply for jobs</li>
+                <li>Track your applications</li>
+                <li>Access verified employment opportunities</li>
+                <li>Receive job alerts and notifications</li>
+            </ul>
+
+            <div style="text-align: center;">
+                <a href="{{ site_url }}{% url 'login' %}" class="btn">Login to Your Account</a>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="font-size: 14px; color: #718096;">
+                    <strong>Need help?</strong> Contact us at 
+                    <a href="mailto:info@governmentjobs.go.ke" style="color: #c9a33d;">info@governmentjobs.go.ke</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="divider"></div>
+            <p style="margin: 0; font-size: 13px;">
+                This is an automated message from the Government Jobs Portal.
+            </p>
+            <p style="margin: 0; font-size: 13px; color: #a0aec0;">
+                Ministry of Labour, Nairobi, Kenya
+            </p>
+            <div class="contact">
+                <span style="margin: 0 10px;">📞 +254 20 222 0000</span>
+                <span style="margin: 0 10px;">✉️ info@governmentjobs.go.ke</span>
+            </div>
+            <p style="margin-top: 15px; font-size: 12px; color: #a0aec0;">
+                &copy; {% now "Y" %} Government Jobs Portal. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

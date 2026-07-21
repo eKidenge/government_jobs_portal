@@ -29,7 +29,7 @@ from rest_framework_simplejwt.views import (
 from static_pages import views as static_views
 
 urlpatterns = [
-    # Admin
+    # Django Admin
     path('admin/', admin.site.urls),
     
     # Home/Landing Page - using static_pages app
@@ -59,6 +59,11 @@ urlpatterns = [
     
     # Static Pages App (About, Contact, FAQ, etc.)
     path('', include('static_pages.urls')),
+    
+    # ==============================================
+    # ADMIN PANEL APP - Using 'panel/' prefix to avoid conflict with Django admin
+    # ==============================================
+    path('panel/', include('admin_panel.urls', namespace='admin_panel')),
     
     # ==============================================
     # API ENDPOINTS

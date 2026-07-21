@@ -5,107 +5,427 @@
 
 {% block extra_css %}
 <style>
-    .admin-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+    /* ============================================
+       GOVERNMENT FONTS
+       ============================================ */
+    .gov-font {
+        font-family: 'Playfair Display', serif !important;
     }
-    .admin-table th {
-        background: #f7fafc;
-        padding: 12px 16px;
-        text-align: left;
-        font-size: 12px;
+    .gov-font-body {
+        font-family: 'Merriweather', serif !important;
+    }
+    .gov-font-sans {
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    /* ============================================
+       ACTION FORMS
+       ============================================ */
+    .action-form {
+        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .action-form button {
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
         font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #4a5568;
-        border-bottom: 2px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        z-index: 10;
+        transition: all 0.2s ease;
     }
-    .admin-table td {
-        padding: 12px 16px;
-        border-bottom: 1px solid #e2e8f0;
-        vertical-align: middle;
+    .action-form button:hover {
+        transform: translateY(-2px);
     }
-    .admin-table tr:hover {
-        background: #f7fafc;
+
+    /* ============================================
+       PAGE HEADER
+       ============================================ */
+    .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
     }
+    .page-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #0a1628;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+    }
+    .page-header h1 i {
+        color: #c9a33d;
+        margin-right: 12px;
+    }
+    .page-header .subtitle {
+        font-family: 'Inter', sans-serif;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    /* ============================================
+       FILTER SECTION
+       ============================================ */
     .filter-section {
         background: white;
         border-radius: 16px;
         padding: 16px 20px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid rgba(201, 163, 61, 0.06);
         margin-bottom: 20px;
     }
     .filter-section select,
     .filter-section input {
         padding: 8px 12px;
-        border: 1px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
         border-radius: 8px;
         font-size: 14px;
+        font-family: 'Inter', sans-serif;
         transition: border-color 0.3s;
+        background: #f7fafc;
     }
     .filter-section select:focus,
     .filter-section input:focus {
-        border-color: #2b6cb0;
+        border-color: #c9a33d;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+        background: white;
     }
+    .filter-section .btn-filter {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        color: white;
+        padding: 8px 24px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .filter-section .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 54, 93, 0.2);
+    }
+    .filter-section .btn-clear {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 8px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .filter-section .btn-clear:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    /* ============================================
+       TABLE
+       ============================================ */
+    .admin-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table th {
+        background: #f7fafc;
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #4a5568;
+        border-bottom: 2px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    .admin-table tr:hover {
+        background: #fdf8f0;
+    }
+
+    /* ============================================
+       BULK ACTIONS
+       ============================================ */
     .bulk-actions {
         display: flex;
         gap: 8px;
         align-items: center;
+        flex-wrap: wrap;
     }
     .bulk-actions select {
         padding: 6px 12px;
-        border: 1px solid #e2e8f0;
+        border: 2px solid #e2e8f0;
         border-radius: 8px;
         font-size: 13px;
+        font-family: 'Inter', sans-serif;
+        background: #f7fafc;
+        transition: border-color 0.3s;
     }
+    .bulk-actions select:focus {
+        border-color: #c9a33d;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+    }
+    .bulk-actions .btn-apply {
+        background: #0a1628;
+        color: white;
+        padding: 6px 20px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .bulk-actions .btn-apply:hover {
+        background: #1a365d;
+        transform: translateY(-2px);
+    }
+
+    /* ============================================
+       ACTION BUTTONS
+       ============================================ */
     .action-btn {
         padding: 6px 12px;
         border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 11px;
+        font-weight: 700;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     .action-btn:hover {
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
-    .btn-approve { background: #c6f6d5; color: #22543d; }
-    .btn-approve:hover { background: #9ae6b4; }
-    .btn-reject { background: #fed7d7; color: #742a2a; }
-    .btn-reject:hover { background: #feb2b2; }
-    .btn-feature { background: #fefcbf; color: #975a16; }
-    .btn-feature:hover { background: #f6e05e; }
-    .btn-edit { background: #bee3f8; color: #2b6cb0; }
-    .btn-edit:hover { background: #90cdf4; }
-    .btn-delete { background: #fed7d7; color: #742a2a; }
-    .btn-delete:hover { background: #feb2b2; }
+    .btn-approve { background: #dcfce7; color: #166534; }
+    .btn-approve:hover { background: #bbf7d0; }
+    .btn-reject { background: #fee2e2; color: #991b1b; }
+    .btn-reject:hover { background: #fecaca; }
+    .btn-feature { background: #fef9c3; color: #854d0e; }
+    .btn-feature:hover { background: #fef08a; }
+    .btn-edit { background: #dbeafe; color: #1e40af; }
+    .btn-edit:hover { background: #bfdbfe; }
+    .btn-delete { background: #fee2e2; color: #991b1b; }
+    .btn-delete:hover { background: #fecaca; }
+
+    /* ============================================
+       STATUS BADGES
+       ============================================ */
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        display: inline-block;
+        font-family: 'Inter', sans-serif;
+    }
+    .status-badge.status-pending { background: #fef9c3; color: #854d0e; }
+    .status-badge.status-approved { background: #dcfce7; color: #166534; }
+    .status-badge.status-active { background: #dcfce7; color: #166534; }
+    .status-badge.status-closed { background: #f1f5f9; color: #475569; }
+    .status-badge.status-rejected { background: #fee2e2; color: #991b1b; }
+    .status-badge.status-expired { background: #fee2e2; color: #991b1b; }
+    .status-badge.status-draft { background: #f1f5f9; color: #475569; }
+
+    /* ============================================
+       PAGINATION
+       ============================================ */
+    .pagination-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .pagination-wrapper .info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    .pagination-wrapper .links {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+    .pagination-wrapper .links a,
+    .pagination-wrapper .links span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        transition: all 0.2s ease;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+    .pagination-wrapper .links a:hover {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    .pagination-wrapper .links .current {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+    .empty-state i {
+        font-size: 48px;
+        color: #c9a33d;
+        opacity: 0.25;
+        margin-bottom: 16px;
+        display: block;
+    }
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #4a5568;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        font-size: 0.9rem;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+        .filter-section form {
+            flex-direction: column;
+        }
+        .filter-section form select,
+        .filter-section form input,
+        .filter-section form button {
+            width: 100%;
+        }
+        .admin-table {
+            font-size: 0.8rem;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 8px 10px;
+        }
+        .action-btn {
+            font-size: 9px;
+            padding: 4px 8px;
+        }
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        .bulk-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .bulk-actions select,
+        .bulk-actions .btn-apply {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-header h1 {
+            font-size: 1.2rem;
+        }
+        .admin-table {
+            font-size: 0.7rem;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 6px 8px;
+        }
+        .status-badge {
+            font-size: 8px;
+            padding: 2px 8px;
+        }
+        .action-btn {
+            font-size: 8px;
+            padding: 3px 6px;
+        }
+        .action-form button {
+            font-size: 8px;
+            padding: 3px 6px;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="bg-gray-50 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <!-- Header -->
-        <div class="flex flex-wrap justify-between items-center mb-6">
+        <div class="page-header">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manage Jobs</h1>
-                <p class="text-gray-600 text-sm">{{ paginator.count }} jobs found</p>
+                <h1>
+                    <i class="fas fa-briefcase"></i> Manage Jobs
+                </h1>
+                <p class="subtitle">
+                    <i class="fas fa-list mr-1"></i> {{ paginator.count }} jobs found
+                </p>
             </div>
-            <div class="flex flex-wrap gap-3 mt-3 md:mt-0">
-                <a href="{% url 'admin_panel:admin_add_job' %}" class="bg-primary-light text-white px-4 py-2 rounded-xl hover:bg-primary transition flex items-center gap-2">
+            <div class="flex flex-wrap gap-3">
+                <a href="{% url 'admin_panel:admin_add_job' %}" class="bg-primary-light text-white px-4 py-2 rounded-xl hover:bg-primary transition flex items-center gap-2 font-semibold text-sm">
                     <i class="fas fa-plus"></i> Add New Job
                 </a>
-                <a href="{% url 'admin_panel:admin_export_jobs' %}" class="bg-white text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:shadow transition flex items-center gap-2">
-                    <i class="fas fa-file-export"></i> Export
+                <a href="{% url 'admin_panel:admin_export_jobs' %}" class="bg-white text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition flex items-center gap-2 font-semibold text-sm">
+                    <i class="fas fa-file-export" style="color:#c9a33d;"></i> Export
                 </a>
             </div>
         </div>
@@ -115,7 +435,7 @@
             <form method="GET" class="flex flex-wrap items-center gap-4">
                 <div class="flex-1 min-w-[150px]">
                     <input type="text" name="search" value="{{ current_filters.search|default:'' }}" 
-                           placeholder="Search jobs..." 
+                           placeholder="Search jobs by title or description..." 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
                 </div>
                 <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
@@ -142,21 +462,23 @@
                         </option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="bg-primary-light text-white px-6 py-2 rounded-lg hover:bg-primary transition">
-                    <i class="fas fa-filter"></i> Filter
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-filter"></i> Apply Filters
                 </button>
-                <a href="{% url 'admin_panel:admin_job_list' %}" class="text-gray-500 hover:text-gray-700 text-sm">Clear</a>
+                <a href="{% url 'admin_panel:admin_job_list' %}" class="btn-clear">
+                    <i class="fas fa-undo"></i> Clear
+                </a>
             </form>
         </div>
 
         <!-- Bulk Actions -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm mb-6">
+        <div class="bg-white rounded-2xl p-4 shadow-sm mb-6 border border-gold/5">
             <form method="POST" action="{% url 'admin_panel:admin_bulk_job_action' %}" id="bulkActionForm">
                 {% csrf_token %}
                 <div class="flex flex-wrap items-center gap-4">
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-primary-light focus:ring-primary-light">
-                        <label for="selectAll" class="text-sm text-gray-600">Select All</label>
+                        <label for="selectAll" class="text-sm text-gray-600 font-medium">Select All</label>
                     </div>
                     <div class="bulk-actions">
                         <select name="action" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
@@ -167,7 +489,7 @@
                             <option value="unfeature">Unfeature</option>
                             <option value="delete">Delete</option>
                         </select>
-                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition">
+                        <button type="submit" class="btn-apply">
                             Apply
                         </button>
                     </div>
@@ -178,7 +500,7 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gold/5">
             <div class="overflow-x-auto">
                 <table class="admin-table">
                     <thead>
@@ -218,10 +540,18 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="text-sm">{{ job.employer.company_name|default:job.agency.agency_name|default:'N/A' }}</div>
+                                    <div class="text-sm">
+                                        {% if job.employer %}
+                                            {{ job.employer.company_name }}
+                                        {% elif job.agency %}
+                                            {{ job.agency.agency_name }}
+                                        {% else %}
+                                            <span style="color:#a0aec0;">N/A</span>
+                                        {% endif %}
+                                    </div>
                                 </td>
-                                <td>{{ job.country.name }}</td>
-                                <td>{{ job.category.name }}</td>
+                                <td>{{ job.country.name|default:'N/A' }}</td>
+                                <td>{{ job.category.name|default:'N/A' }}</td>
                                 <td>
                                     <span class="status-badge status-{{ job.status }}">
                                         {{ job.get_status_display }}
@@ -239,36 +569,50 @@
                                 <td>
                                     <div class="flex flex-wrap gap-1">
                                         {% if job.status == 'pending' %}
-                                            <a href="{% url 'admin_panel:admin_approve_job' job.id %}" 
-                                               class="action-btn btn-approve" onclick="return confirm('Approve this job?')">
-                                                <i class="fas fa-check"></i>
-                                            </a>
-                                            <a href="{% url 'admin_panel:admin_reject_job' job.id %}" 
-                                               class="action-btn btn-reject" onclick="return confirm('Reject this job?')">
-                                                <i class="fas fa-times"></i>
-                                            </a>
+                                            <form method="post" action="{% url 'admin_panel:admin_approve_job' job.id %}" style="display:inline;" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-approve" onclick="return confirm('Approve this job?')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form method="post" action="{% url 'admin_panel:admin_reject_job' job.id %}" style="display:inline;" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-reject" onclick="return confirm('Reject this job?')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
                                         {% endif %}
                                         {% if job.status == 'active' %}
-                                            <a href="{% url 'admin_panel:admin_feature_job' job.id %}" 
-                                               class="action-btn btn-feature" onclick="return confirm('Toggle featured status?')">
-                                                <i class="fas fa-star"></i>
-                                            </a>
+                                            <form method="post" action="{% url 'admin_panel:admin_feature_job' job.id %}" style="display:inline;" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-feature" onclick="return confirm('Toggle featured status?')">
+                                                    <i class="fas fa-star"></i>
+                                                </button>
+                                            </form>
                                         {% endif %}
                                         <a href="{% url 'admin_panel:admin_edit_job' job.id %}" class="action-btn btn-edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="{% url 'admin_panel:admin_delete_job' job.id %}" 
-                                           class="action-btn btn-delete" onclick="return confirm('Delete this job permanently?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <form method="post" action="{% url 'admin_panel:admin_delete_job' job.id %}" style="display:inline;" class="action-form" onsubmit="return confirm('Delete this job permanently?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn btn-delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="9" class="text-center py-12 text-gray-500">
-                                    <i class="fas fa-briefcase text-4xl mb-4 block"></i>
-                                    No jobs found. Try adjusting your filters.
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <i class="fas fa-briefcase"></i>
+                                        <h3>No Jobs Found</h3>
+                                        <p>Try adjusting your filters or search terms to find more jobs.</p>
+                                        <a href="{% url 'admin_panel:admin_job_list' %}" class="action-btn btn-edit" style="margin-top:16px;display:inline-flex;">
+                                            <i class="fas fa-undo"></i> Clear Filters
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -279,36 +623,41 @@
 
         <!-- Pagination -->
         {% if jobs.has_other_pages %}
-            <div class="flex flex-wrap justify-between items-center mt-6">
-                <div class="text-sm text-gray-600">
-                    Showing {{ jobs.start_index }} to {{ jobs.end_index }} of {{ jobs.paginator.count }} jobs
+            <div class="pagination-wrapper">
+                <div class="info">
+                    Showing <strong>{{ jobs.start_index }}</strong> to <strong>{{ jobs.end_index }}</strong> 
+                    of <strong>{{ jobs.paginator.count }}</strong> jobs
                 </div>
-                <div class="flex gap-2">
+                <div class="links">
                     {% if jobs.has_previous %}
-                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">First</a>
-                        <a href="?page={{ jobs.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Previous</a>
+                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ jobs.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
                     {% endif %}
                     
                     {% for num in jobs.paginator.page_range %}
                         {% if jobs.number == num %}
-                            <span class="px-3 py-2 bg-primary-light text-white rounded-lg text-sm">{{ num }}</span>
+                            <span class="current">{{ num }}</span>
                         {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
-                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                               class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">{{ num }}</a>
+                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
                         {% endif %}
                     {% endfor %}
                     
                     {% if jobs.has_next %}
-                        <a href="?page={{ jobs.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Next</a>
-                        <a href="?page={{ jobs.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Last</a>
+                        <a href="?page={{ jobs.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                        <a href="?page={{ jobs.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
                     {% endif %}
                 </div>
             </div>
         {% endif %}
+        
     </div>
 </div>
 
@@ -368,6 +717,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
             }
         }
+    });
+
+    // Prevent default link behavior for action buttons
+    document.querySelectorAll('.action-form button').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            // The confirm dialog is handled by onclick
+            // This ensures the form submits properly
+        });
     });
 });
 </script>

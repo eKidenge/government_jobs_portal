@@ -1,83 +1,522 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Manage Agencies - Admin Panel{% endblock %}
+{% block title %}Manage Recruitment Agencies - Government Jobs Portal{% endblock %}
 
 {% block extra_css %}
 <style>
+    /* ============================================
+       GOVERNMENT ADMIN STYLES
+       ============================================ */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+    
+    .admin-header {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 30px 0;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #c9a33d;
+    }
+    
+    .admin-header::before {
+        content: '⚜️';
+        position: absolute;
+        bottom: -20%;
+        right: 5%;
+        font-size: 180px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .admin-header .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .admin-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2.2rem;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    }
+    
+    .admin-header p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
+        margin-top: 4px;
+    }
+    
+    .admin-header .gov-seal {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        background: rgba(201, 163, 61, 0.15);
+        border-radius: 50%;
+        text-align: center;
+        line-height: 60px;
+        color: #c9a33d;
+        font-size: 28px;
+        border: 2px solid rgba(201, 163, 61, 0.3);
+        margin-right: 16px;
+    }
+    
     .agency-card {
         background: white;
         border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e8ecf1;
+        position: relative;
     }
+    
+    .agency-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        border-radius: 16px 16px 0 0;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
     .agency-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        border-color: #805ad5;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        border-color: #c9a33d;
     }
+    
+    .agency-card:hover::before {
+        opacity: 1;
+    }
+    
     .agency-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
-        background: #faf5ff;
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #fdf8f0, #faf3e0);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 24px;
-        color: #805ad5;
+        font-size: 26px;
+        color: #c9a33d;
         flex-shrink: 0;
+        border: 1px solid rgba(201, 163, 61, 0.15);
     }
+    
+    .agency-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+        letter-spacing: 0.3px;
+    }
+    
+    .agency-email {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .verification-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .verification-badge.verified {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .verification-badge.unverified {
+        background: #fefcbf;
+        color: #744210;
+    }
+    
     .license-status {
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        padding: 2px 10px;
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .license-valid { background: #c6f6d5; color: #22543d; }
-    .license-expiring { background: #fefcbf; color: #975a16; }
-    .license-expired { background: #fed7d7; color: #742a2a; }
+    
+    .license-valid { 
+        background: #c6f6d5; 
+        color: #22543d; 
+    }
+    .license-expiring { 
+        background: #fefcbf; 
+        color: #975a16; 
+    }
+    .license-expired { 
+        background: #fed7d7; 
+        color: #742a2a; 
+    }
+    
+    .agency-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #718096;
+    }
+    
+    .agency-meta i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    
+    /* Action Buttons */
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .btn-view {
+        background: #ebf8ff;
+        color: #2b6cb0;
+    }
+    .btn-view:hover { background: #bee3f8; }
+    
+    .btn-verify {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    .btn-verify:hover { background: #9ae6b4; }
+    
+    .btn-suspend {
+        background: #fefcbf;
+        color: #744210;
+    }
+    .btn-suspend:hover { background: #f6e05e; }
+    
+    .btn-activate {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    .btn-activate:hover { background: #9ae6b4; }
+    
+    .btn-delete {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    .btn-delete:hover { background: #feb2b2; }
+    
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #e8ecf1;
+    }
+    
+    .filter-section label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4a5568;
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .filter-section input,
+    .filter-section select {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .filter-section input:focus,
+    .filter-section select:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.08);
+    }
+    
+    .btn-filter {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        padding: 10px 28px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(43, 108, 176, 0.25);
+    }
+    
+    .btn-pending {
+        background: #fefcbf;
+        color: #744210;
+        padding: 8px 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-pending:hover {
+        background: #f6e05e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(246, 224, 94, 0.3);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #1a365d;
+        font-size: 1.5rem;
+    }
+    
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        max-width: 400px;
+        margin: 10px auto;
+    }
+    
+    /* Pagination */
+    .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+    }
+    
+    .pagination .page-link {
+        padding: 8px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        color: #4a5568;
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .pagination .page-link:hover {
+        background: #f7fafc;
+        border-color: #c9a33d;
+        transform: translateY(-1px);
+    }
+    
+    .pagination .page-link.active {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-color: #1a365d;
+    }
+    
+    .pagination .page-info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .admin-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .admin-header .gov-seal {
+            width: 48px;
+            height: 48px;
+            line-height: 48px;
+            font-size: 22px;
+        }
+        
+        .agency-card {
+            padding: 16px;
+        }
+        
+        .filter-section {
+            padding: 16px;
+        }
+        
+        .btn-filter {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .admin-header {
+            padding: 20px 0;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.3rem;
+        }
+        
+        .agency-card .flex-wrap {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Admin Header -->
+<section class="admin-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div class="flex items-center">
+                <div class="gov-seal">
+                    <i class="fas fa-gavel"></i>
+                </div>
+                <div>
+                    <h1>Manage Recruitment Agencies</h1>
+                    <p>Review, verify, and manage all recruitment agencies on the platform</p>
+                </div>
+            </div>
+            <div class="mt-3 md:mt-0">
+                <a href="{% url 'admin_panel:admin_agency_list' %}?verified=false" class="btn-pending">
+                    <i class="fas fa-clock"></i> Pending Verification
+                    {% if pending_count %}
+                        <span class="bg-red-500 text-white text-xs rounded-full px-2 py-0.5 ml-1">{{ pending_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
 <div class="bg-gray-50 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="flex flex-wrap justify-between items-center mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manage Recruitment Agencies</h1>
-                <p class="text-gray-600 text-sm">{{ paginator.count }} agencies found</p>
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="text-2xl font-bold text-gray-800 font-playfair">{{ paginator.count }}</div>
+                <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Total Agencies</div>
             </div>
-            <div class="flex flex-wrap gap-3 mt-3 md:mt-0">
-                <a href="{% url 'admin_panel:admin_agency_list' %}?verified=false" class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-xl hover:bg-yellow-200 transition flex items-center gap-2">
-                    <i class="fas fa-clock"></i> Pending Verification
-                </a>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="text-2xl font-bold text-green-600 font-playfair">{{ verified_count }}</div>
+                <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Verified</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="text-2xl font-bold text-yellow-600 font-playfair">{{ unverified_count }}</div>
+                <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">Pending</div>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div class="text-2xl font-bold text-red-600 font-playfair">{{ expired_count }}</div>
+                <div class="text-xs text-gray-500 font-inter uppercase tracking-wider">License Expired</div>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm mb-6">
-            <form method="GET" class="flex flex-wrap items-center gap-4">
-                <div class="flex-1 min-w-[200px]">
-                    <input type="text" name="search" value="{{ current_filters.search|default:'' }}" 
-                           placeholder="Search agencies..." 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+        <div class="filter-section mb-6">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="search"><i class="fas fa-search text-primary-light"></i> Search</label>
+                    <input type="text" name="search" id="search" 
+                           value="{{ current_filters.search|default:'' }}" 
+                           placeholder="Search agencies by name or email...">
                 </div>
-                <select name="verified" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
-                    <option value="">All Status</option>
-                    <option value="true" {% if current_filters.verified == 'true' %}selected{% endif %}>Verified</option>
-                    <option value="false" {% if current_filters.verified == 'false' %}selected{% endif %}>Unverified</option>
-                </select>
-                <button type="submit" class="bg-primary-light text-white px-6 py-2 rounded-lg hover:bg-primary transition">
-                    <i class="fas fa-filter"></i> Filter
-                </button>
-                <a href="{% url 'admin_panel:admin_agency_list' %}" class="text-gray-500 hover:text-gray-700 text-sm">Clear</a>
+                <div>
+                    <label for="verified"><i class="fas fa-check-circle text-primary-light"></i> Verification Status</label>
+                    <select name="verified" id="verified">
+                        <option value="">All Status</option>
+                        <option value="true" {% if current_filters.verified == 'true' %}selected{% endif %}>Verified</option>
+                        <option value="false" {% if current_filters.verified == 'false' %}selected{% endif %}>Unverified</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="license_status"><i class="fas fa-id-card text-primary-light"></i> License Status</label>
+                    <select name="license_status" id="license_status">
+                        <option value="">All Licenses</option>
+                        <option value="valid" {% if current_filters.license_status == 'valid' %}selected{% endif %}>Valid</option>
+                        <option value="expiring" {% if current_filters.license_status == 'expiring' %}selected{% endif %}>Expiring Soon</option>
+                        <option value="expired" {% if current_filters.license_status == 'expired' %}selected{% endif %}>Expired</option>
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button type="submit" class="btn-filter">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'admin_panel:admin_agency_list' %}" 
+                       class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition font-inter font-semibold text-sm flex items-center gap-2">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
             </form>
         </div>
 
@@ -90,8 +529,8 @@
                             <i class="fas fa-handshake"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-gray-800 truncate">{{ agency.agency_name }}</h3>
-                            <p class="text-sm text-gray-500 truncate">{{ agency.user.email }}</p>
+                            <h3 class="agency-name truncate">{{ agency.agency_name }}</h3>
+                            <p class="agency-email truncate">{{ agency.user.email }}</p>
                             <div class="flex flex-wrap items-center gap-2 mt-2">
                                 <span class="verification-badge {% if agency.is_verified %}verified{% else %}unverified{% endif %}">
                                     <i class="fas {% if agency.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
@@ -111,52 +550,83 @@
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="mt-2 text-xs text-gray-500">
-                                <i class="fas fa-map-marker-alt mr-1"></i> {{ agency.country.name|default:'N/A' }}
-                                <span class="mx-1">•</span>
-                                <i class="fas fa-briefcase mr-1"></i> {{ agency.jobs_count }} jobs
-                            </div>
-                            <div class="mt-1 text-xs text-gray-500">
-                                <i class="fas fa-calendar mr-1"></i> License Expires: {{ agency.license_expiry|date:"M d, Y" }}
+                            <div class="agency-meta mt-2">
+                                <div class="flex flex-wrap gap-3">
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ agency.country.name|default:'N/A' }}</span>
+                                    <span><i class="fas fa-briefcase"></i> {{ agency.jobs_count|default:0 }} jobs</span>
+                                </div>
+                                <div class="mt-1">
+                                    <i class="fas fa-calendar-alt"></i> License Expires: 
+                                    <span class="font-semibold">{{ agency.license_expiry|date:"M d, Y" }}</span>
+                                    {% if agency.license_expiry < now %}
+                                        <span class="text-red-600 text-xs font-bold ml-1">(EXPIRED)</span>
+                                    {% elif agency.license_expiry < now|date:'Y-m-d'|add:'-30 days' %}
+                                        <span class="text-yellow-600 text-xs font-bold ml-1">(EXPIRING SOON)</span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Action Buttons -->
                     <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
                         <a href="{% url 'admin_panel:admin_agency_detail' agency.id %}" 
-                           class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-sm hover:bg-blue-200 transition">
+                           class="btn-action btn-view">
                             <i class="fas fa-eye"></i> View
                         </a>
+                        
                         {% if not agency.is_verified %}
-                            <a href="{% url 'admin_panel:admin_verify_agency' agency.id %}" 
-                               class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm hover:bg-green-200 transition"
-                               onclick="return confirm('Verify this agency?')">
-                                <i class="fas fa-check"></i> Verify
-                            </a>
+                            <form method="POST" action="{% url 'admin_panel:admin_verify_agency' agency.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="btn-action btn-verify"
+                                        onclick="return confirm('Are you sure you want to verify this agency?\n\nAgency: {{ agency.agency_name }}\nEmail: {{ agency.user.email }}')">
+                                    <i class="fas fa-check-circle"></i> Verify
+                                </button>
+                            </form>
                         {% endif %}
+                        
                         {% if agency.user.status != 'suspended' %}
-                            <a href="{% url 'admin_panel:admin_suspend_agency' agency.id %}" 
-                               class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-sm hover:bg-yellow-200 transition"
-                               onclick="return confirm('Suspend this agency?')">
-                                <i class="fas fa-pause"></i> Suspend
-                            </a>
+                            <form method="POST" action="{% url 'admin_panel:admin_suspend_agency' agency.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="btn-action btn-suspend"
+                                        onclick="return confirm('Are you sure you want to suspend this agency?\n\nAgency: {{ agency.agency_name }}\nEmail: {{ agency.user.email }}')">
+                                    <i class="fas fa-pause-circle"></i> Suspend
+                                </button>
+                            </form>
                         {% else %}
-                            <a href="{% url 'admin_panel:admin_activate_agency' agency.id %}" 
-                               class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm hover:bg-green-200 transition"
-                               onclick="return confirm('Activate this agency?')">
-                                <i class="fas fa-play"></i> Activate
-                            </a>
+                            <form method="POST" action="{% url 'admin_panel:admin_activate_agency' agency.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="btn-action btn-activate"
+                                        onclick="return confirm('Are you sure you want to activate this agency?\n\nAgency: {{ agency.agency_name }}\nEmail: {{ agency.user.email }}')">
+                                    <i class="fas fa-play-circle"></i> Activate
+                                </button>
+                            </form>
                         {% endif %}
-                        <a href="{% url 'admin_panel:admin_delete_agency' agency.id %}" 
-                           class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm hover:bg-red-200 transition"
-                           onclick="return confirm('Delete this agency permanently?')">
-                            <i class="fas fa-trash"></i> Delete
-                        </a>
+                        
+                        <form method="POST" action="{% url 'admin_panel:admin_delete_agency' agency.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    class="btn-action btn-delete"
+                                    onclick="return confirm('⚠️ WARNING: This action cannot be undone!\n\nAre you sure you want to permanently delete this agency?\n\nAgency: {{ agency.agency_name }}\nEmail: {{ agency.user.email }}\nJobs: {{ agency.jobs_count|default:0 }} jobs will also be deleted.')">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
             {% empty %}
-                <div class="col-span-full text-center py-12 text-gray-500">
-                    <i class="fas fa-handshake text-4xl mb-4 block"></i>
-                    No agencies found.
+                <div class="col-span-full">
+                    <div class="empty-state">
+                        <i class="fas fa-handshake"></i>
+                        <h3>No Agencies Found</h3>
+                        <p>There are no recruitment agencies matching your search criteria.</p>
+                        <a href="{% url 'admin_panel:admin_agency_list' %}" 
+                           class="inline-block mt-4 bg-primary-light text-white px-6 py-2 rounded-lg hover:bg-primary transition">
+                            <i class="fas fa-undo"></i> Clear Filters
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -164,35 +634,56 @@
         <!-- Pagination -->
         {% if agencies.has_other_pages %}
             <div class="flex flex-wrap justify-between items-center mt-6">
-                <div class="text-sm text-gray-600">
-                    Showing {{ agencies.start_index }} to {{ agencies.end_index }} of {{ agencies.paginator.count }} agencies
+                <div class="page-info">
+                    Showing <span class="font-semibold">{{ agencies.start_index }}</span> to 
+                    <span class="font-semibold">{{ agencies.end_index }}</span> of 
+                    <span class="font-semibold">{{ agencies.paginator.count }}</span> agencies
                 </div>
-                <div class="flex gap-2">
+                <div class="pagination">
                     {% if agencies.has_previous %}
                         <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">First</a>
+                           class="page-link">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
                         <a href="?page={{ agencies.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Previous</a>
+                           class="page-link">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
                     {% endif %}
                     
                     {% for num in agencies.paginator.page_range %}
                         {% if agencies.number == num %}
-                            <span class="px-3 py-2 bg-primary-light text-white rounded-lg text-sm">{{ num }}</span>
+                            <span class="page-link active">{{ num }}</span>
                         {% elif num > agencies.number|add:'-3' and num < agencies.number|add:'3' %}
                             <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                               class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">{{ num }}</a>
+                               class="page-link">{{ num }}</a>
                         {% endif %}
                     {% endfor %}
                     
                     {% if agencies.has_next %}
                         <a href="?page={{ agencies.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Next</a>
+                           class="page-link">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
                         <a href="?page={{ agencies.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Last</a>
+                           class="page-link">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
                     {% endif %}
                 </div>
             </div>
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit form on select change
+    document.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', function() {
+            this.closest('form').submit();
+        });
+    });
+</script>
 {% endblock %}

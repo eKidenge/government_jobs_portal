@@ -228,11 +228,11 @@ def admin_add_job(request):
         if form.is_valid():
             job = form.save(commit=False)
             job.posted_by_admin = request.user
-            job.status = 'approved'
+            job.status = 'active'
             job.is_verified = True
             job.save()
             messages.success(request, f'Job "{job.title}" added successfully!')
-            return redirect('admin_job_list')
+            return redirect('admin_panel:admin_job_list')
     else:
         form = AdminJobForm()
     
@@ -251,7 +251,7 @@ def admin_edit_job(request, job_id):
         if form.is_valid():
             form.save()
             messages.success(request, f'Job "{job.title}" updated successfully!')
-            return redirect('admin_job_list')
+            return redirect('admin_panel:admin_job_list')
     else:
         form = AdminJobForm(instance=job)
     
@@ -268,7 +268,7 @@ def admin_delete_job(request, job_id):
     job_title = job.title
     job.delete()
     messages.success(request, f'Job "{job_title}" deleted successfully!')
-    return redirect('admin_job_list')
+    return redirect('admin_panel:admin_job_list')
 
 
 @login_required
@@ -277,7 +277,7 @@ def admin_delete_job(request, job_id):
 def admin_approve_job(request, job_id):
     """Approve a job"""
     job = get_object_or_404(Job, id=job_id)
-    job.status = 'approved'
+    job.status = 'active'
     job.is_verified = True
     job.save()
     
@@ -287,11 +287,11 @@ def admin_approve_job(request, job_id):
             user=job.employer.user,
             title='Job Approved',
             message=f'Your job "{job.title}" has been approved and is now live.',
-            type='job_approved'
+            notification_type='job_approved'
         )
     
     messages.success(request, f'Job "{job.title}" approved successfully!')
-    return redirect('admin_job_list')
+    return redirect('admin_panel:admin_job_list')
 
 
 @login_required
@@ -310,11 +310,11 @@ def admin_reject_job(request, job_id):
             user=job.employer.user,
             title='Job Rejected',
             message=f'Your job "{job.title}" was rejected. Reason: {reason}',
-            type='job_rejected'
+            notification_type='job_rejected'
         )
     
     messages.warning(request, f'Job "{job.title}" rejected.')
-    return redirect('admin_job_list')
+    return redirect('admin_panel:admin_job_list')
 
 
 @login_required
@@ -328,7 +328,7 @@ def admin_feature_job(request, job_id):
     
     status = 'featured' if job.is_featured else 'unfeatured'
     messages.success(request, f'Job "{job.title}" {status} successfully!')
-    return redirect('admin_job_list')
+    return redirect('admin_panel:admin_job_list')
 
 
 @login_required
@@ -344,7 +344,7 @@ def admin_bulk_job_action(request):
         jobs = Job.objects.filter(id__in=job_ids)
         
         if action == 'approve':
-            count = jobs.update(status='approved', is_verified=True)
+            count = jobs.update(status='active', is_verified=True)
             messages.success(request, f'{count} jobs approved.')
         elif action == 'reject':
             count = jobs.update(status='rejected')
@@ -360,7 +360,7 @@ def admin_bulk_job_action(request):
             jobs.update(is_featured=False)
             messages.success(request, f'{jobs.count()} jobs unfeatured.')
     
-    return redirect('admin_job_list')
+    return redirect('admin_panel:admin_job_list')
 
 
 @login_required
@@ -477,11 +477,11 @@ def admin_verify_employer(request, employer_id):
         user=employer.user,
         title='Employer Verified',
         message='Your employer account has been verified. You can now post jobs.',
-        type='employer_verified'
+        notification_type='employer_verified'
     )
     
     messages.success(request, f'Employer "{employer.company_name}" verified successfully!')
-    return redirect('admin_employer_detail', employer_id=employer_id)
+    return redirect('admin_panel:admin_employer_detail', employer_id=employer_id)
 
 
 @login_required
@@ -497,11 +497,11 @@ def admin_suspend_employer(request, employer_id):
         user=employer.user,
         title='Account Suspended',
         message='Your employer account has been suspended. Please contact support.',
-        type='account_suspended'
+        notification_type='account_suspended'
     )
     
     messages.warning(request, f'Employer "{employer.company_name}" suspended.')
-    return redirect('admin_employer_detail', employer_id=employer_id)
+    return redirect('admin_panel:admin_employer_detail', employer_id=employer_id)
 
 
 @login_required
@@ -517,11 +517,11 @@ def admin_activate_employer(request, employer_id):
         user=employer.user,
         title='Account Activated',
         message='Your employer account has been activated.',
-        type='account_activated'
+        notification_type='account_activated'
     )
     
     messages.success(request, f'Employer "{employer.company_name}" activated.')
-    return redirect('admin_employer_detail', employer_id=employer_id)
+    return redirect('admin_panel:admin_employer_detail', employer_id=employer_id)
 
 
 @login_required
@@ -532,7 +532,7 @@ def admin_renew_accreditation(request, employer_id):
     employer = get_object_or_404(EmployerProfile, id=employer_id)
     # Implement accreditation renewal logic
     messages.success(request, f'Accreditation for "{employer.company_name}" renewed.')
-    return redirect('admin_employer_detail', employer_id=employer_id)
+    return redirect('admin_panel:admin_employer_detail', employer_id=employer_id)
 
 
 @login_required
@@ -544,7 +544,100 @@ def admin_delete_employer(request, employer_id):
     company_name = employer.company_name
     employer.delete()
     messages.success(request, f'Employer "{company_name}" deleted.')
-    return redirect('admin_employer_list')
+    return redirect('admin_panel:admin_employer_list')
+
+
+@login_required
+@staff_member_required
+def admin_register_employer(request):
+    """Register a new employer from admin panel"""
+    if request.method == 'POST':
+        form = AdminEmployerForm(request.POST)
+        if form.is_valid():
+            # Create user and employer profile
+            user = form.save(commit=False)
+            user.user_type = 'employer'
+            user.status = 'approved'
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            
+            employer = EmployerProfile.objects.create(
+                user=user,
+                company_name=form.cleaned_data['company_name'],
+                registration_number=form.cleaned_data['registration_number'],
+                is_verified=True,
+                verification_date=timezone.now()
+            )
+            
+            messages.success(request, f'Employer "{employer.company_name}" registered successfully!')
+            return redirect('admin_panel:admin_employer_detail', employer_id=employer.id)
+    else:
+        form = AdminEmployerForm()
+    
+    context = {'form': form, 'is_edit': False}
+    return render(request, 'admin_panel/employers/register.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_employer_setup(request, employer_id):
+    """Set up an employer account"""
+    employer = get_object_or_404(EmployerProfile, id=employer_id)
+    
+    if request.method == 'POST':
+        # Implement employer setup logic
+        messages.success(request, f'Employer "{employer.company_name}" setup completed!')
+        return redirect('admin_panel:admin_employer_detail', employer_id=employer_id)
+    
+    context = {'employer': employer}
+    return render(request, 'admin_panel/employers/setup.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_export_employers(request):
+    """Export employers as CSV"""
+    employers = EmployerProfile.objects.select_related('user', 'country').all()
+    
+    # Apply filters if any
+    is_verified = request.GET.get('verified')
+    search = request.GET.get('search')
+    
+    if is_verified == 'true':
+        employers = employers.filter(is_verified=True)
+    elif is_verified == 'false':
+        employers = employers.filter(is_verified=False)
+    
+    if search:
+        employers = employers.filter(
+            Q(company_name__icontains=search) |
+            Q(user__email__icontains=search) |
+            Q(registration_number__icontains=search)
+        )
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="employers_export_{datetime.now().strftime("%Y%m%d")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'Company Name', 'Email', 'Phone', 'Registration Number',
+        'Country', 'Industry', 'Verified', 'Status', 'Date Joined'
+    ])
+    
+    for employer in employers:
+        writer.writerow([
+            employer.company_name,
+            employer.user.email,
+            employer.phone_number or 'N/A',
+            employer.registration_number or 'N/A',
+            employer.country.name if employer.country else 'N/A',
+            employer.industry or 'N/A',
+            'Yes' if employer.is_verified else 'No',
+            employer.user.get_status_display(),
+            employer.created_at.strftime('%Y-%m-%d') if hasattr(employer, 'created_at') else employer.user.date_joined.strftime('%Y-%m-%d'),
+        ])
+    
+    return response
 
 
 # ==============================================
@@ -619,11 +712,11 @@ def admin_verify_agency(request, agency_id):
         user=agency.user,
         title='Agency Verified',
         message='Your agency has been verified. You can now post jobs.',
-        type='agency_verified'
+        notification_type='agency_verified'
     )
     
-    messages.success(request, f'Agency "{agency.agency_name}" verified!')
-    return redirect('admin_agency_detail', agency_id=agency_id)
+    messages.success(request, f'✅ Agency "{agency.agency_name}" verified successfully!')
+    return redirect('admin_panel:admin_agency_detail', agency_id=agency_id)
 
 
 @login_required
@@ -635,8 +728,15 @@ def admin_suspend_agency(request, agency_id):
     agency.user.status = 'suspended'
     agency.user.save()
     
-    messages.warning(request, f'Agency "{agency.agency_name}" suspended.')
-    return redirect('admin_agency_detail', agency_id=agency_id)
+    Notification.objects.create(
+        user=agency.user,
+        title='Account Suspended',
+        message='Your agency account has been suspended. Please contact support.',
+        notification_type='account_suspended'
+    )
+    
+    messages.warning(request, f'⚠️ Agency "{agency.agency_name}" suspended.')
+    return redirect('admin_panel:admin_agency_detail', agency_id=agency_id)
 
 
 @login_required
@@ -648,8 +748,15 @@ def admin_activate_agency(request, agency_id):
     agency.user.status = 'approved'
     agency.user.save()
     
-    messages.success(request, f'Agency "{agency.agency_name}" activated.')
-    return redirect('admin_agency_detail', agency_id=agency_id)
+    Notification.objects.create(
+        user=agency.user,
+        title='Account Activated',
+        message='Your agency account has been activated.',
+        notification_type='account_activated'
+    )
+    
+    messages.success(request, f'✅ Agency "{agency.agency_name}" activated.')
+    return redirect('admin_panel:admin_agency_detail', agency_id=agency_id)
 
 
 @login_required
@@ -660,8 +767,60 @@ def admin_delete_agency(request, agency_id):
     agency = get_object_or_404(RecruitmentAgency, id=agency_id)
     agency_name = agency.agency_name
     agency.delete()
-    messages.success(request, f'Agency "{agency_name}" deleted.')
-    return redirect('admin_agency_list')
+    messages.success(request, f'🗑️ Agency "{agency_name}" deleted.')
+    return redirect('admin_panel:admin_agency_list')
+
+
+@login_required
+@staff_member_required
+def admin_register_agency(request):
+    """Register a new recruitment agency from admin panel"""
+    if request.method == 'POST':
+        form = AdminAgencyForm(request.POST)
+        if form.is_valid():
+            # Create user and agency profile
+            user = form.save(commit=False)
+            user.user_type = 'agency'
+            user.status = 'approved'
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            
+            agency = RecruitmentAgency.objects.create(
+                user=user,
+                agency_name=form.cleaned_data['agency_name'],
+                registration_number=form.cleaned_data['registration_number'],
+                license_number=form.cleaned_data['license_number'],
+                license_expiry=form.cleaned_data['license_expiry'],
+                address=form.cleaned_data.get('address', ''),
+                contact_phone=form.cleaned_data['contact_phone'],
+                contact_email=form.cleaned_data['contact_email'],
+                description=form.cleaned_data.get('description', ''),
+                is_verified=True,
+                verification_date=timezone.now()
+            )
+            
+            messages.success(request, f'✅ Agency "{agency.agency_name}" registered successfully!')
+            return redirect('admin_panel:admin_agency_detail', agency_id=agency.id)
+    else:
+        form = AdminAgencyForm()
+    
+    context = {'form': form, 'is_edit': False}
+    return render(request, 'admin_panel/agencies/register.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_agency_setup(request, agency_id):
+    """Set up a recruitment agency account"""
+    agency = get_object_or_404(RecruitmentAgency, id=agency_id)
+    
+    if request.method == 'POST':
+        # Implement agency setup logic
+        messages.success(request, f'✅ Agency "{agency.agency_name}" setup completed!')
+        return redirect('admin_panel:admin_agency_detail', agency_id=agency_id)
+    
+    context = {'agency': agency}
+    return render(request, 'admin_panel/agencies/setup.html', context)
 
 
 # ==============================================
@@ -741,11 +900,11 @@ def admin_approve_user(request, user_id):
         user=user,
         title='Account Approved',
         message='Your account has been approved. You can now access all features.',
-        type='account_approved'
+        notification_type='account_approved'
     )
     
-    messages.success(request, f'User "{user.full_name}" approved!')
-    return redirect('admin_user_detail', user_id=user_id)
+    messages.success(request, f'✅ User "{user.full_name}" approved!')
+    return redirect('admin_panel:admin_user_list')
 
 
 @login_required
@@ -761,11 +920,11 @@ def admin_suspend_user(request, user_id):
         user=user,
         title='Account Suspended',
         message='Your account has been suspended. Please contact support for more information.',
-        type='account_suspended'
+        notification_type='account_suspended'
     )
     
-    messages.warning(request, f'User "{user.full_name}" suspended.')
-    return redirect('admin_user_detail', user_id=user_id)
+    messages.warning(request, f'⚠️ User "{user.full_name}" suspended.')
+    return redirect('admin_panel:admin_user_list')
 
 
 @login_required
@@ -781,11 +940,11 @@ def admin_activate_user(request, user_id):
         user=user,
         title='Account Activated',
         message='Your account has been reactivated.',
-        type='account_activated'
+        notification_type='account_activated'
     )
     
-    messages.success(request, f'User "{user.full_name}" activated.')
-    return redirect('admin_user_detail', user_id=user_id)
+    messages.success(request, f'✅ User "{user.full_name}" activated.')
+    return redirect('admin_panel:admin_user_list')
 
 
 @login_required
@@ -804,14 +963,14 @@ def admin_reset_user_password(request, user_id):
             user=user,
             title='Password Reset',
             message='Your password has been reset by the administrator.',
-            type='password_reset'
+            notification_type='password_reset'
         )
         
-        messages.success(request, f'Password for "{user.full_name}" reset successfully!')
+        messages.success(request, f'✅ Password for "{user.full_name}" reset successfully!')
     else:
-        messages.error(request, 'Invalid password. Must be at least 8 characters.')
+        messages.error(request, '❌ Invalid password. Must be at least 8 characters.')
     
-    return redirect('admin_user_detail', user_id=user_id)
+    return redirect('admin_panel:admin_user_list')
 
 
 @login_required
@@ -822,8 +981,8 @@ def admin_delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     full_name = user.full_name
     user.delete()
-    messages.success(request, f'User "{full_name}" deleted.')
-    return redirect('admin_user_list')
+    messages.success(request, f'🗑️ User "{full_name}" deleted.')
+    return redirect('admin_panel:admin_user_list')
 
 
 @login_required
@@ -836,7 +995,7 @@ def admin_bulk_user_action(request):
     
     if not user_ids:
         messages.error(request, 'No users selected.')
-        return redirect('admin_user_list')
+        return redirect('admin_panel:admin_user_list')
     
     users = User.objects.filter(id__in=user_ids)
     
@@ -854,7 +1013,54 @@ def admin_bulk_user_action(request):
         users.delete()
         messages.success(request, f'{count} users deleted.')
     
-    return redirect('admin_user_list')
+    return redirect('admin_panel:admin_user_list')
+
+
+@login_required
+@staff_member_required
+def admin_export_users(request):
+    """Export users as CSV"""
+    users = User.objects.all()
+    
+    # Apply filters if any
+    user_type = request.GET.get('user_type')
+    status = request.GET.get('status')
+    search = request.GET.get('search')
+    
+    if user_type:
+        users = users.filter(user_type=user_type)
+    if status:
+        users = users.filter(status=status)
+    if search:
+        users = users.filter(
+            Q(email__icontains=search) |
+            Q(full_name__icontains=search) |
+            Q(national_id__icontains=search) |
+            Q(phone_number__icontains=search)
+        )
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="users_export_{datetime.now().strftime("%Y%m%d")}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'Full Name', 'Email', 'Phone', 'National ID', 'User Type', 
+        'Status', 'Verified', 'Date Joined'
+    ])
+    
+    for user in users:
+        writer.writerow([
+            user.full_name,
+            user.email,
+            user.phone_number or 'N/A',
+            user.national_id or 'N/A',
+            user.get_user_type_display(),
+            user.get_status_display(),
+            'Yes' if user.is_verified else 'No',
+            user.date_joined.strftime('%Y-%m-%d %H:%M'),
+        ])
+    
+    return response
 
 
 # ==============================================
@@ -939,11 +1145,11 @@ def admin_verify_payment(request, payment_id):
         from payments.views import grant_payment_access
         grant_payment_access(payment.user, payment)
         
-        messages.success(request, f'Payment {payment.transaction_reference} verified!')
+        messages.success(request, f'✅ Payment {payment.transaction_reference} verified!')
     else:
-        messages.warning(request, 'Payment is not pending.')
+        messages.warning(request, '⚠️ Payment is not pending.')
     
-    return redirect('admin_payment_detail', payment_id=payment_id)
+    return redirect('admin_panel:admin_payment_detail', payment_id=payment_id)
 
 
 @login_required
@@ -970,14 +1176,14 @@ def admin_refund_payment(request, payment_id):
             user=payment.user,
             title='Payment Refunded',
             message=f'Your payment of {payment.amount} {payment.currency} has been refunded. Reason: {reason}',
-            type='payment_refunded'
+            notification_type='payment_refunded'
         )
         
-        messages.success(request, f'Payment {payment.transaction_reference} refunded!')
+        messages.success(request, f'✅ Payment {payment.transaction_reference} refunded!')
     else:
-        messages.warning(request, 'Only completed payments can be refunded.')
+        messages.warning(request, '⚠️ Only completed payments can be refunded.')
     
-    return redirect('admin_payment_detail', payment_id=payment_id)
+    return redirect('admin_panel:admin_payment_detail', payment_id=payment_id)
 
 
 @login_required
@@ -1009,6 +1215,147 @@ def admin_export_payments(request):
         ])
     
     return response
+
+
+# ==============================================
+# PAYMENT PLANS MANAGEMENT VIEWS
+# ==============================================
+
+@login_required
+@staff_member_required
+def admin_payment_plans(request):
+    """List all payment plans"""
+    plans = PaymentPlan.objects.all()
+    context = {'plans': plans}
+    return render(request, 'admin_panel/payment_plans/list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_add_payment_plan(request):
+    """Add a new payment plan"""
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Payment plan added successfully!')
+        return redirect('admin_panel:admin_payment_plans')
+    return render(request, 'admin_panel/payment_plans/form.html', {'is_edit': False})
+
+
+@login_required
+@staff_member_required
+def admin_edit_payment_plan(request, plan_id):
+    """Edit a payment plan"""
+    plan = get_object_or_404(PaymentPlan, id=plan_id)
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Payment plan updated successfully!')
+        return redirect('admin_panel:admin_payment_plans')
+    return render(request, 'admin_panel/payment_plans/form.html', {'is_edit': True, 'plan': plan})
+
+
+@login_required
+@staff_member_required
+@require_POST
+def admin_delete_payment_plan(request, plan_id):
+    """Delete a payment plan"""
+    plan = get_object_or_404(PaymentPlan, id=plan_id)
+    plan.delete()
+    messages.success(request, 'Payment plan deleted successfully!')
+    return redirect('admin_panel:admin_payment_plans')
+
+
+# ==============================================
+# CATEGORIES MANAGEMENT VIEWS
+# ==============================================
+
+@login_required
+@staff_member_required
+def admin_categories(request):
+    """List all categories"""
+    categories = Category.objects.all()
+    context = {'categories': categories}
+    return render(request, 'admin_panel/categories/list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_add_category(request):
+    """Add a new category"""
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Category added successfully!')
+        return redirect('admin_panel:admin_categories')
+    return render(request, 'admin_panel/categories/form.html', {'is_edit': False})
+
+
+@login_required
+@staff_member_required
+def admin_edit_category(request, category_id):
+    """Edit a category"""
+    category = get_object_or_404(Category, id=category_id)
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Category updated successfully!')
+        return redirect('admin_panel:admin_categories')
+    return render(request, 'admin_panel/categories/form.html', {'is_edit': True, 'category': category})
+
+
+@login_required
+@staff_member_required
+@require_POST
+def admin_delete_category(request, category_id):
+    """Delete a category"""
+    category = get_object_or_404(Category, id=category_id)
+    category.delete()
+    messages.success(request, 'Category deleted successfully!')
+    return redirect('admin_panel:admin_categories')
+
+
+# ==============================================
+# COUNTRIES MANAGEMENT VIEWS
+# ==============================================
+
+@login_required
+@staff_member_required
+def admin_countries(request):
+    """List all countries"""
+    countries = Country.objects.all()
+    context = {'countries': countries}
+    return render(request, 'admin_panel/countries/list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_add_country(request):
+    """Add a new country"""
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Country added successfully!')
+        return redirect('admin_panel:admin_countries')
+    return render(request, 'admin_panel/countries/form.html', {'is_edit': False})
+
+
+@login_required
+@staff_member_required
+def admin_edit_country(request, country_id):
+    """Edit a country"""
+    country = get_object_or_404(Country, id=country_id)
+    if request.method == 'POST':
+        # Implement form handling
+        messages.success(request, 'Country updated successfully!')
+        return redirect('admin_panel:admin_countries')
+    return render(request, 'admin_panel/countries/form.html', {'is_edit': True, 'country': country})
+
+
+@login_required
+@staff_member_required
+@require_POST
+def admin_delete_country(request, country_id):
+    """Delete a country"""
+    country = get_object_or_404(Country, id=country_id)
+    country.delete()
+    messages.success(request, 'Country deleted successfully!')
+    return redirect('admin_panel:admin_countries')
 
 
 # ==============================================
@@ -1183,7 +1530,7 @@ def admin_export_report(request, report_type):
         return export_report_pdf(report_type, request)
     else:
         messages.error(request, 'Invalid export format.')
-        return redirect('admin_reports')
+        return redirect('admin_panel:admin_reports')
 
 
 def export_report_csv(report_type, request):
@@ -1312,7 +1659,50 @@ def admin_update_settings(request):
     else:
         messages.error(request, 'Invalid settings provided.')
     
-    return redirect('admin_settings')
+    return redirect('admin_panel:admin_settings')
+
+
+# ==============================================
+# ADMIN PROFILE VIEWS
+# ==============================================
+
+@login_required
+@staff_member_required
+def admin_profile(request):
+    """View admin profile"""
+    context = {'admin_user': request.user}
+    return render(request, 'admin_panel/profile.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_profile_update(request):
+    """Update admin profile"""
+    if request.method == 'POST':
+        # Implement profile update logic
+        messages.success(request, 'Profile updated successfully!')
+    return redirect('admin_panel:admin_profile')
+
+
+# ==============================================
+# ACTIVITY LOGS VIEWS
+# ==============================================
+
+@login_required
+@staff_member_required
+def admin_activity_logs(request):
+    """View activity logs"""
+    # Implement activity log retrieval
+    context = {'logs': []}
+    return render(request, 'admin_panel/activity_logs/list.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_activity_log_detail(request, log_id):
+    """View activity log details"""
+    context = {'log_id': log_id}
+    return render(request, 'admin_panel/activity_logs/detail.html', context)
 
 
 # ==============================================

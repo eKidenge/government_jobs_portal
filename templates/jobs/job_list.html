@@ -733,10 +733,17 @@
                                         {% endif %}
                                     </div>
                                     
+                                    <!-- JOB META - FIXED -->
                                     <div class="job-meta flex flex-wrap gap-4 text-sm">
                                         <span>
                                             <i class="fas fa-building"></i>
-                                            {{ job.employer.company_name|default:job.agency.agency_name|default:'N/A' }}
+                                            {% if job.employer %}
+                                                {{ job.employer.company_name }}
+                                            {% elif job.agency %}
+                                                {{ job.agency.agency_name }}
+                                            {% else %}
+                                                <span style="color:#a0aec0;">N/A</span>
+                                            {% endif %}
                                         </span>
                                         <span>
                                             <i class="fas fa-map-marker-alt"></i>

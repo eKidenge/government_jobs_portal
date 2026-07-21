@@ -10,16 +10,23 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.conf import settings
+from django.core.paginator import Paginator
+from django.contrib.admin.views.decorators import staff_member_required
 import json
 import uuid
-from datetime import datetime
+import logging
 
 from .models import Payment, PaymentPlan, UserPaymentAccess
 from .mpesa import MpesaService
 from accounts.models import User
-from jobs.models import Job, Category, Country, JobApplication
 from notifications.models import Notification
 
+logger = logging.getLogger(__name__)
+
+
+# ==============================================
+# PAYMENT PAGES
+# ==============================================
 
 @login_required
 def payment_page(request):
@@ -30,13 +37,16 @@ def payment_page(request):
     try:
         payment_access = UserPaymentAccess.objects.get(user=request.user)
         has_access = payment_access.has_access
+        can_apply = payment_access.can_apply()
     except UserPaymentAccess.DoesNotExist:
         has_access = False
+        can_apply = False
     
     context = {
         'plans': plans,
         'user': request.user,
         'has_access': has_access,
+        'can_apply': can_apply,
     }
     return render(request, 'payments/payment_page.html', context)
 
@@ -45,21 +55,52 @@ def payment_page(request):
 def initiate_payment(request):
     """Initiate a payment"""
     if request.method != 'POST':
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
     
     plan_id = request.POST.get('plan_id')
     payment_method = request.POST.get('payment_method')
     phone_number = request.POST.get('phone_number')
     
+    # Validate plan
     if not plan_id:
         messages.error(request, 'Please select a payment plan.')
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
     
     try:
         plan = PaymentPlan.objects.get(id=plan_id, is_active=True)
     except PaymentPlan.DoesNotExist:
         messages.error(request, 'Invalid payment plan selected.')
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
+    
+    # Validate payment method
+    valid_methods = ['mpesa', 'visa', 'mastercard', 'ecitizen', 'bank_transfer']
+    if payment_method not in valid_methods:
+        messages.error(request, 'Invalid payment method selected.')
+        return redirect('payments:payment_page')
+    
+    # Validate phone number for M-Pesa
+    if payment_method == 'mpesa':
+        if not phone_number:
+            messages.error(request, 'Phone number is required for M-Pesa payment.')
+            return redirect('payments:payment_page')
+        
+        # Clean and validate phone number
+        phone_number = phone_number.strip()
+        # Remove any non-digit characters
+        phone_number = ''.join(filter(str.isdigit, phone_number))
+        
+        # Format to 254XXXXXXXXX
+        if phone_number.startswith('0'):
+            phone_number = '254' + phone_number[1:]
+        elif phone_number.startswith('254'):
+            pass  # Already correct format
+        else:
+            phone_number = '254' + phone_number
+        
+        # Validate length
+        if len(phone_number) != 12:
+            messages.error(request, 'Invalid phone number format. Use 0712345678 or 254712345678.')
+            return redirect('payments:payment_page')
     
     # Create payment record
     transaction_ref = f"GOVJOB-{uuid.uuid4().hex[:10].upper()}"
@@ -74,67 +115,60 @@ def initiate_payment(request):
         status='pending'
     )
     
+    # Process based on payment method
     if payment_method == 'mpesa':
-        # Process M-Pesa payment
-        if not phone_number:
-            messages.error(request, 'Phone number is required for M-Pesa payment.')
-            return redirect('payment_page')
-        
-        # Clean phone number
-        phone_number = phone_number.strip()
-        if phone_number.startswith('0'):
-            phone_number = '254' + phone_number[1:]
-        elif not phone_number.startswith('254'):
-            phone_number = '254' + phone_number
-        
-        try:
-            mpesa = MpesaService()
-            response = mpesa.stk_push(
-                phone_number=phone_number,
-                amount=str(int(plan.amount)),
-                account_reference=transaction_ref,
-                transaction_desc=f"Gov Jobs Fee - {plan.name}"
-            )
-            
-            if response.get('ResponseCode') == '0':
-                payment.metadata = {
-                    'checkout_request_id': response.get('CheckoutRequestID'),
-                    'merchant_request_id': response.get('MerchantRequestID'),
-                    'phone_number': phone_number
-                }
-                payment.save()
-                
-                messages.info(request, 'Please check your phone and enter your M-Pesa PIN to complete payment.')
-                return redirect('payment_confirmation', payment_id=payment.id)
-            else:
-                payment.status = 'failed'
-                payment.save()
-                messages.error(request, f"M-Pesa error: {response.get('ResponseDescription', 'Unknown error')}")
-                return redirect('payment_page')
-                
-        except Exception as e:
-            payment.status = 'failed'
-            payment.save()
-            messages.error(request, f'Payment initiation failed: {str(e)}')
-            return redirect('payment_page')
+        return process_mpesa_payment(request, payment, phone_number, plan)
     
     elif payment_method in ['visa', 'mastercard']:
-        # Process card payment (implement with a payment gateway)
         messages.info(request, 'Card payment processing coming soon.')
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
     
     elif payment_method == 'ecitizen':
-        # Process eCitizen payment
         messages.info(request, 'eCitizen payment processing coming soon.')
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
     
     elif payment_method == 'bank_transfer':
-        # Process bank transfer
-        messages.info(request, 'Bank transfer payment processing coming soon.')
-        return redirect('payment_page')
+        messages.info(request, 'Please complete the bank transfer with the provided details.')
+        return redirect('payments:payment_confirmation', payment_id=payment.id)
     
     messages.error(request, 'Invalid payment method selected.')
-    return redirect('payment_page')
+    return redirect('payments:payment_page')
+
+
+def process_mpesa_payment(request, payment, phone_number, plan):
+    """Process M-Pesa payment"""
+    try:
+        mpesa = MpesaService()
+        response = mpesa.stk_push(
+            phone_number=phone_number,
+            amount=str(int(plan.amount)),
+            account_reference=payment.transaction_reference,
+            transaction_desc=f"Gov Jobs Fee - {plan.name}"
+        )
+        
+        if response.get('ResponseCode') == '0':
+            payment.metadata = {
+                'checkout_request_id': response.get('CheckoutRequestID'),
+                'merchant_request_id': response.get('MerchantRequestID'),
+                'phone_number': phone_number
+            }
+            payment.save()
+            
+            messages.info(request, 'Please check your phone and enter your M-Pesa PIN to complete payment.')
+            return redirect('payments:payment_confirmation', payment_id=payment.id)
+        else:
+            payment.status = 'failed'
+            payment.save()
+            error_msg = response.get('ResponseDescription', 'Unknown error')
+            messages.error(request, f'M-Pesa error: {error_msg}')
+            return redirect('payments:payment_page')
+            
+    except Exception as e:
+        payment.status = 'failed'
+        payment.save()
+        logger.error(f"MPesa payment error: {str(e)}")
+        messages.error(request, f'Payment initiation failed: {str(e)}')
+        return redirect('payments:payment_page')
 
 
 @login_required
@@ -144,7 +178,7 @@ def payment_confirmation(request, payment_id):
     
     # Check if payment is already completed
     if payment.status == 'completed':
-        return redirect('payment_success', payment_id=payment.id)
+        return redirect('payments:payment_success', payment_id=payment.id)
     
     # For M-Pesa, check status
     if payment.payment_method == 'mpesa' and payment.metadata.get('checkout_request_id'):
@@ -172,22 +206,26 @@ def payment_confirmation(request, payment_id):
                 )
                 
                 messages.success(request, 'Payment confirmed successfully!')
-                return redirect('payment_success', payment_id=payment.id)
+                return redirect('payments:payment_success', payment_id=payment.id)
                 
             elif response.get('ResultCode') == '2001':
                 # Still pending
-                messages.info(request, 'Payment is still being processed. Please wait.')
+                messages.info(request, 'Payment is still being processed. Please wait or refresh.')
             else:
                 payment.status = 'failed'
                 payment.save()
-                messages.error(request, f"Payment failed: {response.get('ResultDescription', 'Unknown error')}")
-                return redirect('payment_page')
+                error_msg = response.get('ResultDesc', 'Unknown error')
+                messages.error(request, f"Payment failed: {error_msg}")
+                return redirect('payments:payment_page')
                 
         except Exception as e:
-            messages.warning(request, f'Unable to confirm payment status. Please refresh.')
+            logger.error(f"Payment confirmation error: {str(e)}")
+            messages.warning(request, 'Unable to confirm payment status. Please refresh.')
     
     context = {
         'payment': payment,
+        'is_mpesa': payment.payment_method == 'mpesa',
+        'is_bank_transfer': payment.payment_method == 'bank_transfer',
     }
     return render(request, 'payments/payment_confirmation.html', context)
 
@@ -198,7 +236,7 @@ def payment_success(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id, user=request.user)
     
     if payment.status != 'completed':
-        return redirect('payment_confirmation', payment_id=payment.id)
+        return redirect('payments:payment_confirmation', payment_id=payment.id)
     
     context = {
         'payment': payment,
@@ -210,32 +248,42 @@ def payment_success(request, payment_id):
 def payment_cancel(request):
     """Payment cancellation page"""
     messages.warning(request, 'Payment was cancelled.')
-    return redirect('payment_page')
+    return redirect('payments:payment_page')
 
+
+# ==============================================
+# PAYMENT HISTORY & RECEIPTS
+# ==============================================
 
 @login_required
 def payment_history(request):
     """View payment history"""
     payments = Payment.objects.filter(user=request.user).order_by('-payment_date')
     
+    # Get counts for stats
+    completed_count = payments.filter(status='completed').count()
+    pending_count = payments.filter(status='pending').count()
+    
     paginator = Paginator(payments, 20)
     page = request.GET.get('page')
-    payments = paginator.get_page(page)
+    payments_page = paginator.get_page(page)
     
     context = {
-        'payments': payments,
+        'payments': payments_page,
+        'completed_count': completed_count,
+        'pending_count': pending_count,
     }
     return render(request, 'payments/payment_history.html', context)
 
 
 @login_required
 def download_receipt(request, payment_id):
-    """Download payment receipt"""
+    """Download payment receipt as PDF"""
     payment = get_object_or_404(Payment, id=payment_id, user=request.user)
     
     if payment.status != 'completed':
         messages.error(request, 'Receipt is only available for completed payments.')
-        return redirect('payment_history')
+        return redirect('payments:payment_history')
     
     # Generate PDF receipt
     response = HttpResponse(content_type='application/pdf')
@@ -298,6 +346,25 @@ def download_receipt(request, payment_id):
 
 
 @login_required
+def view_receipt(request, payment_id):
+    """View payment receipt online (HTML version)"""
+    payment = get_object_or_404(Payment, id=payment_id, user=request.user)
+    
+    if payment.status != 'completed':
+        messages.error(request, 'Receipt is only available for completed payments.')
+        return redirect('payments:payment_history')
+    
+    context = {
+        'payment': payment,
+    }
+    return render(request, 'payments/payment_receipt.html', context)
+
+
+# ==============================================
+# PAYMENT PLANS (AJAX)
+# ==============================================
+
+@login_required
 def payment_plans(request):
     """Get payment plans (AJAX)"""
     plans = PaymentPlan.objects.filter(is_active=True).values(
@@ -307,57 +374,124 @@ def payment_plans(request):
 
 
 # ==============================================
+# PAYMENT STATUS (AJAX)
+# ==============================================
+
+@login_required
+@require_GET
+def check_payment_status(request, payment_id):
+    """Check payment status via AJAX"""
+    payment = get_object_or_404(Payment, id=payment_id, user=request.user)
+    
+    # If M-Pesa, check status
+    if payment.payment_method == 'mpesa' and payment.metadata.get('checkout_request_id'):
+        try:
+            mpesa = MpesaService()
+            response = mpesa.query_status(payment.metadata['checkout_request_id'])
+            
+            if response.get('ResultCode') == '0':
+                payment.status = 'completed'
+                payment.completed_date = timezone.now()
+                payment.mpesa_receipt_number = response.get('Result', {}).get('ReceiptNumber')
+                payment.save()
+                grant_payment_access(payment.user, payment)
+                return JsonResponse({
+                    'status': 'completed',
+                    'message': 'Payment confirmed!'
+                })
+            elif response.get('ResultCode') == '2001':
+                return JsonResponse({
+                    'status': 'pending',
+                    'message': 'Payment is still processing...'
+                })
+            else:
+                payment.status = 'failed'
+                payment.save()
+                return JsonResponse({
+                    'status': 'failed',
+                    'message': 'Payment failed'
+                })
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'status': payment.status,
+        'message': f'Payment is {payment.get_status_display()}'
+    })
+
+
+# ==============================================
 # M-PESA CALLBACKS
 # ==============================================
 
 @csrf_exempt
 def mpesa_callback(request):
     """M-Pesa callback URL handler"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            result = data.get('Body', {}).get('stkCallback', {})
-            
-            checkout_request_id = result.get('CheckoutRequestID')
-            result_code = result.get('ResultCode')
-            
-            # Find payment by checkout request ID
-            payment = Payment.objects.filter(
-                metadata__checkout_request_id=checkout_request_id
-            ).first()
-            
-            if not payment:
-                return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
-            
-            if result_code == '0':
-                # Payment successful
-                payment.status = 'completed'
-                payment.completed_date = timezone.now()
-                payment.mpesa_receipt_number = result.get('Result', {}).get('ReceiptNumber')
-                payment.save()
-                
-                # Grant access
-                grant_payment_access(payment.user, payment)
-                
-                # Create notification
-                Notification.objects.create(
-                    user=payment.user,
-                    title='Payment Confirmed',
-                    message=f'Your payment of {payment.amount} {payment.currency} has been confirmed.',
-                    notification_type='payment_confirmed',
-                    link='/payment/history/'
-                )
-            else:
-                payment.status = 'failed'
-                payment.save()
-            
-            return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
-            
-        except Exception as e:
-            print(f"MPesa callback error: {str(e)}")
-            return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Error'})
+    if request.method != 'POST':
+        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request'})
     
-    return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request'})
+    try:
+        data = json.loads(request.body)
+        logger.info(f"M-Pesa callback received: {data}")
+        
+        result = data.get('Body', {}).get('stkCallback', {})
+        checkout_request_id = result.get('CheckoutRequestID')
+        result_code = result.get('ResultCode')
+        
+        if not checkout_request_id:
+            logger.error("No CheckoutRequestID in callback")
+            return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Missing CheckoutRequestID'})
+        
+        # Find payment by checkout request ID
+        payment = Payment.objects.filter(
+            metadata__checkout_request_id=checkout_request_id
+        ).first()
+        
+        if not payment:
+            logger.warning(f"Payment not found for CheckoutRequestID: {checkout_request_id}")
+            return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
+        
+        # Prevent duplicate processing
+        if payment.status == 'completed':
+            return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
+        
+        if result_code == '0':
+            # Payment successful
+            payment.status = 'completed'
+            payment.completed_date = timezone.now()
+            payment.mpesa_receipt_number = result.get('CallbackMetadata', {}).get('ReceiptNumber')
+            payment.save()
+            
+            try:
+                grant_payment_access(payment.user, payment)
+            except Exception as e:
+                logger.error(f"Failed to grant access: {str(e)}")
+            
+            # Create notification
+            Notification.objects.create(
+                user=payment.user,
+                title='Payment Confirmed',
+                message=f'Your payment of {payment.amount} {payment.currency} has been confirmed.',
+                notification_type='payment_confirmed',
+                link='/payment/history/'
+            )
+            logger.info(f"Payment completed: {payment.transaction_reference}")
+        else:
+            payment.status = 'failed'
+            payment.save()
+            logger.info(f"Payment failed: {result.get('ResultDesc', 'No description')}")
+        
+        return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in callback: {str(e)}")
+        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid JSON'})
+    except Exception as e:
+        logger.error(f"MPesa callback error: {str(e)}", exc_info=True)
+        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Internal error'})
 
 
 @csrf_exempt
@@ -366,11 +500,10 @@ def mpesa_result(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print("M-Pesa Result:", data)
-            # Process result data
+            logger.info(f"M-Pesa Result: {data}")
             return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
         except Exception as e:
-            print(f"MPesa result error: {str(e)}")
+            logger.error(f"MPesa result error: {str(e)}")
             return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Error'})
     
     return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request'})
@@ -382,11 +515,10 @@ def mpesa_timeout(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print("M-Pesa Timeout:", data)
-            # Process timeout data
+            logger.info(f"M-Pesa Timeout: {data}")
             return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
         except Exception as e:
-            print(f"MPesa timeout error: {str(e)}")
+            logger.error(f"MPesa timeout error: {str(e)}")
             return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Error'})
     
     return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request'})
@@ -396,13 +528,9 @@ def mpesa_timeout(request):
 # ADMIN PAYMENT MANAGEMENT
 # ==============================================
 
-@login_required
+@staff_member_required
 def verify_payment(request, payment_id):
     """Verify a payment (admin only)"""
-    if not request.user.is_staff:
-        messages.error(request, 'Access denied. Admin only.')
-        return redirect('home')
-    
     payment = get_object_or_404(Payment, id=payment_id)
     
     if payment.status == 'pending':
@@ -429,13 +557,9 @@ def verify_payment(request, payment_id):
     return redirect('admin_panel:admin_payment_detail', payment_id=payment_id)
 
 
-@login_required
+@staff_member_required
 def refund_payment(request, payment_id):
     """Refund a payment (admin only)"""
-    if not request.user.is_staff:
-        messages.error(request, 'Access denied. Admin only.')
-        return redirect('home')
-    
     payment = get_object_or_404(Payment, id=payment_id)
     reason = request.POST.get('reason', 'No reason provided.')
     
@@ -484,17 +608,17 @@ def grant_payment_access(user, payment):
     
     if plan.plan_type == 'single':
         access.total_applications_allowed = 1
-        access.applications_remaining = 1
+        access.applications_used = 0  # Reset used count
         access.access_start = timezone.now()
         access.access_end = timezone.now() + timezone.timedelta(days=30)
     elif plan.plan_type == 'monthly':
         access.total_applications_allowed = 999  # Unlimited
-        access.applications_remaining = 999
+        access.applications_used = 0
         access.access_start = timezone.now()
         access.access_end = timezone.now() + timezone.timedelta(days=30)
     elif plan.plan_type == 'quarterly':
         access.total_applications_allowed = 999  # Unlimited
-        access.applications_remaining = 999
+        access.applications_used = 0
         access.access_start = timezone.now()
         access.access_end = timezone.now() + timezone.timedelta(days=90)
     

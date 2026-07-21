@@ -1,0 +1,518 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       PROFILE PAGE - GOVERNMENT STYLES
+       ============================================ */
+    
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    /* Profile Card */
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        margin-bottom: 24px;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .profile-card:hover {
+        box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    }
+    
+    /* Profile Header */
+    .profile-card .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid rgba(201, 163, 61, 0.08);
+    }
+    
+    .profile-card .profile-avatar {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 36px;
+        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+        flex-shrink: 0;
+        border: 3px solid #c9a33d;
+        box-shadow: 0 4px 16px rgba(201, 163, 61, 0.15);
+    }
+    
+    .profile-card .profile-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #0a1628;
+        font-size: 2rem;
+        margin: 0;
+        letter-spacing: 0.5px;
+    }
+    
+    .profile-card .profile-email {
+        font-family: 'Inter', sans-serif;
+        color: #718096;
+        font-size: 1rem;
+        margin: 2px 0 6px;
+    }
+    
+    /* Badges */
+    .profile-card .profile-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 16px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .profile-badge.verified {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .profile-badge.pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+    
+    .profile-badge.type-badge {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    /* Section Title */
+    .profile-card .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #0a1628;
+        font-size: 1.2rem;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: 0.3px;
+    }
+    
+    .profile-card .section-title i {
+        color: #c9a33d;
+        font-size: 1.1rem;
+    }
+    
+    /* Info Grid */
+    .profile-card .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+    
+    .profile-card .info-item {
+        padding: 14px 18px;
+        background: #f8f6f2;
+        border-radius: 10px;
+        border: 1px solid rgba(201, 163, 61, 0.04);
+        transition: background 0.2s ease;
+    }
+    
+    .profile-card .info-item:hover {
+        background: #fdf8f0;
+    }
+    
+    .profile-card .info-item .label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #a0aec0;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+    
+    .profile-card .info-item .value {
+        font-family: 'Merriweather', serif;
+        font-size: 0.95rem;
+        color: #1a202c;
+        margin-top: 2px;
+        font-weight: 500;
+    }
+    
+    /* Action Buttons */
+    .profile-card .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 2px solid rgba(201, 163, 61, 0.08);
+    }
+    
+    .profile-card .btn-edit {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        color: white;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+        letter-spacing: 0.3px;
+    }
+    
+    .profile-card .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(26, 54, 93, 0.25);
+    }
+    
+    .profile-card .btn-edit i {
+        color: #c9a33d;
+    }
+    
+    .profile-card .btn-change-password {
+        background: white;
+        color: #0a1628;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid #e2e8f0;
+        letter-spacing: 0.3px;
+    }
+    
+    .profile-card .btn-change-password:hover {
+        border-color: #c9a33d;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(201, 163, 61, 0.1);
+    }
+    
+    .profile-card .btn-change-password i {
+        color: #c9a33d;
+    }
+    
+    .profile-card .btn-dashboard {
+        background: white;
+        color: #c9a33d;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid #c9a33d;
+        letter-spacing: 0.3px;
+    }
+    
+    .profile-card .btn-dashboard:hover {
+        background: #fdf8f0;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(201, 163, 61, 0.1);
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-top: 4px;
+    }
+    
+    .stat-card-mini {
+        background: #f8f6f2;
+        border-radius: 12px;
+        padding: 16px 20px;
+        text-align: center;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card-mini:hover {
+        background: #fdf8f0;
+        border-color: rgba(201, 163, 61, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .stat-card-mini .number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0a1628;
+        letter-spacing: -0.5px;
+    }
+    
+    .stat-card-mini .label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+    
+    .stat-card-mini .number.gold { color: #c9a33d; }
+    .stat-card-mini .number.green { color: #38a169; }
+    .stat-card-mini .number.blue { color: #2b6cb0; }
+    
+    /* Back to Dashboard Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: #718096;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .back-link:hover {
+        color: #c9a33d;
+        border-color: #c9a33d;
+        transform: translateX(-4px);
+    }
+    
+    .back-link i {
+        color: #c9a33d;
+    }
+    
+    .text-center {
+        text-align: center;
+    }
+    
+    .mt-4 {
+        margin-top: 16px;
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    
+    @media (max-width: 768px) {
+        .profile-card {
+            padding: 20px;
+        }
+        
+        .profile-card .profile-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+        }
+        
+        .profile-card .profile-avatar {
+            width: 72px;
+            height: 72px;
+            font-size: 28px;
+        }
+        
+        .profile-card .profile-name {
+            font-size: 1.6rem;
+        }
+        
+        .profile-card .info-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .profile-card .action-buttons {
+            flex-direction: column;
+        }
+        
+        .profile-card .action-buttons a,
+        .profile-card .action-buttons button {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .stat-card-mini .number {
+            font-size: 1.6rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .profile-card {
+            padding: 16px;
+        }
+        
+        .profile-card .profile-name {
+            font-size: 1.3rem;
+        }
+        
+        .profile-card .profile-avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stat-card-mini {
+            padding: 12px 16px;
+        }
+        
+        .stat-card-mini .number {
+            font-size: 1.4rem;
+        }
+        
+        .profile-card .btn-edit,
+        .profile-card .btn-change-password,
+        .profile-card .btn-dashboard {
+            padding: 10px 20px;
+            font-size: 0.8rem;
+        }
+        
+        .profile-card .info-item {
+            padding: 10px 14px;
+        }
+        
+        .profile-card .info-item .value {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="profile-container">
+            
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ user.full_name|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <h1 class="profile-name">{{ user.full_name }}</h1>
+                        <p class="profile-email">{{ user.email }}</p>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+                            <span class="profile-badge {% if user.is_verified %}verified{% else %}pending{% endif %}">
+                                <i class="fas {% if user.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
+                                {% if user.is_verified %}Verified{% else %}Pending Verification{% endif %}
+                            </span>
+                            <span class="profile-badge type-badge">
+                                <i class="fas fa-user-tag"></i> {{ user.get_user_type_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card-mini">
+                        <div class="number gold">{{ applications_count|default:0 }}</div>
+                        <div class="label">Applications</div>
+                    </div>
+                    <div class="stat-card-mini">
+                        <div class="number green">{{ payments_count|default:0 }}</div>
+                        <div class="label">Payments</div>
+                    </div>
+                    <div class="stat-card-mini">
+                        <div class="number blue">KES {{ total_spent|default:0|floatformat:0 }}</div>
+                        <div class="label">Total Spent</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Personal Information -->
+            <div class="profile-card">
+                <div class="section-title">
+                    <i class="fas fa-user"></i> Personal Information
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Full Name</div>
+                        <div class="value">{{ user.full_name }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Email Address</div>
+                        <div class="value">{{ user.email }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Phone Number</div>
+                        <div class="value">{{ user.phone_number|default:'Not provided' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">National ID</div>
+                        <div class="value">{{ user.national_id|default:'Not provided' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">User Type</div>
+                        <div class="value">{{ user.get_user_type_display }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Member Since</div>
+                        <div class="value">{{ user.date_joined|date:"F d, Y" }}</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{% url 'profile_edit' %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'change_password' %}" class="btn-change-password">
+                        <i class="fas fa-key"></i> Change Password
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="btn-dashboard">
+                        <i class="fas fa-arrow-left"></i> Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Back to Dashboard Link (alternative) -->
+            <div class="text-center mt-4">
+                <a href="{% url 'dashboard' %}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

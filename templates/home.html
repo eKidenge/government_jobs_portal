@@ -548,6 +548,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .job-card .job-footer .closing {
@@ -571,13 +573,6 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    
-    .job-card:hover .apply-btn {
-        opacity: 1;
-        transform: translateY(0);
     }
     
     .job-card .apply-btn:hover {
@@ -1534,7 +1529,7 @@
 </section>
 
 <!-- ============================================ -->
-<!-- FEATURED JOBS -->
+<!-- FEATURED JOBS - FIXED -->
 <!-- ============================================ -->
 <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1571,7 +1566,13 @@
                         
                         <p class="job-meta mt-2">
                             <i class="fas fa-building"></i> 
-                            {{ job.employer.company_name|default:job.agency.agency_name|default:'N/A' }}
+                            {% if job.employer %}
+                                {{ job.employer.company_name }}
+                            {% elif job.agency %}
+                                {{ job.agency.agency_name }}
+                            {% else %}
+                                <span style="color:#a0aec0;">N/A</span>
+                            {% endif %}
                         </p>
                         
                         <div class="job-meta mt-1 flex flex-wrap gap-3">

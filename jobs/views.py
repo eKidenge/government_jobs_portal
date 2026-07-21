@@ -13,9 +13,10 @@ from django.views.decorators.http import require_POST, require_GET
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils.html import strip_tags
 
 from .models import Job, Category, Country, JobApplication
-from .forms import JobSearchForm, JobApplicationForm
+from .forms import JobSearchForm, JobApplicationForm, JobForm
 from accounts.models import User
 from employers.models import EmployerProfile
 from agencies.models import RecruitmentAgency
@@ -150,10 +151,10 @@ def apply_to_job(request, job_id):
         payment_access = UserPaymentAccess.objects.get(user=request.user)
         if not payment_access.can_apply():
             messages.error(request, 'Please complete the government employment service fee payment before applying.')
-            return redirect('payment_page')
+            return redirect('payments:payment_page')
     except UserPaymentAccess.DoesNotExist:
         messages.error(request, 'Please complete the government employment service fee payment before applying.')
-        return redirect('payment_page')
+        return redirect('payments:payment_page')
     
     # Check if already applied
     if JobApplication.objects.filter(job=job, applicant=request.user).exists():
@@ -381,19 +382,32 @@ def employer_job_list(request):
         messages.error(request, 'Please complete your employer profile first.')
         return redirect('employer_setup')
     
-    jobs = Job.objects.filter(employer=employer).order_by('-posted_date')
+    # Get all jobs queryset first
+    jobs_queryset = Job.objects.filter(employer=employer).order_by('-posted_date')
     
-    # Filter by status
+    # Calculate statistics BEFORE pagination (on queryset)
+    jobs_count = jobs_queryset.count()
+    active_jobs = jobs_queryset.filter(status='active').count()
+    pending_jobs = jobs_queryset.filter(status='pending').count()
+    closed_jobs = jobs_queryset.filter(status='closed').count()
+    
+    # Apply status filter if provided
     status_filter = request.GET.get('status')
     if status_filter:
-        jobs = jobs.filter(status=status_filter)
+        jobs_queryset = jobs_queryset.filter(status=status_filter)
     
-    paginator = Paginator(jobs, 20)
+    # Paginate
+    paginator = Paginator(jobs_queryset, 20)
     page = request.GET.get('page')
     jobs = paginator.get_page(page)
     
     context = {
-        'jobs': jobs,
+        'jobs': jobs,  # This is the Paginator page object
+        'employer': employer,
+        'jobs_count': jobs_count,
+        'active_jobs': active_jobs,
+        'pending_jobs': pending_jobs,
+        'closed_jobs': closed_jobs,
         'status_filter': status_filter,
         'status_choices': Job.STATUS_CHOICES,
     }
@@ -417,7 +431,7 @@ def create_job(request):
         return redirect('employer_setup')
     
     if request.method == 'POST':
-        form = JobForm(request.POST)
+        form = JobForm(request.POST, request.FILES)
         if form.is_valid():
             job = form.save(commit=False)
             job.employer = employer
@@ -430,7 +444,7 @@ def create_job(request):
     else:
         form = JobForm()
     
-    context = {'form': form}
+    context = {'form': form, 'employer': employer}
     return render(request, 'jobs/create_job.html', context)
 
 
@@ -454,7 +468,7 @@ def edit_job(request, job_id):
         return redirect('employer_job_list')
     
     if request.method == 'POST':
-        form = JobForm(request.POST, instance=job)
+        form = JobForm(request.POST, request.FILES, instance=job)
         if form.is_valid():
             form.save()
             messages.success(request, 'Job updated successfully!')

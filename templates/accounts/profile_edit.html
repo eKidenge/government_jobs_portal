@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-edit-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .profile-edit-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .profile-edit-card .form-header {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #1a365d;
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid rgba(201, 163, 61, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .profile-edit-card .form-header i {
+        color: #c9a33d;
+    }
+    
+    .profile-edit-card .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .profile-edit-card label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 6px;
+    }
+    
+    .profile-edit-card label .required {
+        color: #e53e3e;
+        margin-left: 2px;
+    }
+    
+    .profile-edit-card .form-control {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .profile-edit-card .form-control:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+    }
+    
+    .profile-edit-card .form-control:disabled {
+        background: #edf2f7;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    
+    .profile-edit-card .help-text {
+        font-family: 'Merriweather', serif;
+        font-size: 0.75rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+    
+    .profile-edit-card .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 2px solid #e2e8f0;
+    }
+    
+    .profile-edit-card .btn-save {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .profile-edit-card .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(43, 108, 176, 0.25);
+    }
+    
+    .profile-edit-card .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 12px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .profile-edit-card .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    
+    .profile-edit-card .alert {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        border-left: 4px solid;
+    }
+    
+    .profile-edit-card .alert-success {
+        background: #f0fff4;
+        border-color: #38a169;
+        color: #22543d;
+    }
+    
+    .profile-edit-card .alert-error {
+        background: #fff5f5;
+        border-color: #e53e3e;
+        color: #742a2a;
+    }
+    
+    .profile-edit-card .alert-info {
+        background: #ebf8ff;
+        border-color: #2b6cb0;
+        color: #2b6cb0;
+    }
+    
+    .profile-edit-card .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-edit-card {
+            padding: 20px;
+        }
+        
+        .profile-edit-card .form-header {
+            font-size: 1.4rem;
+        }
+        
+        .profile-edit-card .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .profile-edit-card .form-actions {
+            flex-direction: column;
+        }
+        
+        .profile-edit-card .form-actions button,
+        .profile-edit-card .form-actions a {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .profile-edit-card .form-header {
+            font-size: 1.2rem;
+        }
+        
+        .profile-edit-card .form-control {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="profile-edit-container">
+            <div class="profile-edit-card">
+                <div class="form-header">
+                    <i class="fas fa-user-edit"></i> Edit Profile
+                </div>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="full_name">
+                            Full Name <span class="required">*</span>
+                        </label>
+                        <input type="text" id="full_name" name="full_name" 
+                               value="{{ user.full_name }}" 
+                               class="form-control" 
+                               placeholder="Enter your full name"
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input type="email" id="email" name="email" 
+                               value="{{ user.email }}" 
+                               class="form-control" 
+                               disabled
+                               placeholder="Your email address">
+                        <p class="help-text">Email address cannot be changed. Contact support if you need to update it.</p>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone_number">Phone Number</label>
+                            <input type="text" id="phone_number" name="phone_number" 
+                                   value="{{ user.phone_number|default:'' }}" 
+                                   class="form-control" 
+                                   placeholder="Enter phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="national_id">National ID</label>
+                            <input type="text" id="national_id" name="national_id" 
+                                   value="{{ user.national_id|default:'' }}" 
+                                   class="form-control" 
+                                   placeholder="Enter National ID">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>User Type</label>
+                            <input type="text" value="{{ user.get_user_type_display }}" 
+                                   class="form-control" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Status</label>
+                            <input type="text" value="{{ user.get_status_display }}" 
+                                   class="form-control" disabled>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{% url 'profile' %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,704 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Users - Admin Panel{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       GOVERNMENT FONTS
+       ============================================ */
+    .gov-font {
+        font-family: 'Playfair Display', serif !important;
+    }
+    .gov-font-body {
+        font-family: 'Merriweather', serif !important;
+    }
+    .gov-font-sans {
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    /* ============================================
+       PAGE HEADER
+       ============================================ */
+    .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .page-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #0a1628;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+    }
+    .page-header h1 i {
+        color: #c9a33d;
+        margin-right: 12px;
+    }
+    .page-header .subtitle {
+        font-family: 'Inter', sans-serif;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    /* ============================================
+       FILTER SECTION
+       ============================================ */
+    .filter-section {
+        background: white;
+        border-radius: 16px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-bottom: 20px;
+    }
+    .filter-section select,
+    .filter-section input {
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
+        transition: border-color 0.3s;
+        background: #f7fafc;
+    }
+    .filter-section select:focus,
+    .filter-section input:focus {
+        border-color: #c9a33d;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+        background: white;
+    }
+
+    /* ============================================
+       TABLE
+       ============================================ */
+    .admin-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table th {
+        background: #f7fafc;
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #4a5568;
+        border-bottom: 2px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    .admin-table tr:hover {
+        background: #fdf8f0;
+    }
+    .admin-table .user-name {
+        font-weight: 700;
+        color: #0a1628;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table .user-detail {
+        font-size: 0.75rem;
+        color: #a0aec0;
+        font-family: 'Inter', sans-serif;
+    }
+    .admin-table .user-detail i {
+        color: #c9a33d;
+        width: 14px;
+    }
+
+    /* ============================================
+       BADGES
+       ============================================ */
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        display: inline-block;
+        font-family: 'Inter', sans-serif;
+    }
+    .status-badge.approved { background: #dcfce7; color: #166534; }
+    .status-badge.pending { background: #fef9c3; color: #854d0e; }
+    .status-badge.suspended { background: #fee2e2; color: #991b1b; }
+    .status-badge.active { background: #dbeafe; color: #1e40af; }
+
+    .user-type-badge {
+        padding: 2px 12px;
+        border-radius: 50px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        font-family: 'Inter', sans-serif;
+    }
+    .user-type-badge.citizen { background: #f1f5f9; color: #475569; }
+    .user-type-badge.employer { background: #dbeafe; color: #1e40af; }
+    .user-type-badge.agency { background: #fef9c3; color: #854d0e; }
+    .user-type-badge.admin { background: #fee2e2; color: #991b1b; }
+
+    .verified-badge {
+        font-size: 0.65rem;
+        color: #166534;
+        font-family: 'Inter', sans-serif;
+        display: block;
+        margin-top: 2px;
+    }
+    .verified-badge i {
+        color: #38a169;
+    }
+
+    /* ============================================
+       ACTION BUTTONS
+       ============================================ */
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .action-btn:hover {
+        transform: translateY(-2px);
+    }
+    .btn-approve { background: #dcfce7; color: #166534; }
+    .btn-approve:hover { background: #bbf7d0; }
+    .btn-suspend { background: #fee2e2; color: #991b1b; }
+    .btn-suspend:hover { background: #fecaca; }
+    .btn-activate { background: #dbeafe; color: #1e40af; }
+    .btn-activate:hover { background: #bfdbfe; }
+    .btn-edit { background: #dbeafe; color: #1e40af; }
+    .btn-edit:hover { background: #bfdbfe; }
+    .btn-delete { background: #fee2e2; color: #991b1b; }
+    .btn-delete:hover { background: #fecaca; }
+    .btn-reset { background: #fef9c3; color: #854d0e; }
+    .btn-reset:hover { background: #fef08a; }
+
+    /* ============================================
+       BULK ACTIONS
+       ============================================ */
+    .bulk-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .bulk-actions select {
+        padding: 6px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: 'Inter', sans-serif;
+        background: #f7fafc;
+        transition: border-color 0.3s;
+    }
+    .bulk-actions select:focus {
+        border-color: #c9a33d;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+    }
+    .bulk-actions .btn-apply {
+        background: #0a1628;
+        color: white;
+        padding: 6px 20px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .bulk-actions .btn-apply:hover {
+        background: #1a365d;
+        transform: translateY(-2px);
+    }
+
+    /* ============================================
+       PAGINATION
+       ============================================ */
+    .pagination-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .pagination-wrapper .info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    .pagination-wrapper .links {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+    .pagination-wrapper .links a,
+    .pagination-wrapper .links span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        transition: all 0.2s ease;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+    .pagination-wrapper .links a:hover {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    .pagination-wrapper .links .current {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+
+    /* ============================================
+       ACTION FORMS - PREVENT INTERFERENCE
+       ============================================ */
+    .action-form {
+        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .action-form button {
+        cursor: pointer;
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+    .empty-state i {
+        font-size: 48px;
+        color: #c9a33d;
+        opacity: 0.25;
+        margin-bottom: 16px;
+        display: block;
+    }
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #4a5568;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        font-size: 0.9rem;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+        .filter-section form {
+            flex-direction: column;
+        }
+        .filter-section form select,
+        .filter-section form input,
+        .filter-section form button {
+            width: 100%;
+        }
+        .admin-table {
+            font-size: 0.8rem;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 8px 10px;
+        }
+        .action-btn {
+            font-size: 9px;
+            padding: 4px 8px;
+        }
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        .bulk-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .bulk-actions select,
+        .bulk-actions .btn-apply {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-header h1 {
+            font-size: 1.2rem;
+        }
+        .admin-table {
+            font-size: 0.7rem;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 6px 8px;
+        }
+        .status-badge,
+        .user-type-badge {
+            font-size: 8px;
+            padding: 2px 8px;
+        }
+        .action-btn {
+            font-size: 8px;
+            padding: 3px 6px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="page-header">
+            <div>
+                <h1><i class="fas fa-users-cog"></i> Manage Users</h1>
+                <p class="subtitle"><i class="fas fa-users mr-1"></i> {{ paginator.count }} users found</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <a href="{% url 'admin_panel:admin_export_users' %}" class="bg-white text-gray-700 px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition flex items-center gap-2 font-semibold text-sm">
+                    <i class="fas fa-file-export" style="color:#c9a33d;"></i> Export
+                </a>
+                <a href="{% url 'admin_panel:admin_user_list' %}?status=pending" class="bg-yellow-50 text-yellow-800 px-4 py-2 rounded-xl shadow-sm hover:shadow-md transition flex items-center gap-2 font-semibold text-sm">
+                    <i class="fas fa-clock" style="color:#d69e2e;"></i> Pending
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <form method="GET" class="flex flex-wrap items-center gap-4">
+                <div class="flex-1 min-w-[150px]">
+                    <input type="text" name="search" value="{{ current_filters.search|default:'' }}" 
+                           placeholder="Search users by name or email..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                </div>
+                <select name="user_type" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                    <option value="">All Types</option>
+                    <option value="citizen" {% if current_filters.user_type == 'citizen' %}selected{% endif %}>Citizen</option>
+                    <option value="employer" {% if current_filters.user_type == 'employer' %}selected{% endif %}>Employer</option>
+                    <option value="agency" {% if current_filters.user_type == 'agency' %}selected{% endif %}>Agency</option>
+                    <option value="admin" {% if current_filters.user_type == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+                <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if current_filters.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if current_filters.status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="active" {% if current_filters.status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="suspended" {% if current_filters.status == 'suspended' %}selected{% endif %}>Suspended</option>
+                </select>
+                <button type="submit" class="bg-primary-light text-white px-6 py-2 rounded-lg hover:bg-primary transition">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+                <a href="{% url 'admin_panel:admin_user_list' %}" class="text-gray-500 hover:text-gray-700 text-sm font-medium">Clear</a>
+            </form>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm mb-6 border border-gold/5">
+            <form method="POST" action="{% url 'admin_panel:admin_bulk_user_action' %}" id="bulkActionForm">
+                {% csrf_token %}
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-primary-light focus:ring-primary-light">
+                        <label for="selectAll" class="text-sm text-gray-600 font-medium">Select All</label>
+                    </div>
+                    <div class="bulk-actions">
+                        <select name="action" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                            <option value="">Bulk Action</option>
+                            <option value="approve">Approve</option>
+                            <option value="suspend">Suspend</option>
+                            <option value="activate">Activate</option>
+                            <option value="delete">Delete</option>
+                        </select>
+                        <button type="submit" class="btn-apply">
+                            Apply
+                        </button>
+                    </div>
+                    <span class="text-sm text-gray-500" id="selectedCount">0 selected</span>
+                </div>
+                <input type="hidden" name="user_ids" id="selectedUserIds" value="">
+            </form>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gold/5">
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th width="40">
+                                <input type="checkbox" id="selectAllTable" class="rounded border-gray-300 text-primary-light">
+                            </th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_item in users %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="user-checkbox" value="{{ user_item.id }}">
+                                </td>
+                                <td>
+                                    <div class="user-name">{{ user_item.full_name }}</div>
+                                    <div class="user-detail">
+                                        <i class="fas fa-id-card"></i> {{ user_item.national_id|default:'N/A' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-sm">{{ user_item.email }}</div>
+                                    <div class="user-detail">
+                                        <i class="fas fa-phone"></i> {{ user_item.phone_number|default:'N/A' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="user-type-badge {{ user_item.user_type }}">
+                                        {{ user_item.get_user_type_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ user_item.status }}">
+                                        {{ user_item.get_status_display }}
+                                    </span>
+                                    {% if user_item.is_verified %}
+                                        <span class="verified-badge">
+                                            <i class="fas fa-check-circle"></i> Verified
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="text-sm">{{ user_item.date_joined|date:"M d, Y" }}</div>
+                                    <div class="user-detail">{{ user_item.date_joined|timesince }} ago</div>
+                                </td>
+                                <td>
+                                    <div class="flex flex-wrap gap-1">
+                                        {% if user_item.status == 'pending' %}
+                                            <form method="post" action="{% url 'admin_panel:admin_approve_user' user_item.id %}" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-approve" onclick="return confirm('Approve this user?')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form method="post" action="{% url 'admin_panel:admin_suspend_user' user_item.id %}" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-suspend" onclick="return confirm('Suspend this user?')">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        {% if user_item.status == 'suspended' %}
+                                            <form method="post" action="{% url 'admin_panel:admin_activate_user' user_item.id %}" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-activate" onclick="return confirm('Activate this user?')">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        {% if user_item.status == 'approved' or user_item.status == 'active' %}
+                                            <form method="post" action="{% url 'admin_panel:admin_suspend_user' user_item.id %}" class="action-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn btn-suspend" onclick="return confirm('Suspend this user?')">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        <a href="{% url 'admin_panel:admin_reset_user_password' user_item.id %}" 
+                                           class="action-btn btn-reset" onclick="return confirm('Reset password for this user?')">
+                                            <i class="fas fa-key"></i>
+                                        </a>
+                                        <a href="{% url 'admin_panel:admin_user_detail' user_item.id %}" class="action-btn btn-edit">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="post" action="{% url 'admin_panel:admin_delete_user' user_item.id %}" class="action-form" onsubmit="return confirm('Delete this user permanently?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn btn-delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-users"></i>
+                                        <h3>No Users Found</h3>
+                                        <p>Try adjusting your filters or search terms to find more users.</p>
+                                        <a href="{% url 'admin_panel:admin_user_list' %}" class="action-btn btn-edit" style="margin-top:16px;display:inline-flex;">
+                                            <i class="fas fa-undo"></i> Clear Filters
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if users.has_other_pages %}
+            <div class="pagination-wrapper">
+                <div class="info">
+                    Showing <strong>{{ users.start_index }}</strong> to <strong>{{ users.end_index }}</strong> 
+                    of <strong>{{ users.paginator.count }}</strong> users
+                </div>
+                <div class="links">
+                    {% if users.has_previous %}
+                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ users.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in users.paginator.page_range %}
+                        {% if users.number == num %}
+                            <span class="current">{{ num }}</span>
+                        {% elif num > users.number|add:'-3' and num < users.number|add:'3' %}
+                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if users.has_next %}
+                        <a href="?page={{ users.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                        <a href="?page={{ users.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select All functionality
+    const selectAll = document.getElementById('selectAll');
+    const selectAllTable = document.getElementById('selectAllTable');
+    const checkboxes = document.querySelectorAll('.user-checkbox');
+    const selectedCount = document.getElementById('selectedCount');
+    const selectedIds = document.getElementById('selectedUserIds');
+
+    function updateSelectedCount() {
+        const checked = document.querySelectorAll('.user-checkbox:checked');
+        selectedCount.textContent = checked.length + ' selected';
+        const ids = Array.from(checked).map(cb => cb.value).join(',');
+        selectedIds.value = ids;
+    }
+
+    selectAll?.addEventListener('change', function() {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        if (selectAllTable) selectAllTable.checked = this.checked;
+        updateSelectedCount();
+    });
+
+    selectAllTable?.addEventListener('change', function() {
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        if (selectAll) selectAll.checked = this.checked;
+        updateSelectedCount();
+    });
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedCount);
+    });
+
+    updateSelectedCount();
+
+    // Confirmation for bulk actions
+    document.getElementById('bulkActionForm')?.addEventListener('submit', function(e) {
+        const action = this.querySelector('select[name="action"]').value;
+        const selected = document.querySelectorAll('.user-checkbox:checked');
+        
+        if (!action) {
+            e.preventDefault();
+            alert('Please select an action.');
+            return;
+        }
+        
+        if (selected.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one user.');
+            return;
+        }
+        
+        if (action === 'delete') {
+            if (!confirm(`Are you sure you want to delete ${selected.length} user(s)? This action cannot be undone.`)) {
+                e.preventDefault();
+            }
+        }
+        if (action === 'suspend') {
+            if (!confirm(`Are you sure you want to suspend ${selected.length} user(s)?`)) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Prevent any default link behavior for action buttons
+    document.querySelectorAll('.action-form button').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // The confirm dialog is handled by onclick
+            // This ensures the form submits properly
+        });
+    });
+});
+</script>
+{% endblock %}

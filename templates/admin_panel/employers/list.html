@@ -5,47 +5,654 @@
 
 {% block extra_css %}
 <style>
+    /* ============================================
+       EMPLOYERS LIST - GOVERNMENT STYLES
+       ============================================ */
+    
+    /* Header */
+    .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    
+    .page-header .header-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #0a1628;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .page-header .header-title i {
+        color: #c9a33d;
+        margin-right: 12px;
+    }
+    
+    .page-header .header-subtitle {
+        font-family: 'Inter', sans-serif;
+        color: #718096;
+        font-size: 0.9rem;
+        margin-top: 2px;
+    }
+    
+    .page-header .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .btn-pending {
+        background: #fef9c3;
+        color: #854d0e;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid transparent;
+    }
+    
+    .btn-pending:hover {
+        background: #fef08a;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(214, 158, 46, 0.15);
+    }
+    
+    .btn-pending i {
+        color: #d69e2e;
+    }
+    
+    .btn-export {
+        background: white;
+        color: #475569;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    .btn-export:hover {
+        border-color: #c9a33d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    
+    .btn-export i {
+        color: #c9a33d;
+    }
+    
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        border-radius: 16px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-bottom: 24px;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .filter-section:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .filter-form .search-wrapper {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+    }
+    
+    .filter-form .search-wrapper i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #a0aec0;
+    }
+    
+    .filter-form .search-wrapper input {
+        width: 100%;
+        padding: 10px 14px 10px 40px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .filter-form .search-wrapper input:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+    }
+    
+    .filter-form select {
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+        min-width: 140px;
+        cursor: pointer;
+    }
+    
+    .filter-form select:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+    }
+    
+    .filter-form .btn-filter {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        color: white;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .filter-form .btn-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(26, 54, 93, 0.2);
+    }
+    
+    .filter-form .btn-clear {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 10px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-form .btn-clear:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    
+    /* Employer Cards */
+    .employer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+    
     .employer-card {
         background: white;
         border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
     }
+    
+    .employer-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+        transform-origin: left;
+    }
+    
+    .employer-card:hover::before {
+        transform: scaleX(1);
+    }
+    
     .employer-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        border-color: #2b6cb0;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(10, 22, 40, 0.08);
+        border-color: rgba(201, 163, 61, 0.12);
     }
-    .employer-logo {
+    
+    .employer-card .card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .employer-card .employer-logo {
         width: 56px;
         height: 56px;
         border-radius: 12px;
-        background: #ebf8ff;
+        background: linear-gradient(135deg, #ebf8ff, #bee3f8);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
         color: #2b6cb0;
         flex-shrink: 0;
+        transition: all 0.3s ease;
     }
-    .verification-badge {
+    
+    .employer-card:hover .employer-logo {
+        transform: scale(1.05) rotate(-3deg);
+    }
+    
+    .employer-card .employer-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .employer-card .employer-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #0a1628;
+        font-size: 1.1rem;
+        margin: 0;
+        letter-spacing: 0.3px;
+    }
+    
+    .employer-card .employer-email {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        margin: 2px 0 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .employer-card .employer-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    /* Badges */
+    .badge {
         display: inline-flex;
         align-items: center;
         gap: 4px;
         padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    .verification-badge.verified {
-        background: #c6f6d5;
-        color: #22543d;
+    
+    .badge.verified {
+        background: #dcfce7;
+        color: #166534;
     }
-    .verification-badge.unverified {
-        background: #fefcbf;
-        color: #975a16;
+    
+    .badge.unverified {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+    
+    .badge.suspended {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .badge.active {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .badge .badge-icon {
+        font-size: 0.6rem;
+    }
+    
+    .employer-card .employer-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+    
+    .employer-card .employer-details span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .employer-card .employer-details i {
+        color: #c9a33d;
+        font-size: 0.7rem;
+    }
+    
+    /* Card Actions */
+    .employer-card .card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+    }
+    
+    .employer-card .btn-action {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .employer-card .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-action.btn-view {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .btn-action.btn-view:hover {
+        background: #bfdbfe;
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
+    }
+    
+    .btn-action.btn-verify {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .btn-action.btn-verify:hover {
+        background: #bbf7d0;
+        box-shadow: 0 4px 12px rgba(22, 101, 52, 0.15);
+    }
+    
+    .btn-action.btn-suspend {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+    
+    .btn-action.btn-suspend:hover {
+        background: #fef08a;
+        box-shadow: 0 4px 12px rgba(133, 77, 14, 0.15);
+    }
+    
+    .btn-action.btn-activate {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .btn-action.btn-activate:hover {
+        background: #bfdbfe;
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
+    }
+    
+    .btn-action.btn-delete {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .btn-action.btn-delete:hover {
+        background: #fecaca;
+        box-shadow: 0 4px 12px rgba(153, 27, 27, 0.15);
+    }
+    
+    /* Action Forms - FIXED */
+    .action-form {
+        display: inline-block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .action-form button {
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .action-form button:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #c9a33d;
+        opacity: 0.25;
+        margin-bottom: 16px;
+        display: block;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #4a5568;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+    
+    /* Pagination */
+    .pagination-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+    }
+    
+    .pagination-wrapper .pagination-info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    
+    .pagination-wrapper .pagination-links {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .pagination-wrapper .pagination-links a,
+    .pagination-wrapper .pagination-links span {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        transition: all 0.2s ease;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+    
+    .pagination-wrapper .pagination-links a:hover {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    
+    .pagination-wrapper .pagination-links .current {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .page-header .header-title {
+            font-size: 1.6rem;
+        }
+        
+        .page-header .header-actions {
+            width: 100%;
+        }
+        
+        .page-header .header-actions a {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-form .search-wrapper {
+            min-width: 100%;
+        }
+        
+        .filter-form select {
+            width: 100%;
+        }
+        
+        .filter-form .btn-filter,
+        .filter-form .btn-clear {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .employer-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .employer-card .card-actions {
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .page-header .header-title {
+            font-size: 1.3rem;
+        }
+        
+        .employer-card {
+            padding: 16px;
+        }
+        
+        .employer-card .card-header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .employer-card .employer-meta {
+            justify-content: center;
+        }
+        
+        .employer-card .employer-details {
+            justify-content: center;
+        }
+        
+        .employer-card .card-actions {
+            justify-content: center;
+        }
+        
+        .employer-card .btn-action {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+        }
+        
+        .action-form button {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+        }
+        
+        .pagination-wrapper .pagination-links a,
+        .pagination-wrapper .pagination-links span {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
     }
 </style>
 {% endblock %}
@@ -53,138 +660,174 @@
 {% block content %}
 <div class="bg-gray-50 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         <!-- Header -->
-        <div class="flex flex-wrap justify-between items-center mb-6">
+        <div class="page-header">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Manage Employers</h1>
-                <p class="text-gray-600 text-sm">{{ paginator.count }} employers found</p>
+                <h1 class="header-title">
+                    <i class="fas fa-building"></i> Manage Employers
+                </h1>
+                <p class="header-subtitle">
+                    <i class="fas fa-users mr-1"></i> {{ paginator.count }} employers found
+                </p>
             </div>
-            <div class="flex flex-wrap gap-3 mt-3 md:mt-0">
-                <a href="{% url 'admin_panel:admin_employer_list' %}?verified=false" class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-xl hover:bg-yellow-200 transition flex items-center gap-2">
+            <div class="header-actions">
+                <a href="{% url 'admin_panel:admin_employer_list' %}?verified=false" class="btn-pending">
                     <i class="fas fa-clock"></i> Pending Verification
+                </a>
+                <a href="{% url 'admin_panel:admin_export_employers' %}" class="btn-export">
+                    <i class="fas fa-file-export"></i> Export
                 </a>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm mb-6">
-            <form method="GET" class="flex flex-wrap items-center gap-4">
-                <div class="flex-1 min-w-[200px]">
+        <div class="filter-section">
+            <form method="GET" class="filter-form">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
                     <input type="text" name="search" value="{{ current_filters.search|default:'' }}" 
-                           placeholder="Search employers..." 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                           placeholder="Search employers by name or email...">
                 </div>
-                <select name="verified" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                <select name="verified">
                     <option value="">All Status</option>
                     <option value="true" {% if current_filters.verified == 'true' %}selected{% endif %}>Verified</option>
                     <option value="false" {% if current_filters.verified == 'false' %}selected{% endif %}>Unverified</option>
                 </select>
-                <button type="submit" class="bg-primary-light text-white px-6 py-2 rounded-lg hover:bg-primary transition">
-                    <i class="fas fa-filter"></i> Filter
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-filter"></i> Apply Filters
                 </button>
-                <a href="{% url 'admin_panel:admin_employer_list' %}" class="text-gray-500 hover:text-gray-700 text-sm">Clear</a>
+                <a href="{% url 'admin_panel:admin_employer_list' %}" class="btn-clear">
+                    <i class="fas fa-undo"></i> Clear
+                </a>
             </form>
         </div>
 
         <!-- Employer Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="employer-grid">
             {% for employer in employers %}
                 <div class="employer-card">
-                    <div class="flex items-start gap-4">
+                    <div class="card-header">
                         <div class="employer-logo">
                             <i class="fas fa-building"></i>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-gray-800 truncate">{{ employer.company_name }}</h3>
-                            <p class="text-sm text-gray-500 truncate">{{ employer.user.email }}</p>
-                            <div class="flex flex-wrap items-center gap-2 mt-2">
-                                <span class="verification-badge {% if employer.is_verified %}verified{% else %}unverified{% endif %}">
-                                    <i class="fas {% if employer.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
+                        <div class="employer-info">
+                            <h3 class="employer-name">{{ employer.company_name }}</h3>
+                            <p class="employer-email">{{ employer.user.email }}</p>
+                            <div class="employer-meta">
+                                <span class="badge {% if employer.is_verified %}verified{% else %}unverified{% endif %}">
+                                    <i class="fas {% if employer.is_verified %}fa-check-circle{% else %}fa-clock{% endif %} badge-icon"></i>
                                     {% if employer.is_verified %}Verified{% else %}Pending{% endif %}
                                 </span>
-                                <span class="text-xs text-gray-500">
-                                    <i class="fas fa-briefcase mr-1"></i> {{ employer.jobs_count }} jobs
-                                </span>
+                                {% if employer.user.status == 'suspended' %}
+                                    <span class="badge suspended">
+                                        <i class="fas fa-ban badge-icon"></i> Suspended
+                                    </span>
+                                {% else %}
+                                    <span class="badge active">
+                                        <i class="fas fa-circle badge-icon"></i> Active
+                                    </span>
+                                {% endif %}
                             </div>
-                            <div class="mt-2 text-xs text-gray-500">
-                                <i class="fas fa-map-marker-alt mr-1"></i> {{ employer.country.name|default:'N/A' }}
-                                <span class="mx-1">•</span>
-                                <i class="fas fa-industry mr-1"></i> {{ employer.industry|default:'N/A' }}
+                            <div class="employer-details">
+                                <span>
+                                    <i class="fas fa-map-marker-alt"></i> {{ employer.country.name|default:'N/A' }}
+                                </span>
+                                <span>
+                                    <i class="fas fa-briefcase"></i> {{ employer.jobs_count|default:0 }} jobs
+                                </span>
+                                <span>
+                                    <i class="fas fa-industry"></i> {{ employer.industry|default:'N/A' }}
+                                </span>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
+                    
+                    <div class="card-actions">
                         <a href="{% url 'admin_panel:admin_employer_detail' employer.id %}" 
-                           class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-sm hover:bg-blue-200 transition">
+                           class="btn-action btn-view">
                             <i class="fas fa-eye"></i> View
                         </a>
                         {% if not employer.is_verified %}
-                            <a href="{% url 'admin_panel:admin_verify_employer' employer.id %}" 
-                               class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm hover:bg-green-200 transition"
-                               onclick="return confirm('Verify this employer?')">
-                                <i class="fas fa-check"></i> Verify
-                            </a>
+                            <form method="post" action="{% url 'admin_panel:admin_verify_employer' employer.id %}" class="action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-verify" onclick="return confirm('Verify this employer?')">
+                                    <i class="fas fa-check"></i> Verify
+                                </button>
+                            </form>
                         {% endif %}
                         {% if employer.user.status != 'suspended' %}
-                            <a href="{% url 'admin_panel:admin_suspend_employer' employer.id %}" 
-                               class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-sm hover:bg-yellow-200 transition"
-                               onclick="return confirm('Suspend this employer?')">
-                                <i class="fas fa-pause"></i> Suspend
-                            </a>
+                            <form method="post" action="{% url 'admin_panel:admin_suspend_employer' employer.id %}" class="action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-suspend" onclick="return confirm('Suspend this employer?')">
+                                    <i class="fas fa-pause"></i> Suspend
+                                </button>
+                            </form>
                         {% else %}
-                            <a href="{% url 'admin_panel:admin_activate_employer' employer.id %}" 
-                               class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm hover:bg-green-200 transition"
-                               onclick="return confirm('Activate this employer?')">
-                                <i class="fas fa-play"></i> Activate
-                            </a>
+                            <form method="post" action="{% url 'admin_panel:admin_activate_employer' employer.id %}" class="action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-activate" onclick="return confirm('Activate this employer?')">
+                                    <i class="fas fa-play"></i> Activate
+                                </button>
+                            </form>
                         {% endif %}
-                        <a href="{% url 'admin_panel:admin_delete_employer' employer.id %}" 
-                           class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm hover:bg-red-200 transition"
-                           onclick="return confirm('Delete this employer permanently?')">
-                            <i class="fas fa-trash"></i> Delete
-                        </a>
+                        <form method="post" action="{% url 'admin_panel:admin_delete_employer' employer.id %}" class="action-form" onsubmit="return confirm('Delete this employer permanently?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action btn-delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
             {% empty %}
-                <div class="col-span-full text-center py-12 text-gray-500">
-                    <i class="fas fa-building text-4xl mb-4 block"></i>
-                    No employers found.
+                <div class="empty-state">
+                    <i class="fas fa-building"></i>
+                    <h3>No Employers Found</h3>
+                    <p>Try adjusting your filters or search terms to find more employers.</p>
+                    <a href="{% url 'admin_panel:admin_employer_list' %}" class="btn-action btn-view" style="margin-top:16px;display:inline-flex;">
+                        <i class="fas fa-undo"></i> Clear Filters
+                    </a>
                 </div>
             {% endfor %}
         </div>
 
         <!-- Pagination -->
         {% if employers.has_other_pages %}
-            <div class="flex flex-wrap justify-between items-center mt-6">
-                <div class="text-sm text-gray-600">
-                    Showing {{ employers.start_index }} to {{ employers.end_index }} of {{ employers.paginator.count }} employers
+            <div class="pagination-wrapper">
+                <div class="pagination-info">
+                    Showing <strong>{{ employers.start_index }}</strong> to <strong>{{ employers.end_index }}</strong> 
+                    of <strong>{{ employers.paginator.count }}</strong> employers
                 </div>
-                <div class="flex gap-2">
+                <div class="pagination-links">
                     {% if employers.has_previous %}
-                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">First</a>
-                        <a href="?page={{ employers.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Previous</a>
+                        <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ employers.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
                     {% endif %}
                     
                     {% for num in employers.paginator.page_range %}
                         {% if employers.number == num %}
-                            <span class="px-3 py-2 bg-primary-light text-white rounded-lg text-sm">{{ num }}</span>
+                            <span class="current">{{ num }}</span>
                         {% elif num > employers.number|add:'-3' and num < employers.number|add:'3' %}
-                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                               class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">{{ num }}</a>
+                            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
                         {% endif %}
                     {% endfor %}
                     
                     {% if employers.has_next %}
-                        <a href="?page={{ employers.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Next</a>
-                        <a href="?page={{ employers.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
-                           class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm">Last</a>
+                        <a href="?page={{ employers.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                        <a href="?page={{ employers.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
                     {% endif %}
                 </div>
             </div>
         {% endif %}
+        
     </div>
 </div>
 {% endblock %}

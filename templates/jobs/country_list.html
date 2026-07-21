@@ -1,0 +1,503 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Destination Countries - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       COUNTRIES PAGE GOVERNMENT STYLES
+       ============================================ */
+    
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@400;700&display=swap');
+    
+    .page-header {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 40px 0 30px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #c9a33d;
+    }
+    
+    .page-header::before {
+        content: '🌍';
+        position: absolute;
+        bottom: -20%;
+        right: 5%;
+        font-size: 180px;
+        opacity: 0.03;
+        transform: rotate(-10deg);
+    }
+    
+    .page-header .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .page-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: white;
+        font-size: 2.5rem;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .page-header p {
+        font-family: 'Merriweather', serif;
+        color: rgba(255,255,255,0.85);
+        font-size: 1.05rem;
+        max-width: 600px;
+        margin-top: 4px;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        gap: 8px;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .breadcrumb a {
+        color: rgba(255,255,255,0.9);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .breadcrumb a:hover {
+        color: #c9a33d;
+    }
+    
+    .breadcrumb .separator {
+        color: rgba(255,255,255,0.4);
+    }
+    
+    .breadcrumb .current {
+        color: #c9a33d;
+    }
+    
+    .countries-section {
+        background: #f7fafc;
+        min-height: 100vh;
+        padding: 30px 0 60px;
+    }
+    
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .results-header .title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.6rem;
+    }
+    
+    .results-header .count {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    
+    .results-header .count strong {
+        color: #1a365d;
+        font-weight: 700;
+    }
+    
+    /* Search */
+    .search-section {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        margin-bottom: 24px;
+    }
+    
+    .search-section .search-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .search-section input {
+        flex: 1;
+        min-width: 200px;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #2d3748;
+    }
+    
+    .search-section input:focus {
+        outline: none;
+        border-color: #c9a33d;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.08);
+    }
+    
+    .search-section .btn-search {
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+    }
+    
+    .search-section .btn-search:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.25);
+    }
+    
+    .search-section .btn-clear {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #e2e8f0;
+        color: #4a5568;
+    }
+    
+    .search-section .btn-clear:hover {
+        background: #cbd5e0;
+    }
+    
+    /* Country Grid */
+    .country-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+    }
+    
+    .country-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    
+    .country-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #c9a33d, #d4af37);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .country-card:hover::after {
+        transform: scaleX(1);
+    }
+    
+    .country-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        border-color: rgba(201, 163, 61, 0.15);
+    }
+    
+    .country-card .country-flag {
+        font-size: 3rem;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .country-card .country-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 4px;
+    }
+    
+    .country-card .country-name a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .country-card .country-name a:hover {
+        color: #c9a33d;
+    }
+    
+    .country-card .country-details {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+    
+    .country-card .country-details i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    
+    .country-card .country-stats {
+        display: flex;
+        gap: 16px;
+        margin-top: 10px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f4f8;
+    }
+    
+    .country-card .country-stats .stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .country-card .country-stats .stat i {
+        color: #c9a33d;
+        width: 16px;
+        font-size: 0.75rem;
+    }
+    
+    .country-card .card-footer {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f4f8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .country-card .view-jobs {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #c9a33d;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .country-card .view-jobs:hover {
+        color: #b8860b;
+        gap: 8px;
+    }
+    
+    .country-card .jobs-count {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .country-card .jobs-count i {
+        color: #c9a33d;
+    }
+    
+    /* No Results */
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        grid-column: 1 / -1;
+    }
+    
+    .no-results i {
+        font-size: 48px;
+        color: #a0aec0;
+        margin-bottom: 16px;
+    }
+    
+    .no-results h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    
+    .no-results p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+    }
+    
+    .no-results .clear-link {
+        font-family: 'Inter', sans-serif;
+        color: #c9a33d;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+        display: inline-block;
+        margin-top: 12px;
+    }
+    
+    .no-results .clear-link:hover {
+        color: #b8860b;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header h1 {
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            font-size: 0.95rem;
+        }
+        
+        .country-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .search-section .search-group {
+            flex-direction: column;
+        }
+        
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .page-header {
+            padding: 30px 0 20px;
+        }
+        
+        .page-header h1 {
+            font-size: 1.6rem;
+        }
+        
+        .country-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .country-card {
+            padding: 16px;
+        }
+        
+        .country-card .country-flag {
+            font-size: 2.5rem;
+        }
+        
+        .search-section {
+            padding: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Destination Countries</span>
+        </div>
+        <h1>Destination Countries</h1>
+        <p>Explore overseas job opportunities by country</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="countries-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Results Header -->
+        <div class="results-header">
+            <div>
+                <h2 class="title">Countries with Active Jobs</h2>
+                <p class="count"><strong>{{ countries|length }}</strong> countries with overseas job opportunities</p>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <form method="GET" class="search-group">
+                <input type="text" name="search" value="{{ request.GET.search|default:'' }}" 
+                       placeholder="Search for a country..." 
+                       class="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-light">
+                <button type="submit" class="btn-search">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                {% if request.GET.search %}
+                    <a href="{% url 'countries' %}" class="btn-clear">
+                        <i class="fas fa-undo"></i> Clear
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Country Grid -->
+        <div class="country-grid">
+            {% for country in countries %}
+                <div class="country-card">
+                    <span class="country-flag">{{ country.flag_emoji|default:"🌍" }}</span>
+                    <h3 class="country-name">
+                        <a href="{% url 'job_list' %}?country={{ country.id }}">{{ country.name }}</a>
+                    </h3>
+                    <div class="country-details">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        {% if country.region %}{{ country.region }}{% else %}Various Regions{% endif %}
+                    </div>
+                    <div class="country-stats">
+                        <span class="stat">
+                            <i class="fas fa-briefcase"></i> {{ country.job_count }} active jobs
+                        </span>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'job_list' %}?country={{ country.id }}" class="view-jobs">
+                            View Jobs <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <span class="jobs-count">
+                            <i class="fas fa-briefcase"></i> {{ country.job_count }} positions
+                        </span>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-results">
+                    <i class="fas fa-globe-africa"></i>
+                    <h3>No Countries Found</h3>
+                    <p>There are currently no active job opportunities in any country. Please check back later.</p>
+                    <a href="{% url 'countries' %}" class="clear-link">
+                        <i class="fas fa-undo"></i> Refresh
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

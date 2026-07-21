@@ -95,6 +95,78 @@
         font-size: 8px;
     }
     
+    /* Role Selection Cards */
+    .role-selection {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 24px 0 32px;
+    }
+    
+    .role-card {
+        padding: 24px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        position: relative;
+    }
+    
+    .role-card:hover {
+        border-color: #c9a33d;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    
+    .role-card.selected {
+        border-color: #c9a33d;
+        background: #fdf8f0;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+    }
+    
+    .role-card .role-icon {
+        font-size: 2.5rem;
+        color: #c9a33d;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .role-card .role-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+    
+    .role-card .role-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #718096;
+        line-height: 1.4;
+    }
+    
+    .role-card .role-check {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #c9a33d;
+        color: white;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+    }
+    
+    .role-card.selected .role-check {
+        display: flex;
+    }
+    
     /* Step Indicator */
     .step-indicator {
         display: flex;
@@ -258,6 +330,32 @@
     
     .form-group.error .error-text {
         display: block;
+    }
+    
+    .role-specific {
+        display: none;
+        border-top: 2px solid rgba(201, 163, 61, 0.08);
+        padding-top: 20px;
+        margin-top: 10px;
+    }
+    
+    .role-specific.active {
+        display: block;
+    }
+    
+    .role-specific .role-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 0.9rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .role-specific .role-title i {
+        color: #c9a33d;
     }
     
     /* File Upload */
@@ -547,6 +645,10 @@
             font-size: 1.6rem;
         }
         
+        .role-selection {
+            grid-template-columns: 1fr 1fr;
+        }
+        
         .step-indicator {
             max-width: 100%;
             padding: 0 10px;
@@ -588,6 +690,10 @@
         .register-card {
             padding: 16px;
             border-radius: 16px;
+        }
+        
+        .role-selection {
+            grid-template-columns: 1fr;
         }
         
         .form-group input,
@@ -633,6 +739,28 @@
                 <div class="gov-divider"></div>
             </div>
 
+            <!-- Role Selection -->
+            <div class="role-selection" id="roleSelection">
+                <div class="role-card" data-role="citizen" onclick="selectRole('citizen')">
+                    <span class="role-check"><i class="fas fa-check"></i></span>
+                    <span class="role-icon"><i class="fas fa-user"></i></span>
+                    <div class="role-name">Citizen</div>
+                    <div class="role-desc">Apply for jobs and track applications</div>
+                </div>
+                <div class="role-card" data-role="employer" onclick="selectRole('employer')">
+                    <span class="role-check"><i class="fas fa-check"></i></span>
+                    <span class="role-icon"><i class="fas fa-building"></i></span>
+                    <div class="role-name">Employer</div>
+                    <div class="role-desc">Post jobs and manage applicants</div>
+                </div>
+                <div class="role-card" data-role="agency" onclick="selectRole('agency')">
+                    <span class="role-check"><i class="fas fa-check"></i></span>
+                    <span class="role-icon"><i class="fas fa-handshake"></i></span>
+                    <div class="role-name">Recruitment Agency</div>
+                    <div class="role-desc">Post jobs on behalf of employers</div>
+                </div>
+            </div>
+
             <!-- Step Indicator -->
             <div class="step-indicator">
                 <div class="step-item">
@@ -652,6 +780,7 @@
             <!-- Registration Form -->
             <form method="POST" enctype="multipart/form-data" id="registerForm" novalidate>
                 {% csrf_token %}
+                <input type="hidden" name="user_type" id="selectedRole" value="">
                 
                 <!-- Step 1: Personal Information -->
                 <div class="form-step active" data-step="1">
@@ -733,6 +862,105 @@
                             <input type="password" id="password2" name="password2" 
                                    placeholder="Confirm your password" required>
                             <div class="error-text">{{ form.password2.errors.0|default:"Passwords do not match." }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Role-specific fields: Employer -->
+                    <div class="role-specific" id="employerFields">
+                        <div class="role-title"><i class="fas fa-building"></i> Employer Information</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="form-group">
+                                <label for="company_name"><i class="fas fa-building"></i> Company Name</label>
+                                <input type="text" id="company_name" name="company_name" 
+                                       placeholder="Enter your company name">
+                            </div>
+                            <div class="form-group">
+                                <label for="registration_number"><i class="fas fa-hashtag"></i> Registration Number</label>
+                                <input type="text" id="registration_number" name="registration_number" 
+                                       placeholder="Enter business registration number">
+                            </div>
+                            <div class="form-group">
+                                <label for="industry"><i class="fas fa-industry"></i> Industry</label>
+                                <input type="text" id="industry" name="industry" 
+                                       placeholder="e.g., Technology, Healthcare">
+                            </div>
+                            <div class="form-group">
+                                <label for="company_phone"><i class="fas fa-phone"></i> Company Phone</label>
+                                <input type="tel" id="company_phone" name="company_phone" 
+                                       placeholder="Enter company phone number">
+                            </div>
+                            <div class="md:col-span-2 form-group">
+                                <label for="company_address"><i class="fas fa-map-marker-alt"></i> Company Address</label>
+                                <textarea id="company_address" name="company_address" rows="2" 
+                                          placeholder="Enter company physical address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Role-specific fields: Agency (UPDATED with all required fields) -->
+                    <div class="role-specific" id="agencyFields">
+                        <div class="role-title"><i class="fas fa-handshake"></i> Recruitment Agency Information</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2 form-group">
+                                <label for="agency_name"><i class="fas fa-building"></i> Agency Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="agency_name" name="agency_name" 
+                                       placeholder="Enter your agency name" required>
+                                <div class="error-text">Please enter your agency name.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="registration_number_agency"><i class="fas fa-hashtag"></i> Registration Number <span class="text-red-500">*</span></label>
+                                <input type="text" id="registration_number_agency" name="registration_number" 
+                                       placeholder="e.g., CPR/2026/12345" required>
+                                <div class="error-text">Please enter your business registration number.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="license_number"><i class="fas fa-certificate"></i> License Number <span class="text-red-500">*</span></label>
+                                <input type="text" id="license_number" name="license_number" 
+                                       placeholder="Enter agency license number" required>
+                                <div class="error-text">Please enter your agency license number.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="license_expiry"><i class="fas fa-calendar-alt"></i> License Expiry Date <span class="text-red-500">*</span></label>
+                                <input type="date" id="license_expiry" name="license_expiry" required>
+                                <div class="error-text">Please select your license expiry date.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact_phone"><i class="fas fa-phone"></i> Contact Phone <span class="text-red-500">*</span></label>
+                                <input type="tel" id="contact_phone" name="contact_phone" 
+                                       placeholder="Enter agency contact phone" required>
+                                <div class="error-text">Please enter a contact phone number.</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact_email"><i class="fas fa-envelope"></i> Contact Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="contact_email" name="contact_email" 
+                                       placeholder="Enter agency contact email" required>
+                                <div class="error-text">Please enter a contact email address.</div>
+                            </div>
+                            
+                            <div class="md:col-span-2 form-group">
+                                <label for="address"><i class="fas fa-map-marker-alt"></i> Physical Address <span class="text-red-500">*</span></label>
+                                <textarea id="address" name="address" rows="3" 
+                                          placeholder="Enter agency physical address" required></textarea>
+                                <div class="error-text">Please enter your agency address.</div>
+                            </div>
+                            
+                            <div class="md:col-span-2 form-group">
+                                <label for="description"><i class="fas fa-tasks"></i> Agency Description <span class="text-red-500">*</span></label>
+                                <textarea id="description" name="description" rows="3" 
+                                          placeholder="Describe your agency services and expertise" required></textarea>
+                                <div class="error-text">Please describe your agency services.</div>
+                            </div>
+                            
+                            <div class="md:col-span-2 form-group">
+                                <label for="website"><i class="fas fa-globe"></i> Website <span class="text-gray-400 text-sm">(Optional)</span></label>
+                                <input type="url" id="website" name="website" 
+                                       placeholder="https://www.youragency.com">
+                            </div>
                         </div>
                     </div>
                     
@@ -886,6 +1114,13 @@
                     </div>
                     
                     <div class="review-section">
+                        <h3>Role Information</h3>
+                        <div class="review-grid" id="reviewRole">
+                            <!-- Filled dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
                         <h3>Uploaded Documents</h3>
                         <div class="review-grid" id="reviewDocuments">
                             <!-- Filled dynamically -->
@@ -927,6 +1162,32 @@
 $(document).ready(function() {
     let currentStep = 1;
     const totalSteps = 3;
+    let selectedRole = '';
+
+    // ============================================
+    // ROLE SELECTION
+    // ============================================
+    window.selectRole = function(role) {
+        selectedRole = role;
+        $('#selectedRole').val(role);
+        
+        // Update UI
+        $('.role-card').removeClass('selected');
+        $(`.role-card[data-role="${role}"]`).addClass('selected');
+        
+        // Show/hide role-specific fields
+        $('.role-specific').removeClass('active');
+        if (role === 'employer') {
+            $('#employerFields').addClass('active');
+        } else if (role === 'agency') {
+            $('#agencyFields').addClass('active');
+        }
+        
+        // Enable next step if role is selected
+        if (role) {
+            $('.btn-next').prop('disabled', false);
+        }
+    };
 
     // ============================================
     // STEP NAVIGATION
@@ -955,6 +1216,12 @@ $(document).ready(function() {
     }
 
     $('.next-step').click(function() {
+        // Check if role is selected
+        if (!selectedRole) {
+            alert('Please select your role (Citizen, Employer, or Agency) before proceeding.');
+            return;
+        }
+        
         if (currentStep < totalSteps) {
             // Validate current step before proceeding
             if (currentStep === 1) {
@@ -1007,10 +1274,49 @@ $(document).ready(function() {
             isValid = false;
         }
         
+        // Validate role-specific fields
+        if (selectedRole === 'employer') {
+            const companyName = $('#company_name').val();
+            if (!companyName || !companyName.trim()) {
+                $('#company_name').closest('.form-group').addClass('error');
+                isValid = false;
+            }
+        }
+        
+        if (selectedRole === 'agency') {
+            // Validate all required agency fields
+            const agencyFields = ['agency_name', 'registration_number_agency', 'license_number', 'license_expiry', 'contact_phone', 'contact_email', 'address', 'description'];
+            agencyFields.forEach(fieldId => {
+                const input = $(`#${fieldId}`);
+                if (input.length) {
+                    const group = input.closest('.form-group');
+                    if (!input.val() || !input.val().trim()) {
+                        group.addClass('error');
+                        isValid = false;
+                    } else {
+                        group.removeClass('error');
+                    }
+                }
+            });
+            
+            // Validate license expiry is not in the past
+            const licenseExpiry = $('#license_expiry').val();
+            if (licenseExpiry) {
+                const expiryDate = new Date(licenseExpiry);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (expiryDate < today) {
+                    $('#license_expiry').closest('.form-group').addClass('error');
+                    $('#license_expiry').closest('.form-group').find('.error-text').text('License expiry date cannot be in the past.');
+                    isValid = false;
+                }
+            }
+        }
+        
         if (!isValid) {
             const firstError = $('.form-group.error:first');
             if (firstError.length) {
-                firstError.find('input, select').focus();
+                firstError.find('input, select, textarea').focus();
             }
         }
         return isValid;
@@ -1074,6 +1380,7 @@ $(document).ready(function() {
     function updateReview() {
         // Personal Info
         const fields = [
+            { label: 'Role', value: $('#selectedRole').val().toUpperCase() },
             { label: 'Full Name', value: $('#full_name').val() },
             { label: 'National ID', value: $('#national_id').val() },
             { label: 'Email', value: $('#email').val() },
@@ -1095,6 +1402,51 @@ $(document).ready(function() {
             }
         });
         $('#reviewInfo').html(html);
+        
+        // Role-specific info
+        let roleHtml = '';
+        if (selectedRole === 'employer') {
+            const employerFields = [
+                { label: 'Company Name', value: $('#company_name').val() },
+                { label: 'Registration Number', value: $('#registration_number').val() },
+                { label: 'Industry', value: $('#industry').val() },
+                { label: 'Company Phone', value: $('#company_phone').val() },
+                { label: 'Company Address', value: $('#company_address').val() },
+            ];
+            employerFields.forEach(field => {
+                if (field.value) {
+                    roleHtml += `
+                        <div class="review-item">
+                            <div class="review-label">${field.label}</div>
+                            <div class="review-value">${field.value}</div>
+                        </div>
+                    `;
+                }
+            });
+        } else if (selectedRole === 'agency') {
+            const agencyFields = [
+                { label: 'Agency Name', value: $('#agency_name').val() },
+                { label: 'Registration Number', value: $('#registration_number_agency').val() },
+                { label: 'License Number', value: $('#license_number').val() },
+                { label: 'License Expiry', value: $('#license_expiry').val() },
+                { label: 'Contact Phone', value: $('#contact_phone').val() },
+                { label: 'Contact Email', value: $('#contact_email').val() },
+                { label: 'Address', value: $('#address').val() },
+                { label: 'Description', value: $('#description').val() },
+                { label: 'Website', value: $('#website').val() || 'Not provided' },
+            ];
+            agencyFields.forEach(field => {
+                if (field.value && field.value !== 'Not provided') {
+                    roleHtml += `
+                        <div class="review-item">
+                            <div class="review-label">${field.label}</div>
+                            <div class="review-value">${field.value}</div>
+                        </div>
+                    `;
+                }
+            });
+        }
+        $('#reviewRole').html(roleHtml);
         
         // Documents
         const documents = [
@@ -1133,6 +1485,12 @@ $(document).ready(function() {
             return;
         }
         
+        if (!selectedRole) {
+            e.preventDefault();
+            alert('Please select your role (Citizen, Employer, or Agency).');
+            return;
+        }
+        
         // Validate step 1 again
         if (!validateStep1()) {
             e.preventDefault();
@@ -1148,7 +1506,7 @@ $(document).ready(function() {
     // ============================================
     // CLEAR ERRORS ON INPUT
     // ============================================
-    $('input, select').on('input change', function() {
+    $('input, select, textarea').on('input change', function() {
         $(this).closest('.form-group').removeClass('error');
     });
 
@@ -1179,6 +1537,8 @@ $(document).ready(function() {
     // ============================================
     // INITIAL STATE
     // ============================================
+    // Disable next until role is selected
+    $('.btn-next').prop('disabled', true);
     // Open first step
     showStep(1);
 });

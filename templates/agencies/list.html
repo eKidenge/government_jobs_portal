@@ -608,7 +608,7 @@
                         <button type="submit" class="btn-filter apply">
                             <i class="fas fa-sliders-h"></i> Filter
                         </button>
-                        <a href="{% url 'agencies' %}" class="btn-filter clear">
+                        <a href="{% url 'agencies:agency_list' %}" class="btn-filter clear">
                             <i class="fas fa-undo"></i> Clear
                         </a>
                     </div>
@@ -627,7 +627,8 @@
                         <div class="agency-info">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="agency-name">
-                                    <a href="{% url 'agency_detail' agency.id %}">{{ agency.agency_name }}</a>
+                                    <!-- FIXED: Added agencies namespace -->
+                                    <a href="{% url 'agencies:agency_detail' agency.id %}">{{ agency.agency_name }}</a>
                                 </div>
                                 <span class="verification-badge {% if agency.is_verified %}verified{% else %}pending{% endif %}">
                                     <i class="fas {% if agency.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
@@ -669,7 +670,8 @@
                     </div>
                     
                     <div class="card-footer">
-                        <a href="{% url 'agency_detail' agency.id %}" class="view-details">
+                        <!-- FIXED: Added agencies namespace -->
+                        <a href="{% url 'agencies:agency_detail' agency.id %}" class="view-details">
                             View Details <i class="fas fa-arrow-right"></i>
                         </a>
                         <span class="jobs-count">
@@ -682,7 +684,7 @@
                     <i class="fas fa-handshake"></i>
                     <h3>No Agencies Found</h3>
                     <p>Try adjusting your filters or search terms to find recruitment agencies.</p>
-                    <a href="{% url 'agencies' %}" class="clear-link">
+                    <a href="{% url 'agencies:agency_list' %}" class="clear-link">
                         <i class="fas fa-undo"></i> Clear all filters
                     </a>
                 </div>

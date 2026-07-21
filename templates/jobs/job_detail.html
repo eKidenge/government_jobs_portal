@@ -5,17 +5,55 @@
 
 {% block extra_css %}
 <style>
+    /* ============================================
+       GOVERNMENT FONTS
+       ============================================ */
+    .gov-font {
+        font-family: 'Playfair Display', serif !important;
+    }
+    .gov-font-body {
+        font-family: 'Merriweather', serif !important;
+    }
+    .gov-font-sans {
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    /* ============================================
+       JOB DETAIL PAGE
+       ============================================ */
     .job-detail-card {
         background: white;
         border-radius: 20px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         overflow: hidden;
+        border: 1px solid rgba(201, 163, 61, 0.06);
     }
+    
     .job-header {
         background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
         padding: 30px;
         border-bottom: 1px solid #e2e8f0;
     }
+    
+    .job-header .job-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #1a365d;
+        font-size: 2rem;
+        margin: 0;
+    }
+    
+    .job-header .job-employer {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        color: #4a5568;
+        margin-top: 4px;
+    }
+    
+    .job-header .job-employer i {
+        color: #c9a33d;
+    }
+    
     .job-meta-item {
         display: flex;
         align-items: center;
@@ -23,9 +61,11 @@
         padding: 12px 0;
         border-bottom: 1px solid #f7fafc;
     }
+    
     .job-meta-item:last-child {
         border-bottom: none;
     }
+    
     .job-meta-icon {
         width: 40px;
         height: 40px;
@@ -37,6 +77,12 @@
         color: #2b6cb0;
         flex-shrink: 0;
     }
+    
+    .job-meta-icon.gold {
+        background: #fdf8f0;
+        color: #c9a33d;
+    }
+    
     .access-restricted {
         background: #fff5f5;
         border: 2px solid #fc8181;
@@ -44,21 +90,227 @@
         padding: 30px;
         text-align: center;
     }
+    
     .access-restricted i {
         color: #fc8181;
         font-size: 48px;
         margin-bottom: 16px;
     }
+    
+    .access-restricted h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #742a2a;
+    }
+    
+    .access-restricted p {
+        font-family: 'Merriweather', serif;
+        color: #742a2a;
+    }
+    
     .similar-job-card {
         transition: all 0.3s ease;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
         padding: 16px;
+        background: white;
     }
+    
     .similar-job-card:hover {
-        border-color: #2b6cb0;
-        box-shadow: 0 4px 12px rgba(43, 108, 176, 0.1);
+        border-color: #c9a33d;
+        box-shadow: 0 4px 16px rgba(201, 163, 61, 0.1);
         transform: translateY(-2px);
+    }
+    
+    .similar-job-card .job-title-sm {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 0.95rem;
+    }
+    
+    .similar-job-card .job-meta-sm {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .similar-job-card .job-meta-sm i {
+        color: #c9a33d;
+        width: 14px;
+    }
+    
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge.verified {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .badge.featured {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+    
+    .badge.employment-type {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .badge.experience-level {
+        background: #f5f3ff;
+        color: #6b21a8;
+    }
+    
+    .badge.remote {
+        background: #ecfdf5;
+        color: #065f46;
+    }
+    
+    .badge.closed {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .badge.open {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title i {
+        color: #c9a33d;
+    }
+    
+    .section-content {
+        font-family: 'Merriweather', serif;
+        color: #4a5568;
+        font-size: 0.95rem;
+        line-height: 1.8;
+    }
+    
+    .btn-apply {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .btn-apply:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(43, 108, 176, 0.3);
+    }
+    
+    .btn-apply:disabled {
+        background: #e2e8f0;
+        color: #a0aec0;
+        cursor: not-allowed;
+    }
+    
+    .btn-apply:disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .btn-pay {
+        background: linear-gradient(135deg, #d69e2e, #ed8936);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn-pay:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(214, 158, 46, 0.3);
+    }
+    
+    .share-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .share-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+    }
+    
+    .share-btn.facebook { background: #1877f2; }
+    .share-btn.twitter { background: #1da1f2; }
+    .share-btn.linkedin { background: #0a66c2; }
+    .share-btn.whatsapp { background: #25d366; }
+    .share-btn.email { background: #ea4335; }
+    
+    .share-btn.facebook:hover { background: #1664d9; }
+    .share-btn.twitter:hover { background: #1a8cd8; }
+    .share-btn.linkedin:hover { background: #0957a8; }
+    .share-btn.whatsapp:hover { background: #20b85a; }
+    .share-btn.email:hover { background: #d33426; }
+    
+    @media (max-width: 768px) {
+        .job-header .job-title {
+            font-size: 1.5rem;
+        }
+        
+        .job-header {
+            padding: 20px;
+        }
+        
+        .job-detail-card .p-6 {
+            padding: 16px;
+        }
+        
+        .btn-apply,
+        .btn-pay {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -66,6 +318,16 @@
 {% block content %}
 <div class="bg-gray-50 min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6 font-sans">
+            <a href="{% url 'home' %}" class="hover:text-primary-light transition">Home</a>
+            <span class="text-gray-300">/</span>
+            <a href="{% url 'job_list' %}" class="hover:text-primary-light transition">Jobs</a>
+            <span class="text-gray-300">/</span>
+            <span class="text-gray-700 font-semibold">{{ job.title|truncatechars:40 }}</span>
+        </nav>
+        
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content -->
             <div class="lg:col-span-2">
@@ -75,28 +337,34 @@
                         <div class="flex flex-wrap items-start justify-between gap-4">
                             <div>
                                 <div class="flex flex-wrap items-center gap-3 mb-2">
-                                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">{{ job.title }}</h1>
+                                    <h1 class="job-title">{{ job.title }}</h1>
                                     {% if job.is_verified %}
-                                        <span class="inline-flex items-center text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                                            <i class="fas fa-check-circle mr-1"></i> Verified
+                                        <span class="badge verified">
+                                            <i class="fas fa-check-circle"></i> Verified
                                         </span>
                                     {% endif %}
                                     {% if job.is_featured %}
-                                        <span class="inline-flex items-center text-xs font-semibold text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full">
-                                            <i class="fas fa-star mr-1"></i> Featured
+                                        <span class="badge featured">
+                                            <i class="fas fa-star"></i> Featured
                                         </span>
                                     {% endif %}
                                 </div>
-                                <p class="text-gray-600">
-                                    <i class="fas fa-building mr-2 text-primary-light"></i>
-                                    {{ job.employer.company_name|default:job.agency.agency_name|default:'N/A' }}
+                                <p class="job-employer">
+                                    <i class="fas fa-building mr-2"></i>
+                                    {% if job.employer %}
+                                        {{ job.employer.company_name }}
+                                    {% elif job.agency %}
+                                        {{ job.agency.agency_name }}
+                                    {% else %}
+                                        <span style="color:#a0aec0;">N/A</span>
+                                    {% endif %}
                                 </p>
                             </div>
                             <div class="flex flex-col items-end gap-2">
-                                <span class="inline-flex items-center px-4 py-2 bg-blue-100 text-primary-light rounded-xl text-sm font-semibold">
-                                    <i class="fas fa-clock mr-2"></i> {{ job.get_employment_type_display }}
+                                <span class="badge employment-type">
+                                    <i class="fas fa-clock mr-1"></i> {{ job.get_employment_type_display }}
                                 </span>
-                                <span class="text-sm text-gray-500">
+                                <span class="text-sm text-gray-500 font-sans">
                                     <i class="far fa-calendar-alt mr-1"></i>
                                     Posted {{ job.posted_date|timesince }} ago
                                 </span>
@@ -107,25 +375,25 @@
                     <!-- Job Details -->
                     <div class="p-6 md:p-8">
                         <!-- Salary & Location -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
                             {% if job.salary_min %}
                                 <div>
-                                    <p class="text-sm text-gray-500">Salary Range</p>
-                                    <p class="font-semibold text-gray-800">
+                                    <p class="text-sm text-gray-500 font-sans">Salary Range</p>
+                                    <p class="font-semibold text-gray-800 font-serif text-lg">
                                         {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }}
                                         {% if job.is_salary_negotiable %}
-                                            <span class="text-sm font-normal text-gray-500">(Negotiable)</span>
+                                            <span class="text-sm font-normal text-gray-500 font-sans">(Negotiable)</span>
                                         {% endif %}
                                     </p>
                                 </div>
                             {% endif %}
                             <div>
-                                <p class="text-sm text-gray-500">Location</p>
-                                <p class="font-semibold text-gray-800">
-                                    <i class="fas fa-map-marker-alt mr-2 text-primary-light"></i>
+                                <p class="text-sm text-gray-500 font-sans">Location</p>
+                                <p class="font-semibold text-gray-800 font-sans">
+                                    <i class="fas fa-map-marker-alt mr-2 text-gold"></i>
                                     {{ job.location }}, {{ job.country.name }}
                                     {% if job.is_remote %}
-                                        <span class="inline-flex items-center text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full ml-2">
+                                        <span class="badge remote">
                                             <i class="fas fa-wifi mr-1"></i> Remote
                                         </span>
                                     {% endif %}
@@ -135,24 +403,30 @@
 
                         <!-- Description -->
                         <div class="mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 mb-3">Job Description</h3>
-                            <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">
+                            <h3 class="section-title">
+                                <i class="fas fa-align-left"></i> Job Description
+                            </h3>
+                            <div class="section-content">
                                 {{ job.description|linebreaks }}
                             </div>
                         </div>
 
                         <!-- Responsibilities -->
                         <div class="mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 mb-3">Key Responsibilities</h3>
-                            <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">
+                            <h3 class="section-title">
+                                <i class="fas fa-tasks"></i> Key Responsibilities
+                            </h3>
+                            <div class="section-content">
                                 {{ job.responsibilities|linebreaks }}
                             </div>
                         </div>
 
                         <!-- Requirements -->
                         <div class="mb-6">
-                            <h3 class="text-lg font-bold text-gray-800 mb-3">Requirements</h3>
-                            <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">
+                            <h3 class="section-title">
+                                <i class="fas fa-check-circle"></i> Requirements
+                            </h3>
+                            <div class="section-content">
                                 {{ job.requirements|linebreaks }}
                             </div>
                         </div>
@@ -160,8 +434,10 @@
                         <!-- Benefits -->
                         {% if job.benefits %}
                             <div class="mb-6">
-                                <h3 class="text-lg font-bold text-gray-800 mb-3">Benefits</h3>
-                                <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">
+                                <h3 class="section-title">
+                                    <i class="fas fa-gift"></i> Benefits
+                                </h3>
+                                <div class="section-content">
                                     {{ job.benefits|linebreaks }}
                                 </div>
                             </div>
@@ -170,27 +446,27 @@
                         <!-- Visa Requirements -->
                         {% if job.visa_requirements %}
                             <div class="mb-6 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-                                <h3 class="text-lg font-bold text-yellow-800 mb-2">
+                                <h3 class="section-title text-yellow-800" style="color:#854d0e;">
                                     <i class="fas fa-passport mr-2"></i> Visa Requirements
                                 </h3>
-                                <p class="text-yellow-700">{{ job.visa_requirements }}</p>
+                                <p class="text-yellow-700 font-body">{{ job.visa_requirements }}</p>
                             </div>
                         {% endif %}
 
                         <!-- Application Deadline -->
                         <div class="p-4 bg-blue-50 rounded-xl border border-blue-200 flex flex-wrap items-center justify-between">
                             <div>
-                                <p class="text-sm text-blue-800 font-semibold">
+                                <p class="text-sm text-blue-800 font-semibold font-sans">
                                     <i class="far fa-clock mr-2"></i> Application Deadline
                                 </p>
-                                <p class="text-blue-600 font-bold">{{ job.closing_date|date:"F d, Y" }}</p>
+                                <p class="text-blue-600 font-bold font-serif text-lg">{{ job.closing_date|date:"F d, Y" }}</p>
                             </div>
                             {% if job.closing_date > now %}
-                                <span class="text-sm text-green-600 font-semibold">
+                                <span class="badge open">
                                     <i class="fas fa-check-circle mr-1"></i> Accepting Applications
                                 </span>
                             {% else %}
-                                <span class="text-sm text-red-600 font-semibold">
+                                <span class="badge closed">
                                     <i class="fas fa-times-circle mr-1"></i> Closed
                                 </span>
                             {% endif %}
@@ -201,37 +477,38 @@
                             {% if user.is_authenticated %}
                                 {% if has_payment_access and job.closing_date > now %}
                                     <a href="{% url 'apply_to_job' job.id %}" 
-                                       class="w-full bg-gradient-to-r from-primary-light to-secondary text-white py-4 rounded-xl font-bold hover:shadow-lg transition-all text-center block text-lg">
-                                        <i class="fas fa-paper-plane mr-2"></i> Apply Now
+                                       class="btn-apply">
+                                        <i class="fas fa-paper-plane"></i> Apply Now
                                     </a>
                                 {% elif not has_payment_access %}
                                     <div class="access-restricted">
                                         <i class="fas fa-lock"></i>
-                                        <h3 class="text-xl font-bold text-red-700">Access Restricted</h3>
-                                        <p class="text-red-600 mt-2">
+                                        <h3>Access Restricted</h3>
+                                        <p>
                                             Payment of the Government Employment Service Fee is required before submitting an application.
                                         </p>
-                                        <a href="{% url 'payment_page' %}" 
-                                           class="inline-block mt-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition">
-                                            <i class="fas fa-credit-card mr-2"></i> Pay Now
+                                        <!-- FIXED: Added payments namespace -->
+                                        <a href="{% url 'payments:payment_page' %}" 
+                                           class="btn-pay mt-4 inline-flex">
+                                            <i class="fas fa-credit-card"></i> Pay Now
                                         </a>
                                     </div>
                                 {% elif job.closing_date <= now %}
                                     <div class="p-4 bg-red-50 rounded-xl border border-red-200 text-center">
                                         <i class="fas fa-times-circle text-red-500 text-2xl mb-2"></i>
-                                        <p class="text-red-700 font-semibold">This job posting has closed.</p>
+                                        <p class="text-red-700 font-semibold font-sans">This job posting has closed.</p>
                                     </div>
                                 {% endif %}
                             {% else %}
                                 <div class="p-6 bg-blue-50 rounded-xl border border-blue-200 text-center">
-                                    <p class="text-gray-700 mb-3">Please login or register to apply for this position.</p>
+                                    <p class="text-gray-700 mb-3 font-body">Please login or register to apply for this position.</p>
                                     <div class="flex flex-wrap justify-center gap-3">
                                         <a href="{% url 'login' %}?next={{ request.path }}" 
-                                           class="bg-primary-light text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary transition">
+                                           class="bg-primary-light text-white px-6 py-2 rounded-xl font-semibold hover:bg-primary transition font-sans">
                                             Login
                                         </a>
                                         <a href="{% url 'register' %}" 
-                                           class="border border-primary-light text-primary-light px-6 py-2 rounded-xl font-semibold hover:bg-primary-light hover:text-white transition">
+                                           class="border border-primary-light text-primary-light px-6 py-2 rounded-xl font-semibold hover:bg-primary-light hover:text-white transition font-sans">
                                             Register
                                         </a>
                                     </div>
@@ -246,14 +523,14 @@
             <div class="lg:col-span-1 space-y-6">
                 <!-- Job Meta -->
                 <div class="job-detail-card p-6">
-                    <h3 class="font-bold text-gray-800 mb-4">Job Details</h3>
+                    <h3 class="font-bold text-gray-800 mb-4 gov-font">Job Details</h3>
                     <div class="job-meta-item">
                         <div class="job-meta-icon">
                             <i class="fas fa-briefcase"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500">Employment Type</p>
-                            <p class="font-semibold text-gray-800">{{ job.get_employment_type_display }}</p>
+                            <p class="text-xs text-gray-500 font-sans">Employment Type</p>
+                            <p class="font-semibold text-gray-800 font-sans">{{ job.get_employment_type_display }}</p>
                         </div>
                     </div>
                     <div class="job-meta-item">
@@ -261,17 +538,17 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500">Experience Level</p>
-                            <p class="font-semibold text-gray-800">{{ job.get_experience_level_display }}</p>
+                            <p class="text-xs text-gray-500 font-sans">Experience Level</p>
+                            <p class="font-semibold text-gray-800 font-sans">{{ job.get_experience_level_display }}</p>
                         </div>
                     </div>
                     <div class="job-meta-item">
-                        <div class="job-meta-icon">
+                        <div class="job-meta-icon gold">
                             <i class="fas fa-tag"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500">Category</p>
-                            <p class="font-semibold text-gray-800">{{ job.category.name }}</p>
+                            <p class="text-xs text-gray-500 font-sans">Category</p>
+                            <p class="font-semibold text-gray-800 font-sans">{{ job.category.name }}</p>
                         </div>
                     </div>
                     <div class="job-meta-item">
@@ -279,17 +556,17 @@
                             <i class="fas fa-eye"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500">Views</p>
-                            <p class="font-semibold text-gray-800">{{ job.views_count }}</p>
+                            <p class="text-xs text-gray-500 font-sans">Views</p>
+                            <p class="font-semibold text-gray-800 font-sans">{{ job.views_count }}</p>
                         </div>
                     </div>
                     <div class="job-meta-item">
-                        <div class="job-meta-icon">
+                        <div class="job-meta-icon gold">
                             <i class="fas fa-users"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500">Applications</p>
-                            <p class="font-semibold text-gray-800">{{ job.applications_count }}</p>
+                            <p class="text-xs text-gray-500 font-sans">Applications</p>
+                            <p class="font-semibold text-gray-800 font-sans">{{ job.applications_count }}</p>
                         </div>
                     </div>
                 </div>
@@ -297,16 +574,22 @@
                 <!-- Similar Jobs -->
                 {% if similar_jobs %}
                     <div class="job-detail-card p-6">
-                        <h3 class="font-bold text-gray-800 mb-4">Similar Jobs</h3>
+                        <h3 class="font-bold text-gray-800 mb-4 gov-font">Similar Jobs</h3>
                         <div class="space-y-3">
                             {% for similar in similar_jobs %}
                                 <a href="{% url 'job_detail' similar.id %}" class="similar-job-card block">
-                                    <h4 class="font-semibold text-gray-800 text-sm">{{ similar.title }}</h4>
-                                    <p class="text-xs text-gray-500 mt-1">
+                                    <h4 class="job-title-sm">{{ similar.title }}</h4>
+                                    <p class="job-meta-sm mt-1">
                                         <i class="fas fa-building mr-1"></i> 
-                                        {{ similar.employer.company_name|default:similar.agency.agency_name|default:'N/A' }}
+                                        {% if similar.employer %}
+                                            {{ similar.employer.company_name }}
+                                        {% elif similar.agency %}
+                                            {{ similar.agency.agency_name }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
                                     </p>
-                                    <p class="text-xs text-gray-500">
+                                    <p class="job-meta-sm">
                                         <i class="fas fa-map-marker-alt mr-1"></i> {{ similar.country.name }}
                                     </p>
                                 </a>
@@ -317,21 +600,21 @@
 
                 <!-- Share -->
                 <div class="job-detail-card p-6">
-                    <h3 class="font-bold text-gray-800 mb-4">Share This Job</h3>
-                    <div class="flex gap-3">
-                        <a href="#" class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition">
+                    <h3 class="font-bold text-gray-800 mb-4 gov-font">Share This Job</h3>
+                    <div class="flex gap-3 flex-wrap">
+                        <a href="#" class="share-btn facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-12 h-12 rounded-full bg-blue-400 text-white flex items-center justify-center hover:bg-blue-500 transition">
+                        <a href="#" class="share-btn twitter">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center hover:bg-blue-800 transition">
+                        <a href="#" class="share-btn linkedin">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="#" class="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center hover:bg-green-700 transition">
+                        <a href="#" class="share-btn whatsapp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="#" class="w-12 h-12 rounded-full bg-gray-600 text-white flex items-center justify-center hover:bg-gray-700 transition">
+                        <a href="#" class="share-btn email">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>

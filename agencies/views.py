@@ -12,9 +12,11 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_GET
 
 from .models import RecruitmentAgency, AgencyDocument, AgencyApplication, AgencyContract, AgencyRecruitmentProcess
+from .forms import AgencyProfileForm
 from accounts.models import User
 from accounts.forms import AgencyRegistrationForm
 from jobs.models import Job, JobApplication, Country
+from jobs.forms import JobForm
 from notifications.models import Notification
 
 
@@ -119,7 +121,8 @@ def agency_register(request):
             )
             
             messages.success(request, 'Agency account created! Please complete your profile setup.')
-            return redirect('agency_setup')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_setup')
     else:
         form = AgencyRegistrationForm()
     
@@ -157,7 +160,8 @@ def agency_setup(request):
                 agency.active_countries.set(country_ids)
             
             messages.success(request, 'Agency profile completed successfully!')
-            return redirect('agency_dashboard')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_dashboard')
     else:
         form = AgencyProfileForm(instance=agency)
     
@@ -182,7 +186,8 @@ def agency_verification(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
         document_type = request.POST.get('document_type')
@@ -199,7 +204,8 @@ def agency_verification(request):
         else:
             messages.error(request, 'Please select a document type and file.')
         
-        return redirect('agency_verification')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_verification')
     
     documents = AgencyDocument.objects.filter(agency=agency)
     
@@ -222,7 +228,8 @@ def agency_profile_update(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
         form = AgencyProfileForm(request.POST, request.FILES, instance=agency)
@@ -243,7 +250,8 @@ def agency_profile_update(request):
             user.save()
             
             messages.success(request, 'Profile updated successfully!')
-            return redirect('agency_dashboard')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_dashboard')
     else:
         form = AgencyProfileForm(instance=agency)
     
@@ -321,12 +329,14 @@ def delete_accreditation_document(request, doc_id):
     """Delete an accreditation document"""
     if request.user.user_type != 'agency':
         messages.error(request, 'Access denied.')
-        return redirect('agency_dashboard')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_dashboard')
     
     doc = get_object_or_404(AgencyDocument, id=doc_id, agency__user=request.user)
     doc.delete()
     messages.success(request, 'Document deleted successfully.')
-    return redirect('agency_verification')
+    # FIXED: Added namespace
+    return redirect('agencies:agency_verification')
 
 
 @login_required
@@ -340,7 +350,8 @@ def agency_job_list(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
     
     jobs = Job.objects.filter(agency=agency).order_by('-posted_date')
     
@@ -372,10 +383,12 @@ def agency_create_job(request):
         agency = RecruitmentAgency.objects.get(user=request.user)
         if not agency.is_verified:
             messages.error(request, 'Your agency must be verified before posting jobs.')
-            return redirect('agency_dashboard')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_dashboard')
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
     
     if request.method == 'POST':
         form = JobForm(request.POST)
@@ -387,7 +400,8 @@ def agency_create_job(request):
             job.save()
             
             messages.success(request, 'Job posted successfully! It will be reviewed by the admin.')
-            return redirect('agency_job_list')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_job_list')
     else:
         form = JobForm()
         # Pre-populate country choices from agency's active countries
@@ -408,26 +422,106 @@ def agency_edit_job(request, job_id):
         agency = RecruitmentAgency.objects.get(user=request.user)
     except RecruitmentAgency.DoesNotExist:
         messages.error(request, 'Please complete your agency profile first.')
-        return redirect('agency_setup')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
     
     job = get_object_or_404(Job, id=job_id, agency=agency)
     
     if job.status in ['approved', 'active']:
         messages.warning(request, 'This job is already live. Only pending jobs can be edited.')
-        return redirect('agency_job_list')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_job_list')
     
     if request.method == 'POST':
         form = JobForm(request.POST, instance=job)
         if form.is_valid():
             form.save()
             messages.success(request, 'Job updated successfully!')
-            return redirect('agency_job_list')
+            # FIXED: Added namespace
+            return redirect('agencies:agency_job_list')
     else:
         form = JobForm(instance=job)
         form.fields['country'].choices = [(c.id, c.name) for c in agency.active_countries.all()]
     
     context = {'form': form, 'job': job}
     return render(request, 'agencies/edit_job.html', context)
+
+
+@login_required
+@require_POST
+def agency_delete_job(request, job_id):
+    """Delete a job posting"""
+    if request.user.user_type != 'agency':
+        messages.error(request, 'Access denied. This is for recruitment agencies only.')
+        return redirect('home')
+    
+    try:
+        agency = RecruitmentAgency.objects.get(user=request.user)
+    except RecruitmentAgency.DoesNotExist:
+        messages.error(request, 'Please complete your agency profile first.')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
+    
+    job = get_object_or_404(Job, id=job_id, agency=agency)
+    job_title = job.title
+    
+    # Check if job can be deleted
+    if job.status in ['active', 'approved']:
+        # Instead of deleting, just deactivate
+        job.status = 'closed'
+        job.save()
+        messages.success(request, f'Job "{job_title}" has been closed.')
+    else:
+        job.delete()
+        messages.success(request, f'Job "{job_title}" deleted successfully.')
+    
+    # FIXED: Added namespace
+    return redirect('agencies:agency_job_list')
+
+
+@login_required
+def agency_dashboard(request):
+    """Agency dashboard view"""
+    if request.user.user_type != 'agency':
+        messages.error(request, 'Access denied. This is for recruitment agencies only.')
+        return redirect('home')
+    
+    try:
+        agency = RecruitmentAgency.objects.get(user=request.user)
+    except RecruitmentAgency.DoesNotExist:
+        messages.error(request, 'Please complete your agency profile first.')
+        # FIXED: Added namespace
+        return redirect('agencies:agency_setup')
+    
+    # Get statistics
+    jobs = Job.objects.filter(agency=agency)
+    active_jobs = jobs.filter(status='active').count()
+    pending_jobs = jobs.filter(status='pending').count()
+    total_jobs = jobs.count()
+    
+    applications = JobApplication.objects.filter(job__agency=agency)
+    total_applications = applications.count()
+    
+    # Recent jobs
+    recent_jobs = jobs.order_by('-created_at')[:5]
+    
+    # Documents count
+    documents_count = AgencyDocument.objects.filter(agency=agency).count()
+    
+    context = {
+        'agency': agency,
+        'total_jobs': total_jobs,
+        'active_jobs': active_jobs,
+        'pending_jobs': pending_jobs,
+        'total_applications': total_applications,
+        'recent_jobs': recent_jobs,
+        'documents_count': documents_count,
+        'is_verified': agency.is_verified,
+        'license_valid': agency.is_license_valid() if hasattr(agency, 'is_license_valid') else False,
+        'license_expiry': agency.license_expiry,
+        'now': timezone.now().date(),
+    }
+    return render(request, 'agencies/dashboard.html', context)
 
 
 @login_required
