@@ -610,7 +610,7 @@
                         <div class="company-info">
                             <div class="flex items-start justify-between gap-2">
                                 <div class="company-name">
-                                    <a href="{% url 'employer_detail' employer.id %}">{{ employer.company_name }}</a>
+                                    <a href="{% url 'employers:employer_detail' employer.id %}">{{ employer.company_name }}</a>
                                 </div>
                                 <span class="verification-badge {% if employer.is_verified %}verified{% else %}pending{% endif %}">
                                     <i class="fas {% if employer.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
