@@ -36,7 +36,8 @@ urlpatterns = [
     path('employers/<uuid:employer_id>/suspend/', views.admin_suspend_employer, name='admin_suspend_employer'),
     path('employers/<uuid:employer_id>/activate/', views.admin_activate_employer, name='admin_activate_employer'),
     path('employers/<uuid:employer_id>/renew-accreditation/', views.admin_renew_accreditation, name='admin_renew_accreditation'),
-    path('employers/<uuid:employer_id>/delete/', views.admin_delete_employer, name='admin_delete_employer'),
+    #path('employers/<uuid:employer_id>/delete/', views.admin_delete_employer, name='admin_delete_employer'),
+    path('employers/<uuid:employer_id>/delete/', views.admin_delete_employer, name='admin_employer_delete'),
     path('employers/register/', views.admin_register_employer, name='admin_register_employer'),
     path('employers/<uuid:employer_id>/setup/', views.admin_employer_setup, name='admin_employer_setup'),
     # ADDED THREE NEW PATHS
