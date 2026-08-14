@@ -1,0 +1,426 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ agency.agency_name }} - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .agency-header {
+        background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+        color: white;
+        padding: 40px 0;
+        border-radius: 16px;
+        margin-bottom: 30px;
+    }
+    
+    .agency-header .agency-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: #1a365d;
+        margin: 0 auto 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    .agency-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+    
+    .agency-header .subtitle {
+        font-family: 'Inter', sans-serif;
+        opacity: 0.85;
+        font-size: 1rem;
+    }
+    
+    .agency-header .badge {
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 8px;
+    }
+    
+    .badge-verified {
+        background: #48bb78;
+        color: white;
+    }
+    
+    .badge-pending {
+        background: #ed8936;
+        color: white;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card .number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    
+    .stat-card .label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+    }
+    
+    .info-card h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.2rem;
+        border-bottom: 2px solid #c9a33d;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .info-card .detail-row {
+        display: flex;
+        padding: 8px 0;
+        border-bottom: 1px solid #f7fafc;
+    }
+    
+    .info-card .detail-row .label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #4a5568;
+        width: 140px;
+        flex-shrink: 0;
+        font-size: 0.85rem;
+    }
+    
+    .info-card .detail-row .value {
+        font-family: 'Merriweather', serif;
+        color: #2d3748;
+        font-size: 0.9rem;
+    }
+    
+    .job-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        margin-bottom: 16px;
+    }
+    
+    .job-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+    
+    .job-card h4 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+    }
+    
+    .job-card .job-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+    
+    .job-card .job-meta i {
+        color: #c9a33d;
+        margin-right: 4px;
+    }
+    
+    .btn-gold {
+        background: #c9a33d;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+    }
+    
+    .btn-gold:hover {
+        background: #b8942f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(201, 163, 61, 0.3);
+        color: white;
+    }
+    
+    @media (max-width: 768px) {
+        .agency-header h1 {
+            font-size: 1.5rem;
+        }
+        .info-card .detail-row {
+            flex-direction: column;
+        }
+        .info-card .detail-row .label {
+            width: 100%;
+            margin-bottom: 4px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li><a href="{% url 'home' %}" class="text-gray-500 hover:text-gold-dark font-medium gov-font-sans">Home</a></li>
+            <li><span class="text-gray-400">/</span></li>
+            <li><a href="{% url 'agencies:agency_list' %}" class="text-gray-500 hover:text-gold-dark font-medium gov-font-sans">Agencies</a></li>
+            <li><span class="text-gray-400">/</span></li>
+            <li><span class="text-gray-700 font-semibold gov-font-sans">{{ agency.agency_name }}</span></li>
+        </ol>
+    </nav>
+
+    <!-- Agency Header -->
+    <div class="agency-header text-center">
+        <div class="agency-logo">
+            <i class="fas fa-building"></i>
+        </div>
+        <h1>{{ agency.agency_name }}</h1>
+        <p class="subtitle">
+            <i class="fas fa-map-marker-alt mr-2"></i>
+            {{ agency.country.name|default:'N/A' }}
+            {% if agency.specializations %}
+                &bull; {{ agency.specializations|truncatechars:60 }}
+            {% endif %}
+        </p>
+        {% if agency.is_verified %}
+            <span class="badge badge-verified">
+                <i class="fas fa-check-circle mr-1"></i> Verified
+            </span>
+        {% else %}
+            <span class="badge badge-pending">
+                <i class="fas fa-clock mr-1"></i> Pending Verification
+            </span>
+        {% endif %}
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="stat-card">
+            <div class="number">{{ job_count|default:0 }}</div>
+            <div class="label">Active Jobs</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">{{ total_applications|default:0 }}</div>
+            <div class="label">Applications</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">{{ agency.active_countries.count|default:0 }}</div>
+            <div class="label">Active Countries</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">{{ agency.created_at|date:"Y"|default:'N/A' }}</div>
+            <div class="label">Established</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Info -->
+        <div class="lg:col-span-2">
+            <!-- Description -->
+            {% if agency.description %}
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle text-gold mr-2"></i> About {{ agency.agency_name }}</h3>
+                <div class="value" style="font-family: 'Merriweather', serif; color: #4a5568; line-height: 1.8;">
+                    {{ agency.description|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Active Jobs -->
+            <div class="info-card">
+                <h3><i class="fas fa-briefcase text-gold mr-2"></i> Active Job Opportunities</h3>
+                {% if recent_jobs %}
+                    {% for job in recent_jobs %}
+                    <div class="job-card">
+                        <h4>{{ job.title }}</h4>
+                        <div class="job-meta mt-2">
+                            <span><i class="fas fa-map-marker-alt"></i> {{ job.country.name }}</span>
+                            <span class="mx-3">|</span>
+                            <span><i class="fas fa-tag"></i> {{ job.category.name }}</span>
+                            <span class="mx-3">|</span>
+                            <span><i class="fas fa-clock"></i> {{ job.employment_type }}</span>
+                            <span class="mx-3">|</span>
+                            <span><i class="fas fa-calendar-alt"></i> Closes: {{ job.closing_date|date:"M d, Y" }}</span>
+                        </div>
+                        {% if job.salary_min %}
+                        <div class="job-meta mt-1">
+                            <i class="fas fa-money-bill-wave"></i> 
+                            {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }}
+                            {% if job.salary_max %} - {{ job.salary_max|floatformat:0 }}{% endif %}
+                        </div>
+                        {% endif %}
+                        <div class="mt-3">
+                            <a href="{% url 'jobs:job_detail' job.id %}" class="btn-gold">
+                                <i class="fas fa-eye mr-1"></i> View Job
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if job_count > 5 %}
+                    <div class="text-center mt-4">
+                        <a href="{% url 'jobs:job_list' %}?agency={{ agency.id }}" class="text-gold hover:underline font-medium">
+                            View all {{ job_count }} jobs →
+                        </a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-briefcase text-4xl mb-4 opacity-30"></i>
+                        <p>No active job opportunities at this time.</p>
+                        <p class="text-sm">Please check back later.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Contact Information -->
+            <div class="info-card">
+                <h3><i class="fas fa-address-card text-gold mr-2"></i> Contact</h3>
+                <div class="detail-row">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ agency.contact_phone|default:'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Email</span>
+                    <span class="value">
+                        <a href="mailto:{{ agency.contact_email }}" class="text-gold hover:underline">
+                            {{ agency.contact_email|default:'N/A' }}
+                        </a>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Website</span>
+                    <span class="value">
+                        {% if agency.website %}
+                            <a href="{{ agency.website }}" target="_blank" class="text-gold hover:underline">
+                                {{ agency.website }}
+                            </a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Address</span>
+                    <span class="value">{{ agency.address|default:'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Country</span>
+                    <span class="value">{{ agency.country.name|default:'N/A' }}</span>
+                </div>
+            </div>
+
+            <!-- Active Countries -->
+            {% if agency.active_countries.exists %}
+            <div class="info-card">
+                <h3><i class="fas fa-globe-africa text-gold mr-2"></i> Active Countries</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for country in agency.active_countries.all %}
+                        <span class="bg-gray-100 px-3 py-1 rounded-full text-sm text-gray-700">
+                            <i class="fas fa-flag mr-1"></i> {{ country.name }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- License Info -->
+            <div class="info-card">
+                <h3><i class="fas fa-certificate text-gold mr-2"></i> License Information</h3>
+                <div class="detail-row">
+                    <span class="label">License Number</span>
+                    <span class="value">{{ agency.license_number|default:'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Registration</span>
+                    <span class="value">{{ agency.registration_number|default:'N/A' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">License Expiry</span>
+                    <span class="value">
+                        {% if agency.license_expiry %}
+                            {{ agency.license_expiry|date:"M d, Y" }}
+                            {% if agency.license_expiry < now %}
+                                <span class="text-red-600">(Expired)</span>
+                            {% endif %}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Verified</span>
+                    <span class="value">
+                        {% if agency.is_verified %}
+                            <span class="text-green-600"><i class="fas fa-check-circle"></i> Yes</span>
+                        {% else %}
+                            <span class="text-yellow-600"><i class="fas fa-clock"></i> Pending</span>
+                        {% endif %}
+                    </span>
+                </div>
+                {% if agency.verification_date %}
+                <div class="detail-row">
+                    <span class="label">Verified Since</span>
+                    <span class="value">{{ agency.verification_date|date:"M d, Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Action Button -->
+            <div class="info-card text-center">
+                <a href="{% url 'jobs:job_list' %}?agency={{ agency.id }}" class="btn-gold w-full block text-center">
+                    <i class="fas fa-search mr-2"></i> View All Jobs
+                </a>
+                {% if not user.is_authenticated %}
+                <p class="text-sm text-gray-500 mt-3">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    <a href="{% url 'register' %}" class="text-gold hover:underline">Register</a> to apply
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
