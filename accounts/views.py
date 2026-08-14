@@ -154,7 +154,7 @@ def citizen_dashboard(request):
         payment_access = UserPaymentAccess.objects.get(user=user)
         has_payment_access = payment_access.can_apply()
         total_applications_used = payment_access.applications_used
-        access_type = payment_access.access_type
+        access_type = None  # FIXED: access_type doesn't exist in the model
     except UserPaymentAccess.DoesNotExist:
         has_payment_access = False
         total_applications_used = 0
