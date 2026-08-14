@@ -607,134 +607,146 @@ def check_access(request):
 
 @csrf_exempt
 def mpesa_callback(request):
-    """M-Pesa callback URL handler"""
+    """M-Pesa callback URL handler - robust version supporting JSON and form-data"""
     if request.method != 'POST':
-        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request'})
-    
+        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid request method'})
+
+    # Log the raw request for debugging
+    raw_body = request.body.decode('utf-8')
+    logger.info(f"M-Pesa raw callback body: {raw_body}")
+
+    # Try to parse as JSON first, fallback to form data
     try:
-        data = json.loads(request.body)
-        logger.info(f"M-Pesa callback received: {json.dumps(data)}")
-        
-        stk_callback = data.get('Body', {}).get('stkCallback', {})
-        checkout_request_id = stk_callback.get('CheckoutRequestID')
-        result_code = stk_callback.get('ResultCode')
-        result_desc = stk_callback.get('ResultDesc')
-        callback_metadata = stk_callback.get('CallbackMetadata', {})
-        
-        if not checkout_request_id:
-            logger.error("No CheckoutRequestID in callback")
-            return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Missing CheckoutRequestID'})
-        
-        payment = Payment.objects.filter(
-            metadata__checkout_request_id=checkout_request_id
-        ).first()
-        
-        if not payment:
-            logger.warning(f"Payment not found for CheckoutRequestID: {checkout_request_id}")
-            return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
-        
-        if payment.status == 'completed':
-            logger.info(f"Payment already completed: {checkout_request_id}")
-            return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
-        
-        if result_code == '0':
-            payment.status = 'completed'
-            payment.completed_date = timezone.now()
-            
-            items = callback_metadata.get('Item', [])
-            receipt_number = None
-            amount = None
-            
-            for item in items:
-                name = item.get('Name')
-                value = item.get('Value')
-                if name == 'ReceiptNumber':
-                    receipt_number = value
-                elif name == 'Amount':
-                    amount = value
-            
-            payment.mpesa_receipt_number = receipt_number
-            if amount:
-                payment.amount = amount
-            
-            payment.metadata = {
-                **payment.metadata,
-                'callback_data': data,
-                'callback_receipt': receipt_number,
-                'callback_amount': amount,
-                'completed_at': timezone.now().isoformat()
-            }
-            payment.save()
-            
-            PaymentTransaction.objects.create(
-                payment=payment,
-                transaction_type='callback',
-                status='success',
-                request_data={'checkout_request_id': checkout_request_id},
-                response_data=data
-            )
-            
-            try:
-                grant_payment_access(payment.user, payment)
-                logger.info(f"Access granted to {payment.user.email}")
-            except Exception as e:
-                logger.error(f"Failed to grant access: {str(e)}")
-            
-            try:
-                Notification.objects.create(
-                    user=payment.user,
-                    title='Payment Confirmed',
-                    message=f'Your payment of {payment.amount} {payment.currency} has been confirmed.',
-                    notification_type='payment_confirmed',
-                    link='/payment/history/',
-                    is_read=False
-                )
-            except Exception as e:
-                logger.error(f"Failed to create notification: {str(e)}")
-            
-            logger.info(f"Payment completed: {payment.transaction_reference}")
-            
-        else:
-            payment.status = 'failed'
-            payment.metadata = {
-                **payment.metadata,
-                'callback_data': data,
-                'callback_error_code': result_code,
-                'callback_error_description': result_desc,
-                'failed_at': timezone.now().isoformat()
-            }
-            payment.save()
-            
-            PaymentTransaction.objects.create(
-                payment=payment,
-                transaction_type='callback',
-                status='failed',
-                request_data={'checkout_request_id': checkout_request_id},
-                response_data=data
-            )
-            
-            try:
-                Notification.objects.create(
-                    user=payment.user,
-                    title='Payment Failed',
-                    message=f'Your payment failed. Error: {result_desc}',
-                    notification_type='payment_failed',
-                    link='/payment/',
-                    is_read=False
-                )
-            except Exception as e:
-                logger.error(f"Failed to create notification: {str(e)}")
-            
-            logger.info(f"Payment failed: {result_desc}")
-        
+        data = json.loads(raw_body)
+    except json.JSONDecodeError:
+        # If it's form data, use request.POST
+        data = request.POST.dict()
+        if not data:
+            # If still empty, try request.GET (unlikely)
+            data = request.GET.dict()
+            if not data:
+                logger.error("No data found in callback request")
+                return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'No data received'})
+
+    logger.info(f"M-Pesa parsed callback data: {data}")
+
+    # Extract the STK callback
+    stk_callback = data.get('Body', {}).get('stkCallback', {})
+    if not stk_callback:
+        # Some callbacks might be at the root level
+        stk_callback = data.get('stkCallback', {})
+        if not stk_callback:
+            logger.error("No stkCallback found in callback data")
+            return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid callback structure'})
+
+    checkout_request_id = stk_callback.get('CheckoutRequestID')
+    result_code = stk_callback.get('ResultCode')
+    result_desc = stk_callback.get('ResultDesc')
+    callback_metadata = stk_callback.get('CallbackMetadata', {})
+
+    if not checkout_request_id:
+        logger.error("No CheckoutRequestID in callback")
+        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Missing CheckoutRequestID'})
+
+    # Find the payment
+    payment = Payment.objects.filter(
+        metadata__checkout_request_id=checkout_request_id
+    ).first()
+
+    if not payment:
+        logger.warning(f"Payment not found for CheckoutRequestID: {checkout_request_id}")
+        # Still return success to avoid retries
         return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
-        
-    except json.JSONDecodeError as e:
-        logger.error(f"Invalid JSON in callback: {str(e)}")
-        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Invalid JSON'})
-    except Exception as e:
-        logger.error(f"MPesa callback error: {str(e)}", exc_info=True)
-        return JsonResponse({'ResponseCode': '00000001', 'ResponseDesc': 'Internal error'})
+
+    if payment.status == 'completed':
+        logger.info(f"Payment already completed: {checkout_request_id}")
+        return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
+
+    if result_code == '0':
+        # Payment successful
+        payment.status = 'completed'
+        payment.completed_date = timezone.now()
+
+        # Extract receipt number and amount from metadata
+        items = callback_metadata.get('Item', [])
+        receipt_number = None
+        amount = None
+        for item in items:
+            name = item.get('Name')
+            value = item.get('Value')
+            if name == 'ReceiptNumber':
+                receipt_number = value
+            elif name == 'Amount':
+                amount = value
+
+        if receipt_number:
+            payment.mpesa_receipt_number = receipt_number
+        if amount:
+            payment.amount = amount
+
+        payment.metadata = {
+            **payment.metadata,
+            'callback_data': data,
+            'callback_receipt': receipt_number,
+            'callback_amount': amount,
+            'completed_at': timezone.now().isoformat()
+        }
+        payment.save()
+
+        # Log transaction
+        PaymentTransaction.objects.create(
+            payment=payment,
+            transaction_type='callback',
+            status='success',
+            request_data={'checkout_request_id': checkout_request_id},
+            response_data=data
+        )
+
+        # Grant access
+        try:
+            grant_payment_access(payment.user, payment)
+            logger.info(f"Access granted to {payment.user.email}")
+        except Exception as e:
+            logger.error(f"Failed to grant access: {str(e)}")
+
+        # Create notification
+        try:
+            Notification.objects.create(
+                user=payment.user,
+                title='Payment Confirmed',
+                message=f'Your payment of {payment.amount} {payment.currency} has been confirmed.',
+                notification_type='payment_confirmed',
+                link='/payment/history/',
+                is_read=False
+            )
+        except Exception as e:
+            logger.error(f"Failed to create notification: {str(e)}")
+
+        logger.info(f"Payment completed: {payment.transaction_reference}")
+
+    else:
+        # Payment failed
+        payment.status = 'failed'
+        payment.metadata = {
+            **payment.metadata,
+            'callback_data': data,
+            'callback_error_code': result_code,
+            'callback_error_description': result_desc,
+            'failed_at': timezone.now().isoformat()
+        }
+        payment.save()
+
+        PaymentTransaction.objects.create(
+            payment=payment,
+            transaction_type='callback',
+            status='failed',
+            request_data={'checkout_request_id': checkout_request_id},
+            response_data=data
+        )
+
+        logger.info(f"Payment failed: {result_desc}")
+
+    return JsonResponse({'ResponseCode': '00000000', 'ResponseDesc': 'Success'})
 
 
 @csrf_exempt
@@ -1522,6 +1534,10 @@ def get_phone_number_from_request(request):
         phone = '254' + phone
     
     return phone if len(phone) == 12 else None
+
+# ==============================================
+# DUPLICATE VIEWS (Legacy)
+# ==============================================
 
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
