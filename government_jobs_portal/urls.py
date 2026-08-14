@@ -28,6 +28,9 @@ from rest_framework_simplejwt.views import (
 # Import static_pages views for home
 from static_pages import views as static_views
 
+# 🔽 ADD THIS IMPORT – for employer_setup URL
+from employers import views as employer_views
+
 urlpatterns = [
     # Django Admin
     path('admin/', admin.site.urls),
