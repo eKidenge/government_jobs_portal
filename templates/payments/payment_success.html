@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Successful - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .success-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0 20px;
+        width: 100%;
+    }
+    
+    .success-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(26, 54, 93, 0.1);
+        padding: 50px 40px;
+        text-align: center;
+        border: 1px solid rgba(201, 163, 61, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #38a169, #48bb78, #38a169);
+    }
+    
+    .success-icon {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #f0fff4;
+        border: 4px solid #c6f6d5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 60px;
+        color: #38a169;
+        animation: success-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes success-pop {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+    
+    .success-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 2rem;
+        color: #22543d;
+        margin-bottom: 8px;
+    }
+    
+    .success-subtitle {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .success-details {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: left;
+        margin: 20px 0;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .success-details .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #edf2f7;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    
+    .success-details .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .success-details .detail-label {
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    .success-details .detail-value {
+        color: #1a365d;
+        font-weight: 600;
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 25px;
+    }
+    
+    .btn-gov {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-gov-primary {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+    }
+    
+    .btn-gov-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(43, 108, 176, 0.3);
+    }
+    
+    .btn-gov-gold {
+        background: linear-gradient(135deg, #b8860b, #c9a33d);
+        color: white;
+    }
+    
+    .btn-gov-gold:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(201, 163, 61, 0.3);
+    }
+    
+    .btn-gov-outline {
+        background: transparent;
+        color: #1a365d;
+        border: 2px solid #1a365d;
+    }
+    
+    .btn-gov-outline:hover {
+        background: #1a365d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-gov-gray {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .btn-gov-gray:hover {
+        background: #edf2f7;
+        transform: translateY(-2px);
+    }
+    
+    .access-notice {
+        background: #ebf8ff;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #bee3f8;
+    }
+    
+    .access-notice i {
+        color: #2b6cb0;
+        font-size: 24px;
+    }
+    
+    .access-notice .notice-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: #2a4365;
+        text-align: left;
+    }
+    
+    .access-notice .notice-text strong {
+        color: #1a365d;
+    }
+    
+    @media (max-width: 640px) {
+        .success-card {
+            padding: 30px 20px;
+        }
+        
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            font-size: 45px;
+        }
+        
+        .success-title {
+            font-size: 1.5rem;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .btn-gov {
+            justify-content: center;
+        }
+        
+        .success-details .detail-row {
+            font-size: 0.8rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="success-container">
+        <div class="success-card">
+            <!-- Success Icon -->
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h1 class="success-title">Payment Successful! 🎉</h1>
+            <p class="success-subtitle">Your payment has been confirmed and processed successfully.</p>
+            
+            <!-- Payment Details -->
+            <div class="success-details">
+                <div class="detail-row">
+                    <span class="detail-label">Transaction Reference</span>
+                    <span class="detail-value">{{ payment.transaction_reference }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount Paid</span>
+                    <span class="detail-value">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Payment Method</span>
+                    <span class="detail-value">{{ payment.get_payment_method_display }}</span>
+                </div>
+                {% if payment.mpesa_receipt_number %}
+                <div class="detail-row">
+                    <span class="detail-label">M-Pesa Receipt</span>
+                    <span class="detail-value">{{ payment.mpesa_receipt_number }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">{{ payment.completed_date|date:"F d, Y H:i" }}</span>
+                </div>
+            </div>
+            
+            <!-- Access Notice -->
+            <div class="access-notice">
+                <i class="fas fa-unlock-alt"></i>
+                <div class="notice-text">
+                    <strong>Access Granted!</strong> You can now apply for government jobs.
+                    {% if payment.plan.plan_type == 'single' %}
+                        You have <strong>1</strong> application available.
+                    {% else %}
+                        Your access is valid until <strong>{{ payment.user.payment_access.access_end|date:"F d, Y" }}</strong>.
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="btn-group">
+                <a href="{% url 'citizen_dashboard' %}" class="btn-gov btn-gov-primary">
+                    <i class="fas fa-home"></i> Go to Dashboard
+                </a>
+                <a href="{% url 'job_list' %}" class="btn-gov btn-gov-gold">
+                    <i class="fas fa-search"></i> Browse Jobs
+                </a>
+                <a href="{% url 'payments:download_receipt' payment.id %}" class="btn-gov btn-gov-gray">
+                    <i class="fas fa-download"></i> Download Receipt
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

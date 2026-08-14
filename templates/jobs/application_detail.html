@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Application Details - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .app-detail-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+    }
+    
+    .app-detail-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .app-detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        border-bottom: 1px solid #edf2f7;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .app-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: #1a365d;
+    }
+    
+    .app-title a {
+        color: #1a365d;
+        text-decoration: none;
+    }
+    
+    .app-title a:hover {
+        color: #c9a33d;
+    }
+    
+    .app-detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #edf2f7;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+    }
+    
+    .app-detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .app-detail-row .label {
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    .app-detail-row .value {
+        font-weight: 600;
+        color: #1a365d;
+        text-align: right;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.submitted { background: #e2e8f0; color: #4a5568; }
+    .status-badge.under_review { background: #bee3f8; color: #2b6cb0; }
+    .status-badge.shortlisted { background: #fefcbf; color: #975a16; }
+    .status-badge.interview_scheduled { background: #fbd38d; color: #7b341e; }
+    .status-badge.medical_examination { background: #f6ad55; color: #7b341e; }
+    .status-badge.visa_processing { background: #9f7aea; color: #553c9a; }
+    .status-badge.accepted { background: #c6f6d5; color: #22543d; }
+    .status-badge.rejected { background: #fed7d7; color: #742a2a; }
+    .status-badge.withdrawn { background: #e9d8fd; color: #44337a; }
+    
+    .timeline {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #edf2f7;
+    }
+    
+    .timeline-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    
+    .timeline-item {
+        display: flex;
+        gap: 16px;
+        padding: 8px 0 8px 16px;
+        border-left: 3px solid #e2e8f0;
+        position: relative;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 12px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #cbd5e0;
+        border: 2px solid white;
+    }
+    
+    .timeline-item.active::before {
+        background: #c9a33d;
+    }
+    
+    .timeline-item .timeline-date {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+        min-width: 100px;
+    }
+    
+    .timeline-item .timeline-content {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: #2d3748;
+    }
+    
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+        margin-top: 20px;
+    }
+    
+    .back-btn:hover {
+        background: #edf2f7;
+        border-color: #c9a33d;
+        transform: translateX(-4px);
+    }
+    
+    @media (max-width: 640px) {
+        .app-detail-card {
+            padding: 20px;
+        }
+        
+        .app-detail-row {
+            font-size: 0.85rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        
+        .app-detail-row .value {
+            text-align: left;
+        }
+        
+        .app-header {
+            flex-direction: column;
+        }
+        
+        .timeline-item {
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .timeline-item .timeline-date {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="app-detail-section">
+    <div class="app-detail-container">
+        <div class="app-detail-card">
+            <div class="app-header">
+                <h1 class="app-title">
+                    <a href="{% url 'job_detail' application.job.id %}">
+                        {{ application.job.title }}
+                    </a>
+                </h1>
+                <span class="status-badge {{ application.status }}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+            
+            <div class="app-detail-row">
+                <span class="label">Application Reference</span>
+                <span class="value">{{ application.reference_number|default:'N/A' }}</span>
+            </div>
+            <div class="app-detail-row">
+                <span class="label">Employer/Agency</span>
+                <span class="value">{{ application.job.employer.company_name|default:application.job.agency.agency_name|default:'N/A' }}</span>
+            </div>
+            <div class="app-detail-row">
+                <span class="label">Country</span>
+                <span class="value">{{ application.job.country.name }}</span>
+            </div>
+            <div class="app-detail-row">
+                <span class="label">Date Applied</span>
+                <span class="value">{{ application.date_applied|date:"F d, Y H:i" }}</span>
+            </div>
+            <div class="app-detail-row">
+                <span class="label">Last Updated</span>
+                <span class="value">{{ application.updated_at|date:"F d, Y H:i" }}</span>
+            </div>
+            
+            {% if application.status == 'accepted' %}
+            <div class="app-detail-row" style="background: #f0fff4; border-radius: 8px; margin-top: 8px; padding: 12px 16px; border-color: #c6f6d5;">
+                <span class="label" style="color: #22543d;">🎉 Congratulations!</span>
+                <span class="value" style="color: #38a169;">Your application has been accepted!</span>
+            </div>
+            {% elif application.status == 'rejected' %}
+            <div class="app-detail-row" style="background: #fff5f5; border-radius: 8px; margin-top: 8px; padding: 12px 16px; border-color: #fed7d7;">
+                <span class="label" style="color: #742a2a;">Application Status</span>
+                <span class="value" style="color: #e53e3e;">Not selected for this position</span>
+            </div>
+            {% endif %}
+            
+            {% if application.review_notes %}
+            <div style="margin-top: 16px; padding: 16px; background: #f7fafc; border-radius: 8px;">
+                <h4 style="font-family: 'Inter', sans-serif; font-weight: 700; color: #1a365d; font-size: 0.9rem;">Review Notes</h4>
+                <p style="font-family: 'Inter', sans-serif; color: #4a5568; font-size: 0.9rem; margin-top: 4px;">
+                    {{ application.review_notes }}
+                </p>
+            </div>
+            {% endif %}
+            
+            {% if application.status_history %}
+            <div class="timeline">
+                <h4 class="timeline-title">Application Timeline</h4>
+                {% for status in application.status_history|slice:":5" %}
+                <div class="timeline-item {% if forloop.first %}active{% endif %}">
+                    <span class="timeline-date">{{ status.date|date:"M d, Y" }}</span>
+                    <span class="timeline-content">
+                        <strong>{{ status.status }}</strong>
+                        {% if status.notes %}- {{ status.notes }}{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <a href="{% url 'my_applications' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to My Applications
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Receipt - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .receipt-section {
+        background: #f7fafc;
+        padding: 40px 0;
+        min-height: calc(100vh - 200px);
+    }
+    
+    .receipt-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .receipt-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(26, 54, 93, 0.1);
+        padding: 40px;
+        border: 1px solid rgba(201, 163, 61, 0.1);
+    }
+    
+    .receipt-header {
+        text-align: center;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .receipt-header .gov-logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1a365d;
+        letter-spacing: 1px;
+    }
+    
+    .receipt-header .gov-logo i {
+        color: #c9a33d;
+        margin-right: 10px;
+    }
+    
+    .receipt-header .receipt-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+    
+    .receipt-body .receipt-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+    }
+    
+    .receipt-body .receipt-row:last-child {
+        border-bottom: none;
+    }
+    
+    .receipt-body .receipt-label {
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    .receipt-body .receipt-value {
+        color: #1a365d;
+        font-weight: 600;
+    }
+    
+    .receipt-body .receipt-value.amount {
+        font-size: 1.2rem;
+        color: #c9a33d;
+    }
+    
+    .receipt-footer {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 2px solid #e2e8f0;
+        text-align: center;
+    }
+    
+    .receipt-footer p {
+        font-family: 'Merriweather', serif;
+        font-size: 0.85rem;
+        color: #718096;
+        margin: 4px 0;
+    }
+    
+    .receipt-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-receipt {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-receipt-primary {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+    }
+    
+    .btn-receipt-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(43, 108, 176, 0.3);
+    }
+    
+    .btn-receipt-outline {
+        background: transparent;
+        color: #1a365d;
+        border: 2px solid #1a365d;
+    }
+    
+    .btn-receipt-outline:hover {
+        background: #1a365d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    @media print {
+        .receipt-actions { display: none; }
+        .receipt-section { padding: 20px 0; }
+        .receipt-card { box-shadow: none; border: 1px solid #e2e8f0; }
+    }
+    
+    @media (max-width: 640px) {
+        .receipt-card { padding: 24px 18px; }
+        .receipt-body .receipt-row {
+            font-size: 0.85rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        .receipt-actions { flex-direction: column; }
+        .btn-receipt { justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="receipt-section">
+    <div class="receipt-container">
+        <div class="receipt-card" id="receipt">
+            <!-- Header -->
+            <div class="receipt-header">
+                <div class="gov-logo">
+                    <i class="fas fa-gavel"></i> Government Jobs Portal
+                </div>
+                <div class="receipt-title">Official Payment Receipt</div>
+            </div>
+            
+            <!-- Body -->
+            <div class="receipt-body">
+                <div class="receipt-row">
+                    <span class="receipt-label">Transaction Reference</span>
+                    <span class="receipt-value">{{ payment.transaction_reference }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Date</span>
+                    <span class="receipt-value">{{ payment.payment_date|date:"F d, Y H:i" }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Payment Method</span>
+                    <span class="receipt-value">{{ payment.get_payment_method_display }}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Plan</span>
+                    <span class="receipt-value">{{ payment.plan.name|default:'N/A' }}</span>
+                </div>
+                {% if payment.mpesa_receipt_number %}
+                <div class="receipt-row">
+                    <span class="receipt-label">M-Pesa Receipt</span>
+                    <span class="receipt-value">{{ payment.mpesa_receipt_number }}</span>
+                </div>
+                {% endif %}
+                <div class="receipt-row">
+                    <span class="receipt-label">Status</span>
+                    <span class="receipt-value" style="color: #38a169;">{{ payment.get_status_display }}</span>
+                </div>
+                <div class="receipt-row" style="border-bottom: none; padding-top: 15px;">
+                    <span class="receipt-label" style="font-weight: 700;">Total Amount</span>
+                    <span class="receipt-value amount">{{ payment.currency }} {{ payment.amount|floatformat:2 }}</span>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="receipt-footer">
+                <p>This is a computer-generated receipt. No signature required.</p>
+                <p style="font-size: 0.75rem; color: #a0aec0;">
+                    <i class="fas fa-check-circle" style="color: #38a169;"></i>
+                    Verified by Government Jobs Portal
+                </p>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="receipt-actions">
+            <button onclick="window.print()" class="btn-receipt btn-receipt-primary">
+                <i class="fas fa-print"></i> Print Receipt
+            </button>
+            <a href="{% url 'payments:download_receipt' payment.id %}" class="btn-receipt btn-receipt-outline">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
+            <a href="{% url 'payments:payment_history' %}" class="btn-receipt btn-receipt-outline">
+                <i class="fas fa-history"></i> History
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Job Applications - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header-card {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        border-radius: 20px;
+        padding: 28px 32px;
+        color: white;
+        margin-bottom: 24px;
+        border: 1px solid rgba(201, 163, 61, 0.15);
+    }
+    
+    .header-card h1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.8rem;
+    }
+    
+    .header-card h1 i {
+        color: #c9a33d;
+        margin-right: 12px;
+    }
+    
+    .header-card .subtitle {
+        font-family: 'Merriweather', serif;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 4px;
+    }
+    
+    .header-card .stats {
+        display: flex;
+        gap: 24px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .header-card .stats .stat-item {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .header-card .stats .stat-item .number {
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #c9a33d;
+    }
+    
+    .header-card .stats .stat-item .label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .filter-bar {
+        background: white;
+        border-radius: 16px;
+        padding: 16px 20px;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        margin-bottom: 20px;
+    }
+    
+    .filter-bar select {
+        font-family: 'Inter', sans-serif;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .filter-bar select:focus {
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+        outline: none;
+    }
+    
+    .application-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .application-card:hover {
+        border-color: rgba(201, 163, 61, 0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        transform: translateX(4px);
+    }
+    
+    .application-card .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .application-card .info {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .application-card .info .name {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #0a1628;
+    }
+    
+    .application-card .info .details {
+        font-family: 'Merriweather', serif;
+        font-size: 0.8rem;
+        color: #718096;
+    }
+    
+    .application-card .info .details i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    
+    .application-card .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .btn-sm-primary {
+        background: #1a365d;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.75rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .btn-sm-primary:hover {
+        background: #2b6cb0;
+        transform: translateY(-1px);
+    }
+    
+    .btn-sm-outline {
+        background: transparent;
+        color: #1a365d;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.75rem;
+        border: 1px solid #1a365d;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .btn-sm-outline:hover {
+        background: #1a365d;
+        color: white;
+        transform: translateY(-1px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .empty-state .icon {
+        font-size: 4rem;
+        color: #e2e8f0;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #0a1628;
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+    
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        max-width: 400px;
+        margin: 8px auto 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .header-card {
+            padding: 20px;
+        }
+        .header-card h1 {
+            font-size: 1.3rem;
+        }
+        .application-card {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 16px;
+        }
+        .application-card .actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="header-card" data-aos="fade-up">
+            <div>
+                <h1>
+                    <i class="fas fa-users"></i> {{ job.title }}
+                </h1>
+                <div class="subtitle">
+                    <i class="fas fa-map-marker-alt mr-2"></i> {{ job.country.name }}
+                    <span class="mx-2">•</span>
+                    <i class="fas fa-calendar-alt mr-2"></i> Closes: {{ job.closing_date|date:"M d, Y" }}
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="number">{{ total_applications }}</div>
+                        <div class="label">Total Applications</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="number">{{ applications|length }}</div>
+                        <div class="label">Showing</div>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'employer_job_list' %}" class="btn-sm-primary mt-4 inline-block">
+                <i class="fas fa-arrow-left"></i> Back to Jobs
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar" data-aos="fade-up" data-aos-delay="100">
+            <form method="get" class="flex flex-wrap gap-4 items-center">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600 gov-font-sans uppercase tracking-wider mr-2">
+                        <i class="fas fa-filter text-gold mr-1"></i> Status:
+                    </label>
+                    <select name="status" class="w-auto">
+                        <option value="">All Status</option>
+                        {% for status_code, status_label in status_choices %}
+                            <option value="{{ status_code }}" {% if current_status == status_code %}selected{% endif %}>
+                                {{ status_label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-sm-primary">
+                    <i class="fas fa-search"></i> Apply
+                </button>
+                <a href="{% url 'job_applications' job.id %}" class="btn-sm-outline">
+                    <i class="fas fa-times"></i> Clear
+                </a>
+            </form>
+        </div>
+
+        <!-- Applications List -->
+        <div data-aos="fade-up" data-aos-delay="200">
+            {% if applications %}
+                {% for app in applications %}
+                    <div class="application-card">
+                        <div class="avatar" style="background: {% cycle 'linear-gradient(135deg, #1a365d, #2b6cb0)' 'linear-gradient(135deg, #c9a33d, #b8860b)' 'linear-gradient(135deg, #48bb78, #38a169)' 'linear-gradient(135deg, #805ad5, #6b46c1)' 'linear-gradient(135deg, #e53e3e, #c53030)' %}">
+                            {{ app.applicant.full_name|slice:":1"|upper }}
+                        </div>
+                        <div class="info">
+                            <div class="name">{{ app.applicant.full_name }}</div>
+                            <div class="details">
+                                <i class="fas fa-envelope"></i> {{ app.applicant.email }}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-calendar-alt"></i> Applied: {{ app.date_applied|date:"M d, Y" }}
+                            </div>
+                            <div class="details mt-1">
+                                <i class="fas fa-file-alt"></i> Cover Letter: 
+                                {% if app.cover_letter %}
+                                    <span class="text-green-600">✓</span>
+                                {% else %}
+                                    <span class="text-gray-400">Not provided</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <span class="app-status-badge app-status-{{ app.status|slugify }}">
+                                {{ app.get_status_display }}
+                            </span>
+                            <a href="{% url 'update_application_status' app.id %}" class="btn-sm-primary">
+                                <i class="fas fa-cog"></i> Manage
+                            </a>
+                            <a href="{% url 'view_application' app.id %}" class="btn-sm-outline">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if applications.has_other_pages %}
+                    <div class="mt-6">
+                        <div class="pagination">
+                            {% if applications.has_previous %}
+                                <a href="?page={{ applications.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            {% endif %}
+                            
+                            {% for num in applications.paginator.page_range %}
+                                {% if applications.number == num %}
+                                    <span class="current">{{ num }}</span>
+                                {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                                    <a href="?page={{ num }}{% if current_status %}&status={{ current_status }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if applications.has_next %}
+                                <a href="?page={{ applications.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>No Applications Yet</h3>
+                    <p>There are no applications for this job posting yet. Consider promoting your job to attract more candidates.</p>
+                    <a href="{% url 'edit_job' job.id %}" class="btn-gov-action btn-gov-primary" style="display: inline-block;">
+                        <i class="fas fa-edit"></i> Edit Job
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

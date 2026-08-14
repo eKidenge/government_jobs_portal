@@ -1,0 +1,717 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Applications - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       MY APPLICATIONS STYLES
+       ============================================ */
+    
+    .applications-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+    }
+    
+    .applications-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    /* Header */
+    .applications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .applications-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: #1a365d;
+    }
+    
+    .applications-title i {
+        color: #c9a33d;
+        margin-right: 10px;
+    }
+    
+    .applications-stats {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-badge {
+        background: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #4a5568;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .stat-badge .number {
+        font-weight: 700;
+        color: #1a365d;
+    }
+    
+    .stat-badge .number.gold {
+        color: #c9a33d;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+        background: white;
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+    
+    .filter-bar label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #4a5568;
+    }
+    
+    .filter-bar select,
+    .filter-bar input {
+        padding: 8px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        background: white;
+        min-width: 140px;
+    }
+    
+    .filter-bar select:focus,
+    .filter-bar input:focus {
+        outline: none;
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+    }
+    
+    .filter-bar .search-btn {
+        padding: 8px 20px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .filter-bar .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(43, 108, 176, 0.3);
+    }
+    
+    .filter-bar .clear-btn {
+        padding: 8px 16px;
+        background: transparent;
+        color: #718096;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-bar .clear-btn:hover {
+        background: #f7fafc;
+        border-color: #c9a33d;
+    }
+    
+    /* Application Cards */
+    .application-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .application-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #1a365d, #c9a33d);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .application-card:hover::before {
+        opacity: 1;
+    }
+    
+    .application-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border-color: rgba(201, 163, 61, 0.15);
+    }
+    
+    .application-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .application-card .job-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1a365d;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .application-card .job-title:hover {
+        color: #c9a33d;
+    }
+    
+    .application-card .company-name {
+        font-family: 'Inter', sans-serif;
+        color: #4a5568;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .application-card .company-name i {
+        color: #c9a33d;
+        font-size: 0.8rem;
+    }
+    
+    .application-card .card-body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 30px;
+        margin: 12px 0;
+    }
+    
+    .application-card .info-item {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .application-card .info-item i {
+        color: #c9a33d;
+        width: 16px;
+        font-size: 0.8rem;
+    }
+    
+    .application-card .info-item strong {
+        color: #2d3748;
+    }
+    
+    .application-card .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #edf2f7;
+    }
+    
+    .application-card .date {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        color: #a0aec0;
+    }
+    
+    .application-card .date i {
+        margin-right: 4px;
+    }
+    
+    .application-card .actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .application-card .actions a {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .actions .view-btn {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .actions .view-btn:hover {
+        background: #edf2f7;
+        border-color: #c9a33d;
+    }
+    
+    .actions .withdraw-btn {
+        background: #fff5f5;
+        color: #e53e3e;
+        border: 1px solid #fed7d7;
+    }
+    
+    .actions .withdraw-btn:hover {
+        background: #fed7d7;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-badge.submitted { background: #e2e8f0; color: #4a5568; }
+    .status-badge.under-review { background: #bee3f8; color: #2b6cb0; }
+    .status-badge.shortlisted { background: #fefcbf; color: #975a16; }
+    .status-badge.interview-scheduled { background: #fbd38d; color: #7b341e; }
+    .status-badge.medical-examination { background: #f6ad55; color: #7b341e; }
+    .status-badge.visa-processing { background: #9f7aea; color: #553c9a; }
+    .status-badge.accepted { background: #c6f6d5; color: #22543d; }
+    .status-badge.rejected { background: #fed7d7; color: #742a2a; }
+    .status-badge.withdrawn { background: #e9d8fd; color: #44337a; }
+    
+    /* No Applications */
+    .no-applications {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .no-applications i {
+        font-size: 64px;
+        color: #cbd5e0;
+        margin-bottom: 16px;
+        display: block;
+    }
+    
+    .no-applications h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #2d3748;
+        font-size: 1.3rem;
+    }
+    
+    .no-applications p {
+        font-family: 'Merriweather', serif;
+        color: #718096;
+        font-size: 0.95rem;
+        max-width: 400px;
+        margin: 8px auto 0;
+    }
+    
+    .no-applications .browse-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 32px;
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .no-applications .browse-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(43, 108, 176, 0.3);
+    }
+    
+    /* Pagination */
+    .pagination-wrap {
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 16px 20px;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid rgba(201, 163, 61, 0.06);
+    }
+    
+    .pagination-wrap .info {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+    
+    .pagination-wrap .pagination-links {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .pagination-wrap .pagination-links a,
+    .pagination-wrap .pagination-links span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+    }
+    
+    .pagination-wrap .pagination-links a:hover {
+        background: #f7fafc;
+        border-color: #c9a33d;
+        color: #1a365d;
+    }
+    
+    .pagination-wrap .pagination-links .current {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .applications-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .applications-stats {
+            width: 100%;
+        }
+        
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-bar select,
+        .filter-bar input {
+            width: 100%;
+            min-width: unset;
+        }
+        
+        .application-card .card-header {
+            flex-direction: column;
+        }
+        
+        .application-card .card-body {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .application-card .card-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .application-card .actions {
+            width: 100%;
+        }
+        
+        .application-card .actions a {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .pagination-wrap {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .applications-title {
+            font-size: 1.3rem;
+        }
+        
+        .application-card {
+            padding: 16px;
+        }
+        
+        .application-card .job-title {
+            font-size: 1rem;
+        }
+        
+        .stat-badge {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+        }
+        
+        .filter-bar {
+            padding: 12px 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="applications-section">
+    <div class="applications-container">
+        <!-- Header -->
+        <div class="applications-header">
+            <h1 class="applications-title">
+                <i class="fas fa-file-alt"></i> My Applications
+            </h1>
+            <div class="applications-stats">
+                <span class="stat-badge">
+                    <i class="fas fa-briefcase"></i>
+                    Total: <span class="number">{{ applications.paginator.count|default:0 }}</span>
+                </span>
+                <span class="stat-badge">
+                    <i class="fas fa-clock"></i>
+                    Pending: <span class="number gold">{{ pending_count|default:0 }}</span>
+                </span>
+                <span class="stat-badge">
+                    <i class="fas fa-check-circle" style="color: #38a169;"></i>
+                    Accepted: <span class="number" style="color: #38a169;">{{ accepted_count|default:0 }}</span>
+                </span>
+            </div>
+        </div>
+        
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <label for="statusFilter"><i class="fas fa-filter"></i> Status:</label>
+            <select id="statusFilter" onchange="applyFilter()">
+                <option value="">All Statuses</option>
+                <option value="submitted">Submitted</option>
+                <option value="under-review">Under Review</option>
+                <option value="shortlisted">Shortlisted</option>
+                <option value="interview-scheduled">Interview Scheduled</option>
+                <option value="medical-examination">Medical Examination</option>
+                <option value="visa-processing">Visa Processing</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+                <option value="withdrawn">Withdrawn</option>
+            </select>
+            
+            <label for="searchInput"><i class="fas fa-search"></i> Search:</label>
+            <input type="text" id="searchInput" placeholder="Search by job title..." onkeyup="applyFilter()">
+            
+            <button class="search-btn" onclick="applyFilter()">
+                <i class="fas fa-search"></i> Filter
+            </button>
+            <button class="clear-btn" onclick="clearFilters()">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+        
+        <!-- Applications List -->
+        {% if applications %}
+            {% for application in applications %}
+            <div class="application-card" data-status="{{ application.status }}">
+                <div class="card-header">
+                    <div>
+                        <a href="{% url 'job_detail' application.job.id %}" class="job-title">
+                            {{ application.job.title }}
+                        </a>
+                        <div class="company-name">
+                            <i class="fas fa-building"></i>
+                            {{ application.job.employer.company_name|default:application.job.agency.agency_name|default:'N/A' }}
+                        </div>
+                    </div>
+                    <span class="status-badge {{ application.status }}">
+                        {{ application.get_status_display }}
+                    </span>
+                </div>
+                
+                <div class="card-body">
+                    <span class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <strong>Country:</strong> {{ application.job.country.name }}
+                    </span>
+                    <span class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <strong>Applied:</strong> {{ application.date_applied|date:"M d, Y" }}
+                    </span>
+                    {% if application.interview_date %}
+                    <span class="info-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <strong>Interview:</strong> {{ application.interview_date|date:"M d, Y" }}
+                    </span>
+                    {% endif %}
+                    <span class="info-item">
+                        <i class="fas fa-hashtag"></i>
+                        <strong>Ref:</strong> {{ application.reference_number|default:'N/A' }}
+                    </span>
+                </div>
+                
+                <div class="card-footer">
+                    <span class="date">
+                        <i class="far fa-calendar-alt"></i>
+                        Last updated: {{ application.updated_at|date:"M d, Y H:i" }}
+                    </span>
+                    <div class="actions">
+                        <a href="{% url 'application_detail' application.id %}" class="view-btn">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                        {% if application.status == 'submitted' or application.status == 'under-review' %}
+                        <a href="{% url 'withdraw_application' application.id %}" class="withdraw-btn" onclick="return confirm('Are you sure you want to withdraw this application?')">
+                            <i class="fas fa-times"></i> Withdraw
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Pagination -->
+            {% if applications.has_other_pages %}
+            <div class="pagination-wrap">
+                <span class="info">
+                    Showing {{ applications.start_index }} - {{ applications.end_index }} of {{ applications.paginator.count }}
+                </span>
+                <div class="pagination-links">
+                    {% if applications.has_previous %}
+                        <a href="?page={{ applications.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in applications.paginator.page_range %}
+                        {% if applications.number == num %}
+                            <span class="current">{{ num }}</span>
+                        {% elif num > applications.number|add:'-3' and num < applications.number|add:'3' %}
+                            <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if applications.has_next %}
+                        <a href="?page={{ applications.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+        {% else %}
+            <!-- No Applications -->
+            <div class="no-applications">
+                <i class="fas fa-file-alt"></i>
+                <h3>No Applications Yet</h3>
+                <p>You haven't applied to any jobs yet. Start your job search and apply today!</p>
+                <a href="{% url 'job_list' %}" class="browse-btn">
+                    <i class="fas fa-search"></i> Browse Jobs
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+// ============================================
+// FILTER FUNCTIONALITY
+// ============================================
+
+function applyFilter() {
+    const status = document.getElementById('statusFilter').value;
+    const search = document.getElementById('searchInput').value.trim();
+    
+    let url = window.location.pathname + '?';
+    
+    if (status) {
+        url += 'status=' + encodeURIComponent(status) + '&';
+    }
+    if (search) {
+        url += 'search=' + encodeURIComponent(search) + '&';
+    }
+    
+    // Remove trailing & or ?
+    url = url.replace(/[&?]$/, '');
+    
+    // If no parameters, just go to the base URL
+    if (url === window.location.pathname + '?' || url === window.location.pathname) {
+        url = window.location.pathname;
+    }
+    
+    window.location.href = url;
+}
+
+function clearFilters() {
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('searchInput').value = '';
+    window.location.href = window.location.pathname;
+}
+
+// Enter key triggers search
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        applyFilter();
+    }
+});
+
+// Status filter change triggers search
+document.getElementById('statusFilter').addEventListener('change', function() {
+    applyFilter();
+});
+
+// ============================================
+// CONSOLE LOG
+// ============================================
+console.log('📄 My Applications page loaded');
+</script>
+{% endblock %}

@@ -1,0 +1,523 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Jobs - Recruitment Agency Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #0a1628 0%, #1a365d 40%, #1e4a7a 70%, #2b6cb0 100%);
+        padding: 30px 0;
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-header h1 {
+        font-family: 'Playfair Display', serif;
+        color: white;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+    
+    .dashboard-header p {
+        color: rgba(255,255,255,0.8);
+        font-size: 1rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border-left: 4px solid #c9a33d;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-card .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    
+    .stat-card .stat-label {
+        color: #718096;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .stat-card .stat-icon {
+        float: right;
+        font-size: 2rem;
+        color: #c9a33d;
+        opacity: 0.5;
+    }
+    
+    .jobs-table {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .jobs-table thead {
+        background: #f7fafc;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .jobs-table thead th {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4a5568;
+        padding: 15px 20px;
+        border: none;
+    }
+    
+    .jobs-table tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #edf2f7;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    
+    .jobs-table tbody tr:hover {
+        background: #f7fafc;
+    }
+    
+    .badge-status {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+    }
+    
+    .badge-active {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    
+    .badge-pending {
+        background: #fefcbf;
+        color: #744210;
+    }
+    
+    .badge-closed {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .badge-draft {
+        background: #e2e8f0;
+        color: #2d3748;
+    }
+    
+    .btn-action {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        margin: 0 2px;
+    }
+    
+    .btn-view {
+        background: #ebf8ff;
+        color: #2b6cb0;
+    }
+    
+    .btn-view:hover {
+        background: #bee3f8;
+    }
+    
+    .btn-edit {
+        background: #fefcbf;
+        color: #744210;
+    }
+    
+    .btn-edit:hover {
+        background: #f6e05e;
+    }
+    
+    .btn-delete {
+        background: #fed7d7;
+        color: #742a2a;
+    }
+    
+    .btn-delete:hover {
+        background: #feb2b2;
+    }
+    
+    .btn-post-job {
+        background: linear-gradient(135deg, #c9a33d, #d4af37);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-post-job:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(201, 163, 61, 0.3);
+        color: white;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 20px;
+    }
+    
+    .empty-state h3 {
+        font-family: 'Playfair Display', serif;
+        color: #1a365d;
+        font-size: 1.5rem;
+    }
+    
+    .empty-state p {
+        color: #718096;
+        max-width: 400px;
+        margin: 10px auto;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 20px;
+    }
+    
+    .pagination .page-link {
+        padding: 8px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        color: #4a5568;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+    }
+    
+    .pagination .page-link:hover {
+        background: #f7fafc;
+        border-color: #c9a33d;
+    }
+    
+    .pagination .page-link.active {
+        background: #c9a33d;
+        color: white;
+        border-color: #c9a33d;
+    }
+    
+    .filter-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .filter-section select,
+    .filter-section input {
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-section select:focus,
+    .filter-section input:focus {
+        outline: none;
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 3px rgba(201, 163, 61, 0.1);
+    }
+    
+    .filter-section label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin-bottom: 4px;
+        display: block;
+    }
+    
+    @media (max-width: 768px) {
+        .stat-card {
+            margin-bottom: 15px;
+        }
+        
+        .jobs-table {
+            overflow-x: auto;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<section class="dashboard-header">
+    <div class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1><i class="fas fa-briefcase"></i> Manage Jobs</h1>
+                <p>View and manage all job postings from your agency</p>
+            </div>
+            <a href="{% url 'agency_post_job' %}" class="btn-post-job mt-3 md:mt-0">
+                <i class="fas fa-plus-circle"></i> Post New Job
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Cards -->
+<section class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card">
+            <span class="stat-icon"><i class="fas fa-briefcase"></i></span>
+            <div class="stat-number">{{ total_jobs|default:0 }}</div>
+            <div class="stat-label">Total Jobs</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #48bb78;">
+            <span class="stat-icon"><i class="fas fa-check-circle" style="color:#48bb78;"></i></span>
+            <div class="stat-number">{{ active_jobs|default:0 }}</div>
+            <div class="stat-label">Active Jobs</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #f6ad55;">
+            <span class="stat-icon"><i class="fas fa-clock" style="color:#f6ad55;"></i></span>
+            <div class="stat-number">{{ pending_jobs|default:0 }}</div>
+            <div class="stat-label">Pending Review</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #fc8181;">
+            <span class="stat-icon"><i class="fas fa-users" style="color:#fc8181;"></i></span>
+            <div class="stat-number">{{ total_applications|default:0 }}</div>
+            <div class="stat-label">Total Applications</div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Section -->
+<section class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="filter-section">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label for="status"><i class="fas fa-filter"></i> Status</label>
+                <select name="status" id="status" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="closed" {% if request.GET.status == 'closed' %}selected{% endif %}>Closed</option>
+                    <option value="draft" {% if request.GET.status == 'draft' %}selected{% endif %}>Draft</option>
+                </select>
+            </div>
+            <div>
+                <label for="search"><i class="fas fa-search"></i> Search</label>
+                <input type="text" name="search" id="search" placeholder="Search by title..." 
+                       value="{{ request.GET.search|default:'' }}">
+            </div>
+            <div>
+                <label for="sort"><i class="fas fa-sort"></i> Sort By</label>
+                <select name="sort" id="sort" onchange="this.form.submit()">
+                    <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                    <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                    <option value="-applications_count" {% if request.GET.sort == '-applications_count' %}selected{% endif %}>Most Applications</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="btn-post-job w-full">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Jobs Table -->
+<section class="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="jobs-table">
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                    <th>Applications</th>
+                    <th>Posted Date</th>
+                    <th>Expiry Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                    {% for job in jobs %}
+                    <tr>
+                        <td>
+                            <div class="font-semibold text-gray-800">{{ job.title }}</div>
+                            <div class="text-xs text-gray-500">{{ job.location|default:'No location' }}</div>
+                        </td>
+                        <td>
+                            <span class="badge-status 
+                                {% if job.status == 'active' %}badge-active
+                                {% elif job.status == 'pending' %}badge-pending
+                                {% elif job.status == 'closed' %}badge-closed
+                                {% else %}badge-draft{% endif %}">
+                                {{ job.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="font-semibold">{{ job.applications_count|default:0 }}</span>
+                        </td>
+                        <td>{{ job.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            {% if job.closing_date %}
+                                {{ job.closing_date|date:"M d, Y" }}
+                                {% if job.closing_date < now %}
+                                    <span class="text-red-500 text-xs block">(Expired)</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-gray-400">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="flex flex-wrap gap-1">
+                                <a href="{% url 'agency_view_job' job.id %}" class="btn-action btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'agency_edit_job' job.id %}" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'agency_job_applications' job.id %}" class="btn-action btn-view" style="background:#e6fffa;color:#234e52;">
+                                    <i class="fas fa-users"></i>
+                                </a>
+                                <button onclick="confirmDelete('{{ job.id }}', '{{ job.title|escapejs }}')" 
+                                        class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Jobs Found</h3>
+                                <p>You haven't posted any jobs yet. Click the "Post New Job" button to get started.</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if jobs.has_other_pages %}
+    <div class="pagination">
+        {% if jobs.has_previous %}
+            <a href="?page={{ jobs.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+               class="page-link">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        {% endif %}
+        
+        {% for num in jobs.paginator.page_range %}
+            {% if jobs.number == num %}
+                <span class="page-link active">{{ num }}</span>
+            {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+                <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                   class="page-link">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if jobs.has_next %}
+            <a href="?page={{ jobs.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+               class="page-link">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mt-4">Delete Job</h3>
+            <p class="text-sm text-gray-500 mt-2">
+                Are you sure you want to delete "<span id="deleteJobTitle" class="font-semibold"></span>"?
+                This action cannot be undone.
+            </p>
+            <div class="mt-4 flex justify-center gap-3">
+                <button onclick="closeDeleteModal()" 
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
+                    Cancel
+                </button>
+                <form id="deleteForm" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function confirmDelete(jobId, jobTitle) {
+    document.getElementById('deleteJobTitle').textContent = jobTitle;
+    document.getElementById('deleteForm').action = `/agency/jobs/${jobId}/delete/`;
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+}
+
+// Close modal on click outside
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Keyboard shortcut: Escape to close modal
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Apply - {{ job.title }} - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .apply-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .apply-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 30px;
+    }
+    .job-summary {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 20px;
+        border-left: 4px solid #2b6cb0;
+    }
+    .cover-letter-area {
+        min-height: 200px;
+        resize: vertical;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        width: 100%;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+    .cover-letter-area:focus {
+        border-color: #2b6cb0;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+    }
+    .application-check {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .application-check .check-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: #f7fafc;
+        border-radius: 8px;
+    }
+    .application-check .check-item i {
+        color: #48bb78;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="apply-container px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Apply for Position</h1>
+            <p class="text-gray-600 mt-2">Complete your application for the role below</p>
+        </div>
+
+        <div class="apply-card">
+            <!-- Job Summary -->
+            <div class="job-summary mb-6">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">{{ job.title }}</h2>
+                        <p class="text-gray-600">
+                            <i class="fas fa-building mr-2 text-primary-light"></i>
+                            {{ job.employer.company_name|default:job.agency.agency_name|default:'N/A' }}
+                        </p>
+                        <p class="text-gray-600">
+                            <i class="fas fa-map-marker-alt mr-2 text-primary-light"></i>
+                            {{ job.country.name }}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-3 py-1 bg-blue-100 text-primary-light rounded-full text-sm font-semibold">
+                            <i class="fas fa-clock mr-1"></i> {{ job.get_employment_type_display }}
+                        </span>
+                        {% if job.salary_min %}
+                            <p class="text-sm text-gray-600 mt-1">
+                                {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Form -->
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Cover Letter -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-file-alt text-primary-light mr-2"></i>Cover Letter
+                    </label>
+                    <textarea name="cover_letter" class="cover-letter-area" 
+                              placeholder="Write a compelling cover letter explaining why you're the ideal candidate for this position..."
+                              rows="8">{{ form.cover_letter.value|default:'' }}</textarea>
+                    <p class="text-xs text-gray-500 mt-1">Optional but highly recommended</p>
+                </div>
+
+                <!-- Additional Documents -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-paperclip text-primary-light mr-2"></i>Additional Documents
+                    </label>
+                    <div class="file-upload-wrapper">
+                        {{ form.additional_documents }}
+                        <div class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400"></i>
+                            <p class="text-sm text-gray-600 mt-1">Upload additional documents (Optional)</p>
+                            <p class="text-xs text-gray-500">PDF, DOC, DOCX (Max 5MB)</p>
+                        </div>
+                    </div>
+                    <div class="file-name" id="additional-docs-name"></div>
+                </div>
+
+                <!-- Application Checklist -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <h4 class="font-semibold text-gray-800 mb-3">
+                        <i class="fas fa-check-circle text-primary-light mr-2"></i>Before You Submit
+                    </h4>
+                    <div class="application-check">
+                        <div class="check-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="text-sm">CV uploaded</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="text-sm">National ID uploaded</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="text-sm">Payment verified</span>
+                        </div>
+                        <div class="check-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="text-sm">Profile complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex flex-wrap gap-4">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-paper-plane mr-2"></i> Submit Application
+                    </button>
+                    <a href="{% url 'job_detail' job.id %}" 
+                       class="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition font-semibold">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // File upload display
+    document.querySelector('input[name="additional_documents"]').addEventListener('change', function() {
+        const fileName = this.files[0]?.name || '';
+        document.getElementById('additional-docs-name').textContent = fileName ? '📎 ' + fileName : '';
+    });
+});
+</script>
+{% endblock %}
