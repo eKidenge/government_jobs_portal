@@ -4,7 +4,8 @@ Handles user registration, authentication, profile management
 """
 from django.urls import path
 from . import views
-from employers import views as employer_views   # 🔽 ADD THIS IMPORT
+from employers import views as employer_views   # for employer_setup
+from agencies import views as agency_views      # for agency_setup
 
 #app_name = 'accounts'
 
@@ -20,7 +21,7 @@ urlpatterns = [
     # PROFILE MANAGEMENT
     # ==============================================
     path('profile/', views.profile_view, name='profile'),
-    path('profile/edit/', views.profile_edit, name='profile_edit'),  # ADD THIS LINE
+    path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('profile/update/', views.profile_update, name='profile_update'),
     path('profile/upload-document/', views.upload_document, name='upload_document'),
     path('profile/delete-document/<int:doc_id>/', views.delete_document, name='delete_document'),
@@ -58,7 +59,8 @@ urlpatterns = [
     path('account/suspend/', views.suspend_account, name='suspend_account'),
 
     # ==============================================
-    # EMPLOYER SETUP (for redirect from employer_dashboard)
+    # SETUP REDIRECTS (for employer & agency dashboards)
     # ==============================================
-    path('employer-setup/', employer_views.employer_setup, name='employer_setup'),   # 🔽 ADD THIS LINE
+    path('employer-setup/', employer_views.employer_setup, name='employer_setup'),
+    path('agency-setup/', agency_views.agency_setup, name='agency_setup'),   # ADDED
 ]
