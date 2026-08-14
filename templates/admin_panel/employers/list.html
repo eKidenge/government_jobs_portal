@@ -776,7 +776,8 @@
                                 </button>
                             </form>
                         {% endif %}
-                        <form method="post" action="{% url 'admin_panel:admin_delete_employer' employer.id %}" class="action-form">
+                        <!-- FIXED: Changed from admin_delete_employer to admin_employer_delete -->
+                        <form method="post" action="{% url 'admin_panel:admin_employer_delete' employer.id %}" class="action-form">
                             {% csrf_token %}
                             <button type="submit" class="btn-action btn-delete" onclick="return confirm('Are you sure you want to permanently delete this employer? This action cannot be undone!')">
                                 <i class="fas fa-trash"></i> Delete
