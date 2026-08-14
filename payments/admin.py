@@ -1,9 +1,14 @@
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.html import format_html
-from django.urls import reverse
 from .models import (
-    Payment, PaymentPlan, UserPaymentAccess, 
-    PaymentTransaction, PaymentWebhook, Invoice, PaymentSettings
+    PaymentPlan,
+    Payment,
+    PaymentTransaction,
+    UserPaymentAccess,
+    PaymentWebhook,
+    Invoice,
+    PaymentSettings,
 )
 
 
@@ -26,14 +31,17 @@ class PaymentPlanAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('transaction_reference', 'user', 'amount', 'currency', 'payment_method', 'status', 'payment_date', 'mpesa_receipt_number')
+    list_display = (
+        'transaction_reference', 'user', 'amount', 'currency',
+        'payment_method', 'status', 'payment_date', 'mpesa_receipt_number'
+    )
     list_filter = ('status', 'payment_method', 'payment_date')
     search_fields = ('transaction_reference', 'user__email', 'user__username', 'mpesa_receipt_number')
     ordering = ('-payment_date',)
     readonly_fields = ('transaction_reference', 'payment_date', 'completed_date', 'created_at', 'updated_at')
     fields = (
         'user', 'plan', 'amount', 'currency', 'payment_method',
-        'transaction_reference', 'mpesa_receipt_number', 
+        'transaction_reference', 'mpesa_receipt_number', 'checkout_request_id',
         'status', 'payment_date', 'completed_date',
         'metadata'
     )
@@ -55,6 +63,19 @@ class PaymentAdmin(admin.ModelAdmin):
     mark_refunded.short_description = "Mark selected payments as Refunded"
 
 
+@admin.register(PaymentTransaction)
+class PaymentTransactionAdmin(admin.ModelAdmin):
+    list_display = ('payment', 'transaction_type', 'status', 'created_at')
+    list_filter = ('transaction_type', 'status')
+    search_fields = ('payment__transaction_reference',)
+    readonly_fields = ('created_at',)
+    fields = (
+        'payment', 'transaction_type', 'status',
+        'request_data', 'response_data', 'error_message',
+        'ip_address', 'user_agent'
+    )
+
+
 @admin.register(UserPaymentAccess)
 class UserPaymentAccessAdmin(admin.ModelAdmin):
     list_display = ('user', 'has_access', 'access_start_date', 'access_end_date', 'applications_used', 'applications_limit')
@@ -64,19 +85,6 @@ class UserPaymentAccessAdmin(admin.ModelAdmin):
     fields = (
         'user', 'payment', 'has_access', 'access_start_date', 'access_end_date',
         'applications_used', 'applications_limit', 'metadata'
-    )
-
-
-@admin.register(PaymentTransaction)
-class PaymentTransactionAdmin(admin.ModelAdmin):
-    list_display = ('payment', 'transaction_type', 'status', 'created_at')
-    list_filter = ('transaction_type', 'status')
-    search_fields = ('payment__transaction_reference',)
-    readonly_fields = ('created_at',)
-    fields = (
-        'payment', 'transaction_type', 'status', 
-        'request_data', 'response_data', 'error_message',
-        'ip_address', 'user_agent'
     )
 
 
