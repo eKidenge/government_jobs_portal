@@ -4,6 +4,7 @@ Handles user registration, authentication, profile management
 """
 from django.urls import path
 from . import views
+from employers import views as employer_views   # 🔽 ADD THIS IMPORT
 
 #app_name = 'accounts'
 
@@ -55,4 +56,9 @@ urlpatterns = [
     # ==============================================
     path('account/delete/', views.delete_account, name='delete_account'),
     path('account/suspend/', views.suspend_account, name='suspend_account'),
+
+    # ==============================================
+    # EMPLOYER SETUP (for redirect from employer_dashboard)
+    # ==============================================
+    path('employer-setup/', employer_views.employer_setup, name='employer_setup'),   # 🔽 ADD THIS LINE
 ]
