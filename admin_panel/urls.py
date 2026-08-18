@@ -36,7 +36,6 @@ urlpatterns = [
     path('employers/<uuid:employer_id>/suspend/', views.admin_suspend_employer, name='admin_suspend_employer'),
     path('employers/<uuid:employer_id>/activate/', views.admin_activate_employer, name='admin_activate_employer'),
     path('employers/<uuid:employer_id>/renew-accreditation/', views.admin_renew_accreditation, name='admin_renew_accreditation'),
-    #path('employers/<uuid:employer_id>/delete/', views.admin_delete_employer, name='admin_delete_employer'),
     path('employers/<uuid:employer_id>/delete/', views.admin_delete_employer, name='admin_employer_delete'),
     path('employers/register/', views.admin_register_employer, name='admin_register_employer'),
     path('employers/<uuid:employer_id>/setup/', views.admin_employer_setup, name='admin_employer_setup'),
@@ -72,12 +71,12 @@ urlpatterns = [
     path('users/export/', views.admin_export_users, name='admin_export_users'),
     
     # ==============================================
-    # PAYMENT MANAGEMENT
+    # PAYMENT MANAGEMENT (FIXED: changed UUID to int)
     # ==============================================
     path('payments/', views.admin_payment_list, name='admin_payment_list'),
-    path('payments/<uuid:payment_id>/', views.admin_payment_detail, name='admin_payment_detail'),
-    path('payments/<uuid:payment_id>/verify/', views.admin_verify_payment, name='admin_verify_payment'),
-    path('payments/<uuid:payment_id>/refund/', views.admin_refund_payment, name='admin_refund_payment'),
+    path('payments/<int:payment_id>/', views.admin_payment_detail, name='admin_payment_detail'),
+    path('payments/<int:payment_id>/verify/', views.admin_verify_payment, name='admin_verify_payment'),
+    path('payments/<int:payment_id>/refund/', views.admin_refund_payment, name='admin_refund_payment'),
     path('payments/export/', views.admin_export_payments, name='admin_export_payments'),
     
     # ==============================================
