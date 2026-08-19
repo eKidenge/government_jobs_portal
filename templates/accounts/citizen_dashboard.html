@@ -797,7 +797,16 @@
                                     </span>
                                 </div>
                                 <div class="app-meta">
-                                    <span><i class="fas fa-building"></i> {{ app.job.employer.company_name|default:app.job.agency.agency_name|default:'N/A' }}</span>
+                                    <span><i class="fas fa-building"></i> 
+                                        <!-- FIXED: Safe conditional block for employer/agency -->
+                                        {% if app.job.employer %}
+                                            {{ app.job.employer.company_name }}
+                                        {% elif app.job.agency %}
+                                            {{ app.job.agency.agency_name }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </span>
                                     <span><i class="fas fa-map-marker-alt"></i> {{ app.job.country.name }}</span>
                                 </div>
                                 <div class="app-date">
