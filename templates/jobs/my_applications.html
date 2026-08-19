@@ -568,7 +568,14 @@
                         </a>
                         <div class="company-name">
                             <i class="fas fa-building"></i>
-                            {{ application.job.employer.company_name|default:application.job.agency.agency_name|default:'N/A' }}
+                            <!-- FIXED: Safe conditional block for employer/agency -->
+                            {% if application.job.employer %}
+                                {{ application.job.employer.company_name }}
+                            {% elif application.job.agency %}
+                                {{ application.job.agency.agency_name }}
+                            {% else %}
+                                N/A
+                            {% endif %}
                         </div>
                     </div>
                     <span class="status-badge {{ application.status }}">
