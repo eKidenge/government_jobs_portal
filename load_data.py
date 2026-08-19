@@ -1620,7 +1620,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1645,7 +1645,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1670,7 +1670,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1695,7 +1695,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1720,7 +1720,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1745,7 +1745,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1770,7 +1770,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1795,7 +1795,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1820,7 +1820,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1845,7 +1845,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1870,7 +1870,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1895,7 +1895,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1920,7 +1920,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1945,7 +1945,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1970,7 +1970,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -1995,7 +1995,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2020,7 +2020,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2045,7 +2045,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2070,7 +2070,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2095,7 +2095,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2120,7 +2120,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2145,7 +2145,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2170,7 +2170,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2195,7 +2195,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2220,7 +2220,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2245,7 +2245,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2270,7 +2270,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2295,7 +2295,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English', 'Swahili'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': False,
             'is_verified': True
@@ -2320,7 +2320,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': True,
             'is_verified': True
@@ -2345,7 +2345,7 @@ def load_sample_jobs():
             'is_remote': False,
             'visa_requirements': 'Kenyan citizenship required',
             'required_languages': ['English'],
-            'closing_date': datetime(2026, 8, 31, 23, 59, tzinfo=timezone.utc),
+            'closing_date': timezone.make_aware(datetime(2026, 8, 31, 23, 59)),
             'status': 'active',
             'is_featured': True,
             'is_verified': True
