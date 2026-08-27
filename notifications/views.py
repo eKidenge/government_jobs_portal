@@ -266,6 +266,7 @@ def notification_preferences(request):
     
     context = {
         'preferences': preferences,
+        'now': timezone.now(),  # Added for reference number in template
     }
     return render(request, 'notifications/preferences.html', context)
 
