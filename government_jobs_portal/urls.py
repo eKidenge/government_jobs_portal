@@ -19,7 +19,6 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from django.http import HttpResponse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -29,15 +28,12 @@ from rest_framework_simplejwt.views import (
 # Import static_pages views for home
 from static_pages import views as static_views
 
-# 🔽 ADD THIS IMPORT – for employer_setup URL
-from employers import views as employer_views
-
 # Import sitemaps
 from .sitemaps import StaticViewSitemap, JobSitemap, EmployerSitemap, AgencySitemap
 
-# Custom sitemap view to remove noindex header
+# Custom sitemap view
 def sitemap_view(request):
-    from django.contrib.sitemaps import views as sitemap_views
+    from django.contrib.sitemaps.views import sitemap
     
     sitemaps = {
         'static': StaticViewSitemap,
@@ -46,7 +42,7 @@ def sitemap_view(request):
         'agencies': AgencySitemap,
     }
     
-    response = sitemap_views.sitemap(request, {'sitemaps': sitemaps})
+    response = sitemap(request, {'sitemaps': sitemaps})
     response['X-Robots-Tag'] = 'index, follow'
     return response
 
