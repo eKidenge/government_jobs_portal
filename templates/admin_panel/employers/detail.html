@@ -390,6 +390,7 @@
                     </button>
                 </form>
             {% else %}
+                <!-- FIXED: Changed admin_employer_verify to admin_verify_employer -->
                 <form method="post" action="{% url 'admin_panel:admin_verify_employer' employer.id %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn-action btn-success" onclick="return confirm('Are you sure you want to verify this employer?');">
