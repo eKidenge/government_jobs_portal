@@ -37,7 +37,7 @@ from .sitemaps import StaticViewSitemap, JobSitemap, EmployerSitemap, AgencySite
 
 # Custom sitemap view to remove noindex header
 def sitemap_view(request):
-    from django.contrib.sitemaps.views import sitemap
+    from django.contrib.sitemaps import views as sitemap_views
     
     sitemaps = {
         'static': StaticViewSitemap,
@@ -46,8 +46,8 @@ def sitemap_view(request):
         'agencies': AgencySitemap,
     }
     
-    response = sitemap(request, {'sitemaps': sitemaps})
-    response['X-Robots-Tag'] = 'index, follow'  # Override noindex
+    response = sitemap_views.sitemap(request, {'sitemaps': sitemaps})
+    response['X-Robots-Tag'] = 'index, follow'
     return response
 
 urlpatterns = [
@@ -108,7 +108,7 @@ urlpatterns = [
     path('googlef78b8fbc95b0db37.html', TemplateView.as_view(template_name='googlef78b8fbc95b0db37.html')),
 
     # ==============================================
-    # SITEMAP - For SEO (Custom view to fix noindex)
+    # SITEMAP - For SEO
     # ==============================================
     path('sitemap.xml', sitemap_view, name='sitemap'),
 
