@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -31,20 +32,13 @@ from static_pages import views as static_views
 # Import sitemaps
 from .sitemaps import StaticViewSitemap, JobSitemap, EmployerSitemap, AgencySitemap
 
-# Custom sitemap view
-def sitemap_view(request):
-    from django.contrib.sitemaps.views import sitemap
-    
-    sitemaps = {
-        'static': StaticViewSitemap,
-        'jobs': JobSitemap,
-        'employers': EmployerSitemap,
-        'agencies': AgencySitemap,
-    }
-    
-    response = sitemap(request, {'sitemaps': sitemaps})
-    response['X-Robots-Tag'] = 'index, follow'
-    return response
+# Sitemap configuration
+sitemaps = {
+    'static': StaticViewSitemap,
+    'jobs': JobSitemap,
+    'employers': EmployerSitemap,
+    'agencies': AgencySitemap,
+}
 
 urlpatterns = [
     # Django Admin
@@ -106,7 +100,8 @@ urlpatterns = [
     # ==============================================
     # SITEMAP - For SEO
     # ==============================================
-    path('sitemap.xml', sitemap_view, name='sitemap'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap-<str:section>.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 
     # ==============================================
     # ROBOTS.TXT - For SEO
