@@ -8,7 +8,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.core.paginator import Paginator
 from django.utils import timezone
-from django.urls import reverse
 import logging
 
 from .models import Notification, UserNotificationPreference
@@ -171,7 +170,7 @@ def mark_all_read(request):
             is_read=False
         ).update(is_read=True, read_at=timezone.now())
         
-        messages.success(request, f'All {updated_count} notifications marked as read.')
+        messages.success(request, f'All {updated_count} notification{"s" if updated_count != 1 else ""} marked as read.')
         return redirect('notification_list')
     
     except Exception as e:
@@ -188,7 +187,7 @@ def delete_all_notifications(request):
         count = Notification.objects.filter(user=request.user).count()
         Notification.objects.filter(user=request.user).delete()
         
-        messages.success(request, f'All {count} notifications deleted.')
+        messages.success(request, f'All {count} notification{"s" if count != 1 else ""} deleted.')
         return redirect('notification_list')
     
     except Exception as e:
@@ -217,7 +216,6 @@ def unread_count(request):
         return JsonResponse({
             'count': count,
             'success': True,
-            'user': request.user.username,
         })
     
     except Exception as e:
