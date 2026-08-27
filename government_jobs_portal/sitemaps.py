@@ -31,6 +31,10 @@ class JobSitemap(Sitemap):
     def lastmod(self, obj):
         return obj.updated_at or obj.created_at
 
+    def location(self, obj):
+        """Return the URL for a job"""
+        return f'/jobs/{obj.id}/'
+
 
 class EmployerSitemap(Sitemap):
     """Sitemap for employers"""
@@ -43,6 +47,10 @@ class EmployerSitemap(Sitemap):
     def lastmod(self, obj):
         return obj.updated_at
 
+    def location(self, obj):
+        """Return the URL for an employer"""
+        return f'/employers/{obj.id}/'
+
 
 class AgencySitemap(Sitemap):
     """Sitemap for recruitment agencies"""
@@ -54,3 +62,7 @@ class AgencySitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.updated_at
+
+    def location(self, obj):
+        """Return the URL for an agency"""
+        return f'/agencies/{obj.id}/'
