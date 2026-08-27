@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from django.contrib.sitemaps.views import sitemap  # ADD THIS IMPORT
+from django.http import HttpResponse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -32,16 +32,23 @@ from static_pages import views as static_views
 # 🔽 ADD THIS IMPORT – for employer_setup URL
 from employers import views as employer_views
 
-# Import sitemaps - ADD THIS
+# Import sitemaps
 from .sitemaps import StaticViewSitemap, JobSitemap, EmployerSitemap, AgencySitemap
 
-# Sitemap configuration - ADD THIS
-sitemaps = {
-    'static': StaticViewSitemap,
-    'jobs': JobSitemap,
-    'employers': EmployerSitemap,
-    'agencies': AgencySitemap,
-}
+# Custom sitemap view to remove noindex header
+def sitemap_view(request):
+    from django.contrib.sitemaps.views import sitemap
+    
+    sitemaps = {
+        'static': StaticViewSitemap,
+        'jobs': JobSitemap,
+        'employers': EmployerSitemap,
+        'agencies': AgencySitemap,
+    }
+    
+    response = sitemap(request, {'sitemaps': sitemaps})
+    response['X-Robots-Tag'] = 'index, follow'  # Override noindex
+    return response
 
 urlpatterns = [
     # Django Admin
@@ -101,10 +108,9 @@ urlpatterns = [
     path('googlef78b8fbc95b0db37.html', TemplateView.as_view(template_name='googlef78b8fbc95b0db37.html')),
 
     # ==============================================
-    # SITEMAP - For SEO
+    # SITEMAP - For SEO (Custom view to fix noindex)
     # ==============================================
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('sitemap-<str:section>.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap.xml', sitemap_view, name='sitemap'),
 
     # ==============================================
     # ROBOTS.TXT - For SEO
