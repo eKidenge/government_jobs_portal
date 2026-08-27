@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notifications - Government Jobs Portal{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">My Notifications</h1>
+        <div class="flex space-x-2">
+            {% if unread_count > 0 %}
+                <form method="post" action="{% url 'mark_all_read' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                        Mark All Read
+                    </button>
+                </form>
+            {% endif %}
+            {% if notifications %}
+                <form method="post" action="{% url 'delete_all_notifications' %}" class="inline" onsubmit="return confirm('Are you sure you want to delete all notifications?');">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                        Delete All
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex space-x-2 mb-6 border-b border-gray-200">
+        <a href="?filter=all" class="px-4 py-2 text-sm {% if filter_type == 'all' or not filter_type %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+            All
+            <span class="ml-1 bg-gray-200 text-gray-700 rounded-full px-2 py-0.5 text-xs">{{ notifications.paginator.count }}</span>
+        </a>
+        <a href="?filter=unread" class="px-4 py-2 text-sm {% if filter_type == 'unread' %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+            Unread
+            <span class="ml-1 bg-red-200 text-red-700 rounded-full px-2 py-0.5 text-xs">{{ unread_count }}</span>
+        </a>
+        <a href="?filter=read" class="px-4 py-2 text-sm {% if filter_type == 'read' %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
+            Read
+        </a>
+    </div>
+
+    <!-- Notifications List -->
+    {% if notifications %}
+        <div class="space-y-3">
+            {% for notification in notifications %}
+                <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow {% if not notification.is_read %}border-l-4 border-blue-500{% else %}border-l-4 border-gray-300{% endif %}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                {% if not notification.is_read %}
+                                    <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                                {% endif %}
+                                <h3 class="font-semibold text-gray-900">{{ notification.title }}</h3>
+                                {% if notification.priority == 'high' %}
+                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full">High Priority</span>
+                                {% elif notification.priority == 'medium' %}
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">Medium</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">{{ notification.message }}</p>
+                            <p class="text-xs text-gray-400">{{ notification.created_at|timesince }} ago</p>
+                        </div>
+                        <div class="flex flex-col items-end space-y-1 ml-4">
+                            {% if not notification.is_read %}
+                                <form method="post" action="{% url 'mark_as_read' notification.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-xs text-blue-500 hover:text-blue-700">
+                                        Mark as read
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'mark_as_unread' notification.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-xs text-gray-500 hover:text-gray-700">
+                                        Mark as unread
+                                    </button>
+                                </form>
+                            {% endif %}
+                            <form method="post" action="{% url 'delete_notification' notification.id %}" class="inline" onsubmit="return confirm('Delete this notification?');">
+                                {% csrf_token %}
+                                <button type="submit" class="text-xs text-red-500 hover:text-red-700">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% if notification.link %}
+                        <div class="mt-2">
+                            <a href="{{ notification.link }}" class="text-sm text-blue-500 hover:text-blue-700">
+                                View Details →
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if notifications.paginator.num_pages > 1 %}
+            <div class="mt-6 flex justify-center">
+                <nav class="inline-flex rounded-md shadow">
+                    {% if notifications.has_previous %}
+                        <a href="?page={{ notifications.previous_page_number }}{% if filter_type %}&filter={{ filter_type }}{% endif %}" 
+                           class="px-3 py-2 border rounded-l-md bg-white hover:bg-gray-50 text-sm">
+                            Previous
+                        </a>
+                    {% endif %}
+                    
+                    <span class="px-3 py-2 border-t border-b bg-white text-sm">
+                        Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}
+                    </span>
+                    
+                    {% if notifications.has_next %}
+                        <a href="?page={{ notifications.next_page_number }}{% if filter_type %}&filter={{ filter_type }}{% endif %}" 
+                           class="px-3 py-2 border rounded-r-md bg-white hover:bg-gray-50 text-sm">
+                            Next
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="bg-white p-12 rounded-lg shadow text-center">
+            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <h3 class="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
+            <p class="mt-2 text-sm text-gray-500">You're all caught up! Check back later for new notifications.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh unread count every 30 seconds
+    function updateUnreadCount() {
+        fetch('/notifications/unread-count/')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('.unread-badge');
+                if (badge) {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching unread count:', error));
+    }
+    
+    // Update count periodically
+    setInterval(updateUnreadCount, 30000);
+</script>
+{% endblock %}
