@@ -6,7 +6,6 @@ from django.urls import reverse
 from jobs.models import Job
 from employers.models import EmployerProfile
 from agencies.models import RecruitmentAgency
-from static_pages.models import StaticPage  # If you have static pages
 
 
 class StaticViewSitemap(Sitemap):
