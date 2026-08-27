@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap  # ADD THIS IMPORT
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -30,6 +31,17 @@ from static_pages import views as static_views
 
 # 🔽 ADD THIS IMPORT – for employer_setup URL
 from employers import views as employer_views
+
+# Import sitemaps - ADD THIS
+from .sitemaps import StaticViewSitemap, JobSitemap, EmployerSitemap, AgencySitemap
+
+# Sitemap configuration - ADD THIS
+sitemaps = {
+    'static': StaticViewSitemap,
+    'jobs': JobSitemap,
+    'employers': EmployerSitemap,
+    'agencies': AgencySitemap,
+}
 
 urlpatterns = [
     # Django Admin
@@ -93,6 +105,11 @@ urlpatterns = [
     # ==============================================
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('sitemap-<str:section>.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
+    # ==============================================
+    # ROBOTS.TXT - For SEO
+    # ==============================================
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 ]
 
 # Serve media and static files in development
