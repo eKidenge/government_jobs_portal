@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'admin_panel',
     'notifications',
     'static_pages',
+    'django.contrib.sitemaps',  # Add this line
 ]
 
 MIDDLEWARE = [
