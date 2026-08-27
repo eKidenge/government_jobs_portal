@@ -11,4 +11,7 @@ Disallow: /media/
 
 Allow: /
 
+User-agent: bingbot
+Allow: /
+
 Sitemap: https://government-jobs-portal.onrender.com/sitemap.xml
