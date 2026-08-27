@@ -469,14 +469,26 @@ CKEDITOR_CONFIGS = {
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-# Remove X-Robots-Tag from all responses
-NOINDEX_PAGES = []
-
 # ==============================================
 # TWO FACTOR AUTHENTICATION (Optional)
 # ==============================================
 
 TWO_FACTOR_CALLBACK = 'government_jobs_portal.views.two_factor_callback'
+
+# ==============================================
+# SEO & INDEXING SETTINGS - Allow Google to index
+# ==============================================
+
+# Remove X-Robots-Tag from all responses
+NOINDEX_PAGES = []
+X_ROBOTS_TAG = 'index, follow'
+
+# Disable HSTS preload temporarily for indexing
+SECURE_HSTS_PRELOAD = False
+
+# ==============================================
+# LOG DIRECTORY
+# ==============================================
 
 # Create logs directory if it doesn't exist
 LOG_DIR = BASE_DIR / 'logs'
