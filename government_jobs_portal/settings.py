@@ -31,8 +31,8 @@ ALLOWED_HOSTS = [
     "government-jobs-portal.onrender.com",
     "127.0.0.1",
     "localhost",
-    "dc-backend-6xlc.onrender.com",  # Added your backend domain
-     '.onrender.com',  # Add this to allow all render subdomains
+    "dc-backend-6xlc.onrender.com",
+    '.onrender.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -62,18 +62,19 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'jobs',
-    'payments',  # ✅ Payments app is installed
+    'payments',
     'employers',
     'agencies',
     'admin_panel',
     'notifications',
     'static_pages',
-    'django.contrib.sitemaps',  # Add this line
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise at the TOP
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -139,7 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Africa/Nairobi'  # ✅ Changed to Nairobi time for M-Pesa
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -149,12 +150,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = '/static/'  # ← FIXED: added leading slash
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise for static files in production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
@@ -234,7 +235,6 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 31536000
-# In settings.py, add or update:
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
 
@@ -265,45 +265,25 @@ RATELIMIT_VIEW = '100/h'
 # EMAIL SETTINGS
 # ==============================================
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
-# For production, uncomment and configure:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@governmentjobs.gov')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # ==============================================
-# M-PESA SETTINGS - ✅ FIXED FOR YOUR DOMAIN
+# M-PESA SETTINGS
 # ==============================================
 
-# M-PESA Configuration - Sandbox
 MPESA_CONSUMER_KEY = 'Gxfrx4GQOdeg3earbJuJj5FQVmc1KSLnr7AUJsKxKlWyRpFE'
 MPESA_CONSUMER_SECRET = 'TGkcwoe6ir6U1glEZ7BA7tRNuxLVaSck5birEfhMDjy8Ae46ZcGewnUAYbyDfKZ9'
 MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-MPESA_SHORTCODE = '174379'  # Default sandbox shortcode
-MPESA_ENVIRONMENT = 'sandbox'  # Use 'sandbox' for testing
+MPESA_SHORTCODE = '174379'
+MPESA_ENVIRONMENT = 'sandbox'
 
-# ✅ FIXED: Your main domain for the portal
 SITE_URL = 'https://government-jobs-portal.onrender.com'
 
-# ✅ FIXED: Callback URLs using your main domain
 MPESA_CALLBACK_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-callback/'
 MPESA_RESULT_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-result/'
 MPESA_TIMEOUT_URL = 'https://government-jobs-portal.onrender.com/payment/mpesa-timeout/'
 
-# ✅ FIXED: For backend API calls (if different from main site)
 BACKEND_URL = 'https://dc-backend-6xlc.onrender.com'
-
-# Alternative: Use environment variables for production
-# MPESA_CONSUMER_KEY = os.getenv('MPESA_CONSUMER_KEY', '')
-# MPESA_CONSUMER_SECRET = os.getenv('MPESA_CONSUMER_SECRET', '')
-# MPESA_PASSKEY = os.getenv('MPESA_PASSKEY', '')
-# MPESA_SHORTCODE = os.getenv('MPESA_SHORTCODE', '174379')
-# MPESA_ENVIRONMENT = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
-# SITE_URL = os.getenv('SITE_URL', 'https://government-jobs-portal.onrender.com')
 
 # ==============================================
 # PAYMENT SETTINGS
@@ -337,7 +317,7 @@ PAYMENT_PLANS = {
 }
 
 # ==============================================
-# CELERY SETTINGS (Optional - for background tasks)
+# CELERY SETTINGS
 # ==============================================
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
@@ -417,7 +397,7 @@ ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@governmentjobs.gov')
 # FILE UPLOAD SETTINGS
 # ==============================================
 
-MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024
 ALLOWED_DOCUMENT_TYPES = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png']
 ALLOWED_IMAGE_TYPES = ['jpg', 'jpeg', 'png']
 
@@ -427,7 +407,7 @@ ALLOWED_IMAGE_TYPES = ['jpg', 'jpeg', 'png']
 
 NOTIFICATION_CHANNELS = {
     'email': True,
-    'sms': False,  # Set to True when SMS service is configured
+    'sms': False,
     'dashboard': True,
 }
 
@@ -447,7 +427,7 @@ CACHES = {
 # ==============================================
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_COOKIE_AGE = 86400
 SESSION_SAVE_EVERY_REQUEST = True
 
 # ==============================================
@@ -474,27 +454,23 @@ CKEDITOR_CONFIGS = {
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 # ==============================================
-# TWO FACTOR AUTHENTICATION (Optional)
+# TWO FACTOR AUTHENTICATION
 # ==============================================
 
 TWO_FACTOR_CALLBACK = 'government_jobs_portal.views.two_factor_callback'
 
 # ==============================================
-# SEO & INDEXING SETTINGS - Allow Google to index
+# SEO & INDEXING SETTINGS
 # ==============================================
 
-# Remove X-Robots-Tag from all responses
 NOINDEX_PAGES = []
 X_ROBOTS_TAG = 'index, follow'
-
-# Disable HSTS preload temporarily for indexing
 SECURE_HSTS_PRELOAD = False
 
 # ==============================================
 # LOG DIRECTORY
 # ==============================================
 
-# Create logs directory if it doesn't exist
 LOG_DIR = BASE_DIR / 'logs'
 if not LOG_DIR.exists():
     LOG_DIR.mkdir(parents=True)
