@@ -469,6 +469,9 @@ CKEDITOR_CONFIGS = {
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
+# Remove X-Robots-Tag from all responses
+NOINDEX_PAGES = []
+
 # ==============================================
 # TWO FACTOR AUTHENTICATION (Optional)
 # ==============================================
