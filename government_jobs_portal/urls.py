@@ -87,6 +87,12 @@ urlpatterns = [
 
     # Google Search Console verification
     path('googlef78b8fbc95b0db37.html', TemplateView.as_view(template_name='googlef78b8fbc95b0db37.html')),
+
+    # ==============================================
+    # SITEMAP - For SEO
+    # ==============================================
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap-<str:section>.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # Serve media and static files in development
