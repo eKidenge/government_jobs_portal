@@ -86,7 +86,7 @@ urlpatterns = [
     path('api/notifications/', include('notifications.api_urls')),
 
     # Google Search Console verification
-    path('google1234567890.html', TemplateView.as_view(template_name='google1234567890.html')),
+    path('googlef78b8fbc95b0db37.html', TemplateView.as_view(template_name='googlef78b8fbc95b0db37.html')),
 ]
 
 # Serve media and static files in development
