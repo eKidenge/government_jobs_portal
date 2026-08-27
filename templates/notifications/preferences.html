@@ -1,0 +1,821 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Notification Preferences - Government Jobs Portal{% endblock %}
+
+{% block content %}
+<div class="gov-preferences-container">
+    <!-- Header Section -->
+    <div class="gov-header">
+        <div class="gov-header-content">
+            <div class="gov-header-left">
+                <div class="gov-emblem">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="19" stroke="#ffffff" stroke-width="2"/>
+                        <path d="M20 6L8 18L12 22L20 14L28 22L32 18L20 6Z" fill="#c5a54a"/>
+                        <rect x="15" y="22" width="10" height="12" fill="#c5a54a"/>
+                        <path d="M20 26L17 29H23L20 26Z" fill="#1a3a5c"/>
+                    </svg>
+                    <div class="gov-emblem-text">
+                        <span class="gov-emblem-title">REPUBLIC OF KENYA</span>
+                        <span class="gov-emblem-sub">Public Service Commission</span>
+                    </div>
+                </div>
+                <h1 class="gov-page-title">Notification Preferences</h1>
+                <p class="gov-page-subtitle">Manage how you receive official communications</p>
+            </div>
+            <div class="gov-header-right">
+                <a href="{% url 'notification_list' %}" class="gov-btn gov-btn-back">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="10 2 4 8 10 14"/>
+                    </svg>
+                    Back to Notifications
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preferences Form -->
+    <form method="post" action="{% url 'notification_preferences' %}" class="gov-preferences-form">
+        {% csrf_token %}
+        
+        <!-- Channel Preferences -->
+        <div class="gov-preference-section">
+            <h2 class="gov-section-title">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1a3a5c" stroke-width="2">
+                    <path d="M2 4h16v12H2V4z"/>
+                    <path d="M2 4l8 6 8-6"/>
+                </svg>
+                Communication Channels
+            </h2>
+            <p class="gov-section-description">Select how you wish to receive notifications from the Public Service Commission.</p>
+            
+            <div class="gov-channel-grid">
+                <div class="gov-channel-card">
+                    <div class="gov-channel-header">
+                        <span class="gov-channel-icon">📧</span>
+                        <h3 class="gov-channel-name">Email</h3>
+                    </div>
+                    <div class="gov-channel-toggle">
+                        <label class="gov-toggle">
+                            <input type="checkbox" name="enable_email" {% if preferences.enable_email %}checked{% endif %}>
+                            <span class="gov-toggle-slider"></span>
+                            <span class="gov-toggle-label">{% if preferences.enable_email %}Enabled{% else %}Disabled{% endif %}</span>
+                        </label>
+                    </div>
+                    <p class="gov-channel-desc">Receive notifications via email at {{ request.user.email }}</p>
+                </div>
+                
+                <div class="gov-channel-card">
+                    <div class="gov-channel-header">
+                        <span class="gov-channel-icon">💬</span>
+                        <h3 class="gov-channel-name">SMS</h3>
+                    </div>
+                    <div class="gov-channel-toggle">
+                        <label class="gov-toggle">
+                            <input type="checkbox" name="enable_sms" {% if preferences.enable_sms %}checked{% endif %}>
+                            <span class="gov-toggle-slider"></span>
+                            <span class="gov-toggle-label">{% if preferences.enable_sms %}Enabled{% else %}Disabled{% endif %}</span>
+                        </label>
+                    </div>
+                    <p class="gov-channel-desc">Receive notifications via SMS to {{ request.user.phone_number|default:"your registered phone number" }}</p>
+                </div>
+                
+                <div class="gov-channel-card">
+                    <div class="gov-channel-header">
+                        <span class="gov-channel-icon">📋</span>
+                        <h3 class="gov-channel-name">Dashboard</h3>
+                    </div>
+                    <div class="gov-channel-toggle">
+                        <label class="gov-toggle">
+                            <input type="checkbox" name="enable_dashboard" {% if preferences.enable_dashboard %}checked{% endif %}>
+                            <span class="gov-toggle-slider"></span>
+                            <span class="gov-toggle-label">{% if preferences.enable_dashboard %}Enabled{% else %}Disabled{% endif %}</span>
+                        </label>
+                    </div>
+                    <p class="gov-channel-desc">Receive notifications on your dashboard when you log in</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Type Preferences -->
+        <div class="gov-preference-section">
+            <h2 class="gov-section-title">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1a3a5c" stroke-width="2">
+                    <circle cx="10" cy="10" r="8"/>
+                    <circle cx="10" cy="10" r="2" fill="#1a3a5c"/>
+                </svg>
+                Notification Types
+            </h2>
+            <p class="gov-section-description">Select which types of notifications you wish to receive.</p>
+            
+            <div class="gov-notification-types">
+                <!-- Job Notifications -->
+                <div class="gov-type-group">
+                    <h4 class="gov-type-group-title">Job & Application Notifications</h4>
+                    <div class="gov-type-grid">
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="job_approved" {% if preferences.job_approved %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Job Approved</span>
+                            </label>
+                            <p class="gov-type-desc">When your job posting is approved</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="job_rejected" {% if preferences.job_rejected %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Job Rejected</span>
+                            </label>
+                            <p class="gov-type-desc">When your job posting is rejected</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="application_received" {% if preferences.application_received %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Application Received</span>
+                            </label>
+                            <p class="gov-type-desc">When a candidate applies to your job</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="application_status" {% if preferences.application_status %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Application Status Update</span>
+                            </label>
+                            <p class="gov-type-desc">When your application status changes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interview & Offer Notifications -->
+                <div class="gov-type-group">
+                    <h4 class="gov-type-group-title">Interview & Offer Notifications</h4>
+                    <div class="gov-type-grid">
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="interview_scheduled" {% if preferences.interview_scheduled %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Interview Scheduled</span>
+                            </label>
+                            <p class="gov-type-desc">When an interview is scheduled</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="offer_extended" {% if preferences.offer_extended %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Offer Extended</span>
+                            </label>
+                            <p class="gov-type-desc">When a job offer is extended to you</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Notifications -->
+                <div class="gov-type-group">
+                    <h4 class="gov-type-group-title">Payment Notifications</h4>
+                    <div class="gov-type-grid">
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="payment_confirmed" {% if preferences.payment_confirmed %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Payment Confirmed</span>
+                            </label>
+                            <p class="gov-type-desc">When your payment is confirmed</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="payment_refunded" {% if preferences.payment_refunded %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Payment Refunded</span>
+                            </label>
+                            <p class="gov-type-desc">When a payment is refunded</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Notifications -->
+                <div class="gov-type-group">
+                    <h4 class="gov-type-group-title">Account Notifications</h4>
+                    <div class="gov-type-grid">
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="account_approved" {% if preferences.account_approved %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Account Approved</span>
+                            </label>
+                            <p class="gov-type-desc">When your account is approved</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="account_suspended" {% if preferences.account_suspended %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Account Suspended</span>
+                            </label>
+                            <p class="gov-type-desc">When your account is suspended</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="account_activated" {% if preferences.account_activated %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">Account Activated</span>
+                            </label>
+                            <p class="gov-type-desc">When your account is activated</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Notifications -->
+                <div class="gov-type-group">
+                    <h4 class="gov-type-group-title">System Notifications</h4>
+                    <div class="gov-type-grid">
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="system_notifications" {% if preferences.system_notifications %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">System Notifications</span>
+                            </label>
+                            <p class="gov-type-desc">Important system updates and announcements</p>
+                        </div>
+                        
+                        <div class="gov-type-item">
+                            <label class="gov-checkbox-label">
+                                <input type="checkbox" name="general_notifications" {% if preferences.general_notifications %}checked{% endif %}>
+                                <span class="gov-checkbox-custom"></span>
+                                <span class="gov-type-name">General Notifications</span>
+                            </label>
+                            <p class="gov-type-desc">General updates and information</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="gov-form-actions">
+            <button type="submit" class="gov-btn gov-btn-primary">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 7 5 11 15 1"/>
+                </svg>
+                Save Preferences
+            </button>
+            <a href="{% url 'notification_list' %}" class="gov-btn gov-btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+    <!-- Footer Information -->
+    <div class="gov-preferences-footer">
+        <div class="gov-footer-content">
+            <div class="gov-footer-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 8v4l3 3"/>
+                </svg>
+            </div>
+            <div class="gov-footer-text">
+                <h4>Official Communication Policy</h4>
+                <p>These preferences apply to all official communications from the Public Service Commission. You can update these preferences at any time. For urgent matters, you may still receive critical notifications regardless of your preferences.</p>
+                <span class="gov-footer-ref">Reference: PSC/PREF/{{ now|date:"Y" }}/001</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ============================================
+       GOVERNMENT PREFERENCES STYLES
+       ============================================ */
+    
+    .gov-preferences-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Times New Roman', 'Georgia', serif;
+        color: #1a1a1a;
+        background: #f5f3ee;
+    }
+
+    /* Header */
+    .gov-header {
+        background: #1a3a5c;
+        color: #ffffff;
+        padding: 24px 32px;
+        border-radius: 4px;
+        border-bottom: 4px solid #c5a54a;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .gov-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .gov-header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .gov-emblem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .gov-emblem-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .gov-emblem-title {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #c5a54a;
+        text-transform: uppercase;
+    }
+
+    .gov-emblem-sub {
+        font-size: 12px;
+        font-weight: 400;
+        color: #d4d4d4;
+        letter-spacing: 0.5px;
+    }
+
+    .gov-page-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0;
+        color: #ffffff;
+        font-family: 'Times New Roman', serif;
+        text-transform: uppercase;
+        border-bottom: 2px solid #c5a54a;
+        padding-bottom: 4px;
+        display: inline-block;
+    }
+
+    .gov-page-subtitle {
+        font-size: 13px;
+        color: #b0c4de;
+        margin: 2px 0 0 0;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    .gov-btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: rgba(255,255,255,0.1);
+        color: #ffffff;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        transition: all 0.2s;
+    }
+
+    .gov-btn-back:hover {
+        background: rgba(255,255,255,0.2);
+        color: #ffffff;
+    }
+
+    /* Preference Sections */
+    .gov-preference-section {
+        background: #ffffff;
+        padding: 24px 28px;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .gov-section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a3a5c;
+        font-family: 'Times New Roman', serif;
+        margin: 0 0 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .gov-section-description {
+        font-size: 13px;
+        color: #5d6d7e;
+        margin: 0 0 20px 0;
+        font-family: 'Georgia', serif;
+        line-height: 1.5;
+    }
+
+    /* Channel Grid */
+    .gov-channel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .gov-channel-card {
+        background: #f8f6f2;
+        padding: 16px 20px;
+        border-radius: 4px;
+        border: 1px solid #e8e0d6;
+        transition: all 0.2s;
+    }
+
+    .gov-channel-card:hover {
+        border-color: #c5a54a;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .gov-channel-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .gov-channel-icon {
+        font-size: 20px;
+    }
+
+    .gov-channel-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a3a5c;
+        margin: 0;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-channel-toggle {
+        margin: 8px 0;
+    }
+
+    .gov-channel-desc {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin: 4px 0 0 0;
+        font-family: 'Georgia', serif;
+    }
+
+    /* Toggle Switch */
+    .gov-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        color: #1a1a1a;
+    }
+
+    .gov-toggle input {
+        display: none;
+    }
+
+    .gov-toggle-slider {
+        width: 44px;
+        height: 24px;
+        background: #d4c9b8;
+        border-radius: 12px;
+        position: relative;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+
+    .gov-toggle-slider::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: #ffffff;
+        border-radius: 50%;
+        top: 3px;
+        left: 3px;
+        transition: all 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .gov-toggle input:checked + .gov-toggle-slider {
+        background: #1a3a5c;
+    }
+
+    .gov-toggle input:checked + .gov-toggle-slider::after {
+        left: 23px;
+    }
+
+    .gov-toggle-label {
+        font-weight: 500;
+        min-width: 60px;
+    }
+
+    /* Notification Types */
+    .gov-notification-types {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .gov-type-group {
+        border-top: 1px solid #ecf0f1;
+        padding-top: 16px;
+    }
+
+    .gov-type-group:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .gov-type-group-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 12px 0;
+        font-family: 'Times New Roman', serif;
+        letter-spacing: 0.3px;
+    }
+
+    .gov-type-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+    }
+
+    .gov-type-item {
+        padding: 10px 14px;
+        background: #f8f6f2;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .gov-type-item:hover {
+        border-color: #d4c9b8;
+        background: #fcfaf7;
+    }
+
+    .gov-checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        color: #1a1a1a;
+    }
+
+    .gov-checkbox-label input {
+        display: none;
+    }
+
+    .gov-checkbox-custom {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #d4c9b8;
+        border-radius: 3px;
+        position: relative;
+        flex-shrink: 0;
+        transition: all 0.2s;
+        background: #ffffff;
+    }
+
+    .gov-checkbox-label input:checked + .gov-checkbox-custom {
+        background: #1a3a5c;
+        border-color: #1a3a5c;
+    }
+
+    .gov-checkbox-label input:checked + .gov-checkbox-custom::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 6px;
+        height: 10px;
+        border: solid #ffffff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .gov-type-name {
+        font-weight: 500;
+        color: #1a3a5c;
+    }
+
+    .gov-type-desc {
+        font-size: 11px;
+        color: #7f8c8d;
+        margin: 2px 0 0 28px;
+        font-family: 'Georgia', serif;
+    }
+
+    /* Form Actions */
+    .gov-form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 16px 0;
+        margin-top: 8px;
+        border-top: 2px solid #d4c9b8;
+    }
+
+    .gov-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        font-size: 14px;
+        font-family: 'Times New Roman', serif;
+        border: 1px solid #d4c9b8;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .gov-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .gov-btn-primary {
+        background: #1a3a5c;
+        color: #ffffff;
+        border-color: #1a3a5c;
+    }
+
+    .gov-btn-primary:hover {
+        background: #0f2a44;
+        border-color: #0f2a44;
+        color: #ffffff;
+    }
+
+    .gov-btn-secondary {
+        background: #ffffff;
+        color: #1a1a1a;
+        border-color: #d4c9b8;
+    }
+
+    .gov-btn-secondary:hover {
+        background: #f5f3ee;
+    }
+
+    /* Footer */
+    .gov-preferences-footer {
+        background: #ffffff;
+        padding: 20px 28px;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        margin-top: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .gov-footer-content {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .gov-footer-icon {
+        flex-shrink: 0;
+        margin-top: 2px;
+        opacity: 0.6;
+    }
+
+    .gov-footer-text h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1a3a5c;
+        margin: 0 0 4px 0;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-footer-text p {
+        font-size: 13px;
+        color: #5d6d7e;
+        margin: 0 0 6px 0;
+        font-family: 'Georgia', serif;
+        line-height: 1.5;
+    }
+
+    .gov-footer-ref {
+        font-size: 12px;
+        color: #95a5a6;
+        font-family: 'Times New Roman', serif;
+        letter-spacing: 0.5px;
+    }
+
+    /* Messages */
+    .gov-messages {
+        margin-bottom: 20px;
+    }
+
+    .gov-message {
+        padding: 12px 20px;
+        border-radius: 4px;
+        border-left: 4px solid;
+        font-family: 'Times New Roman', serif;
+        font-size: 14px;
+    }
+
+    .gov-message-success {
+        background: #d4edda;
+        border-color: #28a745;
+        color: #155724;
+    }
+
+    .gov-message-error {
+        background: #f8d7da;
+        border-color: #dc3545;
+        color: #721c24;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .gov-header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gov-header-right {
+            width: 100%;
+        }
+
+        .gov-btn-back {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .gov-page-title {
+            font-size: 22px;
+        }
+
+        .gov-channel-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gov-type-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gov-form-actions {
+            flex-direction: column;
+        }
+
+        .gov-form-actions .gov-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .gov-footer-content {
+            flex-direction: column;
+        }
+
+        .gov-preference-section {
+            padding: 16px 18px;
+        }
+    }
+
+    @media print {
+        .gov-header {
+            background: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .gov-btn {
+            display: none;
+        }
+        .gov-channel-card {
+            border: 1px solid #000;
+        }
+        .gov-toggle-slider {
+            background: #ccc !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .gov-checkbox-custom {
+            border: 1px solid #000 !important;
+        }
+    }
+</style>
+{% endblock %}
