@@ -1,25 +1,82 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Notifications - Government Jobs Portal{% endblock %}
+{% block title %}Official Notifications - Government Jobs Portal{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">My Notifications</h1>
-        <div class="flex space-x-2">
+<div class="gov-notifications-container">
+    <!-- Header Section -->
+    <div class="gov-header">
+        <div class="gov-header-content">
+            <div class="gov-header-left">
+                <div class="gov-emblem">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="19" stroke="#1a3a5c" stroke-width="2"/>
+                        <path d="M20 6L8 18L12 22L20 14L28 22L32 18L20 6Z" fill="#1a3a5c"/>
+                        <rect x="15" y="22" width="10" height="12" fill="#1a3a5c"/>
+                        <path d="M20 26L17 29H23L20 26Z" fill="white"/>
+                    </svg>
+                    <div class="gov-emblem-text">
+                        <span class="gov-emblem-title">REPUBLIC OF KENYA</span>
+                        <span class="gov-emblem-sub">Public Service Commission</span>
+                    </div>
+                </div>
+                <h1 class="gov-page-title">Official Notifications</h1>
+                <p class="gov-page-subtitle">Government Jobs Portal - Communication Center</p>
+            </div>
+            <div class="gov-header-right">
+                <div class="gov-notification-stats">
+                    <div class="gov-stat-item">
+                        <span class="gov-stat-number">{{ notifications.paginator.count }}</span>
+                        <span class="gov-stat-label">Total</span>
+                    </div>
+                    <div class="gov-stat-item gov-stat-unread">
+                        <span class="gov-stat-number">{{ unread_count }}</span>
+                        <span class="gov-stat-label">Unread</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="gov-action-bar">
+        <div class="gov-action-bar-left">
+            <!-- Filter Tabs -->
+            <div class="gov-filter-tabs">
+                <a href="?filter=all" class="gov-filter-tab {% if filter_type == 'all' or not filter_type %}gov-filter-tab-active{% endif %}">
+                    <span>All Communications</span>
+                    <span class="gov-filter-badge">{{ notifications.paginator.count }}</span>
+                </a>
+                <a href="?filter=unread" class="gov-filter-tab {% if filter_type == 'unread' %}gov-filter-tab-active{% endif %}">
+                    <span>Unread</span>
+                    <span class="gov-filter-badge gov-filter-badge-warning">{{ unread_count }}</span>
+                </a>
+                <a href="?filter=read" class="gov-filter-tab {% if filter_type == 'read' %}gov-filter-tab-active{% endif %}">
+                    <span>Read</span>
+                    <span class="gov-filter-badge">{{ notifications.paginator.count|add:unread_count|add:unread_count }}</span>
+                </a>
+            </div>
+        </div>
+        <div class="gov-action-bar-right">
             {% if unread_count > 0 %}
-                <form method="post" action="{% url 'mark_all_read' %}" class="inline">
+                <form method="post" action="{% url 'mark_all_read' %}" class="gov-inline-form">
                     {% csrf_token %}
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
-                        Mark All Read
+                    <button type="submit" class="gov-btn gov-btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="1 8 5 12 15 2"/>
+                        </svg>
+                        Mark All as Read
                     </button>
                 </form>
             {% endif %}
             {% if notifications %}
-                <form method="post" action="{% url 'delete_all_notifications' %}" class="inline" onsubmit="return confirm('Are you sure you want to delete all notifications?');">
+                <form method="post" action="{% url 'delete_all_notifications' %}" class="gov-inline-form" onsubmit="return confirm('WARNING: This action will permanently delete all notifications. Are you sure you want to proceed?');">
                     {% csrf_token %}
-                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                    <button type="submit" class="gov-btn gov-btn-danger">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 4h12M6 4V2h4v2M3 4v9a1 1 0 001 1h8a1 1 0 001-1V4"/>
+                        </svg>
                         Delete All
                     </button>
                 </form>
@@ -27,135 +84,930 @@
         </div>
     </div>
 
-    <!-- Filter Tabs -->
-    <div class="flex space-x-2 mb-6 border-b border-gray-200">
-        <a href="?filter=all" class="px-4 py-2 text-sm {% if filter_type == 'all' or not filter_type %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
-            All
-            <span class="ml-1 bg-gray-200 text-gray-700 rounded-full px-2 py-0.5 text-xs">{{ notifications.paginator.count }}</span>
-        </a>
-        <a href="?filter=unread" class="px-4 py-2 text-sm {% if filter_type == 'unread' %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
-            Unread
-            <span class="ml-1 bg-red-200 text-red-700 rounded-full px-2 py-0.5 text-xs">{{ unread_count }}</span>
-        </a>
-        <a href="?filter=read" class="px-4 py-2 text-sm {% if filter_type == 'read' %}border-b-2 border-blue-500 text-blue-600 font-medium{% else %}text-gray-500 hover:text-gray-700{% endif %}">
-            Read
-        </a>
-    </div>
-
     <!-- Notifications List -->
     {% if notifications %}
-        <div class="space-y-3">
+        <div class="gov-notification-list">
             {% for notification in notifications %}
-                <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow {% if not notification.is_read %}border-l-4 border-blue-500{% else %}border-l-4 border-gray-300{% endif %}">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-1">
-                                {% if not notification.is_read %}
-                                    <span class="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
-                                {% endif %}
-                                <h3 class="font-semibold text-gray-900">{{ notification.title }}</h3>
-                                {% if notification.priority == 'high' %}
-                                    <span class="bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full">High Priority</span>
-                                {% elif notification.priority == 'medium' %}
-                                    <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">Medium</span>
+                <div class="gov-notification-item {% if not notification.is_read %}gov-notification-unread{% else %}gov-notification-read{% endif %}">
+                    <div class="gov-notification-status">
+                        {% if not notification.is_read %}
+                            <span class="gov-status-indicator gov-status-unread" title="Unread"></span>
+                        {% else %}
+                            <span class="gov-status-indicator gov-status-read" title="Read"></span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="gov-notification-content">
+                        <div class="gov-notification-header">
+                            <div class="gov-notification-title-group">
+                                <h3 class="gov-notification-title">{{ notification.title }}</h3>
+                                <div class="gov-notification-badges">
+                                    {% if notification.priority == 'urgent' %}
+                                        <span class="gov-badge gov-badge-urgent">URGENT</span>
+                                    {% elif notification.priority == 'high' %}
+                                        <span class="gov-badge gov-badge-high">HIGH PRIORITY</span>
+                                    {% elif notification.priority == 'medium' %}
+                                        <span class="gov-badge gov-badge-medium">MEDIUM</span>
+                                    {% elif notification.priority == 'low' %}
+                                        <span class="gov-badge gov-badge-low">LOW</span>
+                                    {% endif %}
+                                    
+                                    {% if notification.notification_type %}
+                                        <span class="gov-badge gov-badge-type">{{ notification.get_notification_type_display }}</span>
+                                    {% endif %}
+                                    
+                                    {% if notification.sent_via_email %}
+                                        <span class="gov-badge gov-badge-email">Email Sent</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="gov-notification-meta">
+                                <span class="gov-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="7" cy="7" r="6"/>
+                                        <path d="M7 3v4l2 2"/>
+                                    </svg>
+                                    {{ notification.created_at|date:"d M Y H:i" }}
+                                </span>
+                                <span class="gov-meta-item">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 1l4 4M13 1l-4 4M1 13l4-4M13 13l-4-4"/>
+                                    </svg>
+                                    {{ notification.created_at|timesince }} ago
+                                </span>
+                                {% if notification.read_at %}
+                                    <span class="gov-meta-item">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="1 7 4 10 13 1"/>
+                                        </svg>
+                                        Read {{ notification.read_at|timesince }} ago
+                                    </span>
                                 {% endif %}
                             </div>
-                            <p class="text-gray-600 text-sm mb-2">{{ notification.message }}</p>
-                            <p class="text-xs text-gray-400">{{ notification.created_at|timesince }} ago</p>
                         </div>
-                        <div class="flex flex-col items-end space-y-1 ml-4">
-                            {% if not notification.is_read %}
-                                <form method="post" action="{% url 'mark_as_read' notification.id %}" class="inline">
+                        
+                        <div class="gov-notification-body">
+                            <p class="gov-notification-message">{{ notification.message }}</p>
+                        </div>
+                        
+                        <div class="gov-notification-footer">
+                            <div class="gov-notification-actions">
+                                {% if notification.link %}
+                                    <a href="{{ notification.link }}" class="gov-action-link gov-action-view">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M7 1C3 1 1 4 1 7s2 6 6 6 6-3 6-6-2-6-6-6z"/>
+                                            <circle cx="7" cy="7" r="2"/>
+                                        </svg>
+                                        View Details
+                                    </a>
+                                {% endif %}
+                                
+                                {% if not notification.is_read %}
+                                    <form method="post" action="{% url 'mark_as_read' notification.id %}" class="gov-inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="gov-action-link gov-action-mark-read">
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="1 7 4 10 13 1"/>
+                                            </svg>
+                                            Mark as Read
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{% url 'mark_as_unread' notification.id %}" class="gov-inline-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="gov-action-link gov-action-mark-unread">
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="7" cy="7" r="6"/>
+                                            </svg>
+                                            Mark as Unread
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                
+                                <form method="post" action="{% url 'delete_notification' notification.id %}" class="gov-inline-form" onsubmit="return confirm('Delete this notification?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="text-xs text-blue-500 hover:text-blue-700">
-                                        Mark as read
+                                    <button type="submit" class="gov-action-link gov-action-delete">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 3h12M4 3V2a1 1 0 011-1h4a1 1 0 011 1v1M3 3v8a1 1 0 001 1h6a1 1 0 001-1V3"/>
+                                        </svg>
+                                        Delete
                                     </button>
                                 </form>
-                            {% else %}
-                                <form method="post" action="{% url 'mark_as_unread' notification.id %}" class="inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="text-xs text-gray-500 hover:text-gray-700">
-                                        Mark as unread
-                                    </button>
-                                </form>
+                            </div>
+                            
+                            {% if notification.related_object_id %}
+                                <div class="gov-notification-reference">
+                                    <span class="gov-reference-label">Reference:</span>
+                                    <span class="gov-reference-value">{{ notification.related_object_id }}</span>
+                                </div>
                             {% endif %}
-                            <form method="post" action="{% url 'delete_notification' notification.id %}" class="inline" onsubmit="return confirm('Delete this notification?');">
-                                {% csrf_token %}
-                                <button type="submit" class="text-xs text-red-500 hover:text-red-700">
-                                    Delete
-                                </button>
-                            </form>
                         </div>
                     </div>
-                    {% if notification.link %}
-                        <div class="mt-2">
-                            <a href="{{ notification.link }}" class="text-sm text-blue-500 hover:text-blue-700">
-                                View Details →
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             {% endfor %}
         </div>
 
         <!-- Pagination -->
         {% if notifications.paginator.num_pages > 1 %}
-            <div class="mt-6 flex justify-center">
-                <nav class="inline-flex rounded-md shadow">
+            <div class="gov-pagination">
+                <div class="gov-pagination-info">
+                    Showing page {{ notifications.number }} of {{ notifications.paginator.num_pages }}
+                    <span class="gov-pagination-divider">|</span>
+                    {{ notifications.paginator.count }} notifications total
+                </div>
+                <div class="gov-pagination-controls">
                     {% if notifications.has_previous %}
-                        <a href="?page={{ notifications.previous_page_number }}{% if filter_type %}&filter={{ filter_type }}{% endif %}" 
-                           class="px-3 py-2 border rounded-l-md bg-white hover:bg-gray-50 text-sm">
+                        <a href="?page={{ notifications.previous_page_number }}{% if filter_type and filter_type != 'all' %}&filter={{ filter_type }}{% endif %}" 
+                           class="gov-pagination-link gov-pagination-prev">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="10 2 4 8 10 14"/>
+                            </svg>
                             Previous
                         </a>
                     {% endif %}
                     
-                    <span class="px-3 py-2 border-t border-b bg-white text-sm">
-                        Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}
-                    </span>
+                    <div class="gov-pagination-pages">
+                        {% for i in notifications.paginator.page_range %}
+                            {% if notifications.number == i %}
+                                <span class="gov-pagination-current">{{ i }}</span>
+                            {% elif i > notifications.number|add:"-3" and i < notifications.number|add:"3" %}
+                                <a href="?page={{ i }}{% if filter_type and filter_type != 'all' %}&filter={{ filter_type }}{% endif %}" 
+                                   class="gov-pagination-number">{{ i }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                     
                     {% if notifications.has_next %}
-                        <a href="?page={{ notifications.next_page_number }}{% if filter_type %}&filter={{ filter_type }}{% endif %}" 
-                           class="px-3 py-2 border rounded-r-md bg-white hover:bg-gray-50 text-sm">
+                        <a href="?page={{ notifications.next_page_number }}{% if filter_type and filter_type != 'all' %}&filter={{ filter_type }}{% endif %}" 
+                           class="gov-pagination-link gov-pagination-next">
                             Next
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 2 12 8 6 14"/>
+                            </svg>
                         </a>
                     {% endif %}
-                </nav>
+                </div>
             </div>
         {% endif %}
     {% else %}
         <!-- Empty State -->
-        <div class="bg-white p-12 rounded-lg shadow text-center">
-            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <h3 class="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
-            <p class="mt-2 text-sm text-gray-500">You're all caught up! Check back later for new notifications.</p>
+        <div class="gov-empty-state">
+            <div class="gov-empty-state-icon">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#1a3a5c" stroke-width="2">
+                    <path d="M32 8L8 24v24l24 16 24-16V24L32 8z"/>
+                    <path d="M20 24h24M20 32h16M20 40h8"/>
+                </svg>
+            </div>
+            <h3 class="gov-empty-state-title">
+                {% if filter_type == 'unread' %}
+                    No Unread Official Communications
+                {% else %}
+                    No Official Notifications
+                {% endif %}
+            </h3>
+            <p class="gov-empty-state-description">
+                {% if filter_type == 'unread' %}
+                    All communications have been reviewed and acknowledged.
+                {% else %}
+                    There are currently no notifications from the Public Service Commission.
+                {% endif %}
+            </p>
+            <div class="gov-empty-state-footer">
+                <span class="gov-empty-state-reference">Reference: PSC/NOT/{{ now|date:"Y" }}/000</span>
+            </div>
         </div>
     {% endif %}
 </div>
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    // Auto-refresh unread count every 30 seconds
-    function updateUnreadCount() {
-        fetch('/notifications/unread-count/')
-            .then(response => response.json())
-            .then(data => {
-                const badge = document.querySelector('.unread-badge');
-                if (badge) {
-                    if (data.count > 0) {
-                        badge.textContent = data.count;
-                        badge.style.display = 'inline';
-                    } else {
-                        badge.style.display = 'none';
-                    }
-                }
-            })
-            .catch(error => console.error('Error fetching unread count:', error));
-    }
+<style>
+    /* ============================================
+       GOVERNMENT STYLES - Official Theme
+       ============================================ */
     
-    // Update count periodically
-    setInterval(updateUnreadCount, 30000);
-</script>
+    /* Container */
+    .gov-notifications-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: 'Times New Roman', 'Georgia', serif;
+        color: #1a1a1a;
+        background: #f5f3ee;
+    }
+
+    /* Header */
+    .gov-header {
+        background: #1a3a5c;
+        color: #ffffff;
+        padding: 24px 32px;
+        border-radius: 4px;
+        border-bottom: 4px solid #c5a54a;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .gov-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .gov-header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .gov-emblem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .gov-emblem-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .gov-emblem-title {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #c5a54a;
+        text-transform: uppercase;
+    }
+
+    .gov-emblem-sub {
+        font-size: 12px;
+        font-weight: 400;
+        color: #d4d4d4;
+        letter-spacing: 0.5px;
+    }
+
+    .gov-page-title {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0;
+        color: #ffffff;
+        font-family: 'Times New Roman', serif;
+        text-transform: uppercase;
+        border-bottom: 2px solid #c5a54a;
+        padding-bottom: 4px;
+        display: inline-block;
+    }
+
+    .gov-page-subtitle {
+        font-size: 13px;
+        color: #b0c4de;
+        margin: 2px 0 0 0;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    .gov-header-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .gov-notification-stats {
+        display: flex;
+        gap: 20px;
+        background: rgba(255,255,255,0.08);
+        padding: 8px 20px;
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .gov-stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 8px;
+    }
+
+    .gov-stat-number {
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-stat-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #b0c4de;
+    }
+
+    .gov-stat-unread .gov-stat-number {
+        color: #f4c542;
+    }
+
+    /* Action Bar */
+    .gov-action-bar {
+        background: #ffffff;
+        padding: 12px 20px;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .gov-action-bar-left {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .gov-action-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Filter Tabs */
+    .gov-filter-tabs {
+        display: flex;
+        gap: 0;
+        border: 1px solid #d4c9b8;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #f5f3ee;
+    }
+
+    .gov-filter-tab {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        color: #4a3f35;
+        text-decoration: none;
+        border-right: 1px solid #d4c9b8;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+    }
+
+    .gov-filter-tab:last-child {
+        border-right: none;
+    }
+
+    .gov-filter-tab:hover {
+        background: #e8e0d6;
+        color: #1a3a5c;
+    }
+
+    .gov-filter-tab-active {
+        background: #1a3a5c;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .gov-filter-tab-active:hover {
+        background: #1a3a5c;
+        color: #ffffff;
+    }
+
+    .gov-filter-badge {
+        background: #d4c9b8;
+        color: #1a1a1a;
+        font-size: 10px;
+        padding: 1px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .gov-filter-badge-warning {
+        background: #c5a54a;
+        color: #ffffff;
+    }
+
+    .gov-filter-tab-active .gov-filter-badge {
+        background: rgba(255,255,255,0.2);
+        color: #ffffff;
+    }
+
+    .gov-filter-tab-active .gov-filter-badge-warning {
+        background: #f4c542;
+        color: #1a1a1a;
+    }
+
+    /* Buttons */
+    .gov-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        border: 1px solid #d4c9b8;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ffffff;
+        color: #1a1a1a;
+        text-decoration: none;
+    }
+
+    .gov-btn:hover {
+        background: #f0ece6;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .gov-btn-primary {
+        background: #1a3a5c;
+        color: #ffffff;
+        border-color: #1a3a5c;
+    }
+
+    .gov-btn-primary:hover {
+        background: #0f2a44;
+        border-color: #0f2a44;
+        color: #ffffff;
+    }
+
+    .gov-btn-danger {
+        background: #8b1a1a;
+        color: #ffffff;
+        border-color: #8b1a1a;
+    }
+
+    .gov-btn-danger:hover {
+        background: #6b1414;
+        border-color: #6b1414;
+        color: #ffffff;
+    }
+
+    .gov-inline-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Notification List */
+    .gov-notification-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .gov-notification-item {
+        background: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        display: flex;
+        padding: 0;
+        transition: all 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .gov-notification-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-color: #b8a88e;
+    }
+
+    .gov-notification-unread {
+        border-left: 4px solid #c5a54a;
+        background: #fcfaf7;
+    }
+
+    .gov-notification-read {
+        border-left: 4px solid #d4c9b8;
+        opacity: 0.85;
+    }
+
+    .gov-notification-status {
+        padding: 16px 12px;
+        display: flex;
+        align-items: flex-start;
+        flex-shrink: 0;
+    }
+
+    .gov-status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-top: 4px;
+    }
+
+    .gov-status-unread {
+        background: #c5a54a;
+        box-shadow: 0 0 0 3px rgba(197, 165, 74, 0.2);
+        animation: gov-pulse 2s ease-in-out infinite;
+    }
+
+    .gov-status-read {
+        background: #b8b0a6;
+    }
+
+    @keyframes gov-pulse {
+        0%, 100% { box-shadow: 0 0 0 3px rgba(197, 165, 74, 0.2); }
+        50% { box-shadow: 0 0 0 6px rgba(197, 165, 74, 0.1); }
+    }
+
+    .gov-notification-content {
+        padding: 16px 20px 16px 12px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .gov-notification-header {
+        margin-bottom: 8px;
+    }
+
+    .gov-notification-title-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+
+    .gov-notification-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+        color: #1a3a5c;
+        font-family: 'Times New Roman', serif;
+        letter-spacing: 0.3px;
+    }
+
+    .gov-notification-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .gov-badge {
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-badge-urgent {
+        background: #8b1a1a;
+        color: #ffffff;
+    }
+
+    .gov-badge-high {
+        background: #c0392b;
+        color: #ffffff;
+    }
+
+    .gov-badge-medium {
+        background: #f39c12;
+        color: #1a1a1a;
+    }
+
+    .gov-badge-low {
+        background: #27ae60;
+        color: #ffffff;
+    }
+
+    .gov-badge-type {
+        background: #ecf0f1;
+        color: #2c3e50;
+        font-weight: 400;
+    }
+
+    .gov-badge-email {
+        background: #2980b9;
+        color: #ffffff;
+        font-weight: 400;
+    }
+
+    .gov-notification-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 2px;
+    }
+
+    .gov-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-notification-body {
+        margin: 8px 0 10px 0;
+    }
+
+    .gov-notification-message {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #2c3e50;
+        margin: 0;
+        font-family: 'Georgia', serif;
+    }
+
+    .gov-notification-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .gov-notification-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .gov-action-link {
+        font-size: 12px;
+        font-family: 'Times New Roman', serif;
+        color: #1a3a5c;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 2px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+    }
+
+    .gov-action-link:hover {
+        background: #ecf0f1;
+        color: #0f2a44;
+    }
+
+    .gov-action-view {
+        color: #2980b9;
+    }
+
+    .gov-action-mark-read {
+        color: #27ae60;
+    }
+
+    .gov-action-mark-unread {
+        color: #f39c12;
+    }
+
+    .gov-action-delete {
+        color: #c0392b;
+    }
+
+    .gov-notification-reference {
+        font-size: 11px;
+        color: #95a5a6;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-reference-label {
+        font-weight: 600;
+        color: #7f8c8d;
+    }
+
+    .gov-reference-value {
+        font-family: 'Courier New', monospace;
+        color: #2c3e50;
+    }
+
+    /* Pagination */
+    .gov-pagination {
+        margin-top: 24px;
+        padding: 16px 20px;
+        background: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .gov-pagination-info {
+        font-size: 13px;
+        color: #5d6d7e;
+        font-family: 'Times New Roman', serif;
+    }
+
+    .gov-pagination-divider {
+        margin: 0 8px;
+        color: #d4c9b8;
+    }
+
+    .gov-pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .gov-pagination-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        background: #f5f3ee;
+        color: #1a3a5c;
+        border: 1px solid #d4c9b8;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        transition: all 0.2s;
+    }
+
+    .gov-pagination-link:hover {
+        background: #e8e0d6;
+        border-color: #b8a88e;
+    }
+
+    .gov-pagination-pages {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .gov-pagination-number {
+        padding: 6px 12px;
+        color: #1a3a5c;
+        text-decoration: none;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    .gov-pagination-number:hover {
+        background: #f5f3ee;
+    }
+
+    .gov-pagination-current {
+        padding: 6px 12px;
+        background: #1a3a5c;
+        color: #ffffff;
+        border-radius: 4px;
+        font-size: 13px;
+        font-family: 'Times New Roman', serif;
+        font-weight: 700;
+    }
+
+    /* Empty State */
+    .gov-empty-state {
+        background: #ffffff;
+        padding: 48px 32px;
+        border-radius: 4px;
+        border: 1px solid #d4c9b8;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .gov-empty-state-icon {
+        margin-bottom: 16px;
+        opacity: 0.3;
+    }
+
+    .gov-empty-state-title {
+        font-size: 20px;
+        font-family: 'Times New Roman', serif;
+        color: #1a3a5c;
+        margin: 0 0 8px 0;
+        letter-spacing: 0.5px;
+    }
+
+    .gov-empty-state-description {
+        font-size: 15px;
+        color: #5d6d7e;
+        font-family: 'Georgia', serif;
+        margin: 0 0 16px 0;
+        line-height: 1.6;
+    }
+
+    .gov-empty-state-footer {
+        padding-top: 16px;
+        border-top: 1px solid #ecf0f1;
+    }
+
+    .gov-empty-state-reference {
+        font-size: 12px;
+        color: #95a5a6;
+        font-family: 'Times New Roman', serif;
+        letter-spacing: 0.5px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .gov-header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gov-header-right {
+            width: 100%;
+        }
+
+        .gov-notification-stats {
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .gov-page-title {
+            font-size: 22px;
+        }
+
+        .gov-action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .gov-action-bar-left {
+            justify-content: center;
+        }
+
+        .gov-action-bar-right {
+            justify-content: center;
+        }
+
+        .gov-filter-tabs {
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .gov-filter-tab {
+            flex: 1;
+            justify-content: center;
+            border-right: none;
+            border-bottom: 1px solid #d4c9b8;
+        }
+
+        .gov-pagination {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gov-pagination-controls {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .gov-notification-item {
+            flex-direction: column;
+        }
+
+        .gov-notification-status {
+            padding: 8px 16px;
+        }
+
+        .gov-notification-footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .gov-notification-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+    }
+
+    @media print {
+        .gov-action-bar {
+            display: none;
+        }
+        .gov-notification-actions {
+            display: none;
+        }
+        .gov-notification-item {
+            border: 1px solid #000;
+            break-inside: avoid;
+        }
+        .gov-header {
+            background: #000 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
 {% endblock %}
