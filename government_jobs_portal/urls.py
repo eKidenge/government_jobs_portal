@@ -84,6 +84,9 @@ urlpatterns = [
     path('api/employers/', include('employers.api_urls')),
     path('api/agencies/', include('agencies.api_urls')),
     path('api/notifications/', include('notifications.api_urls')),
+
+    # Google Search Console verification
+    path('google1234567890.html', TemplateView.as_view(template_name='google1234567890.html')),
 ]
 
 # Serve media and static files in development
