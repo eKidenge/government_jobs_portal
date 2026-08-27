@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="78do-3qKtcR-sd4Pwm3Zk1qRFkiAfnIAZoc-YRBQVkY" />
+    
     <meta name="description" content="Government Jobs Portal - Connecting Citizens to Verified Employment Opportunities Worldwide">
     <meta name="keywords" content="government jobs, employment, verified jobs, recruitment, careers">
     <title>{% block title %}Government Jobs Portal{% endblock %}</title>
@@ -13,9 +17,6 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Government-Style Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -29,19 +30,19 @@
            GOVERNMENT-STYLE FONTS & ROOT VARIABLES
            ============================================ */
         * {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .gov-font {
-            font-family: 'Playfair Display', serif !important;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .gov-font-body {
-            font-family: 'Merriweather', serif !important;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .gov-font-sans {
-            font-family: 'Inter', sans-serif !important;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         :root {
@@ -359,7 +360,7 @@
             font-size: 60px;
             color: var(--gold);
             opacity: 0.2;
-            font-family: 'Playfair Display', serif;
+            font-family: 'Times New Roman', Times, serif;
         }
         
         .testimonial-card:hover {
@@ -461,7 +462,7 @@
         .search-container input,
         .search-container select {
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .search-container input:focus,
@@ -481,7 +482,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .status-submitted { background: #e2e8f0; color: #4a5568; }
@@ -585,7 +586,7 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .btn-primary:hover {
@@ -602,7 +603,7 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .btn-gold:hover {
@@ -619,7 +620,7 @@
             transition: all 0.3s ease;
             border: 2px solid var(--primary-light);
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .btn-secondary:hover {
@@ -629,20 +630,25 @@
         }
         
         /* ============================================
-           NAVBAR STYLES
+           NAVBAR STYLES - GOVERNMENT OFFICIAL
            ============================================ */
         .navbar-gov {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(201, 163, 61, 0.15);
+            border-bottom: 3px solid var(--gold);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         
         .navbar-gov .nav-link {
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
+            font-family: 'Times New Roman', Times, serif !important;
+            font-weight: 700;
             color: #1a365d;
             transition: all 0.3s ease;
             position: relative;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            padding: 4px 0;
         }
         
         .navbar-gov .nav-link::after {
@@ -652,7 +658,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            background: var(--gold);
             transform: scaleX(0);
             transition: transform 0.3s ease;
         }
@@ -670,11 +676,12 @@
            ============================================ */
         .footer-gov {
             background: linear-gradient(180deg, #0a1628, #1a365d);
-            border-top: 3px solid var(--gold);
+            border-top: 4px solid var(--gold);
         }
         
         .footer-gov .footer-link {
             transition: all 0.3s ease;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .footer-gov .footer-link:hover {
@@ -783,7 +790,7 @@
             transition: all 0.2s;
             font-size: 14px;
             text-decoration: none;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
         }
         
         .pagination a:hover {
@@ -850,7 +857,9 @@
             font-weight: 500;
             border-bottom: 1px solid #f0f0f0;
             transition: all 0.2s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Times New Roman', Times, serif !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .mobile-menu-link:hover {
@@ -878,12 +887,12 @@
     <div id="preloader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
         <div class="text-center">
             <div class="spinner mx-auto"></div>
-            <p class="mt-4 text-gray-600 font-medium gov-font-sans">Loading...</p>
+            <p class="mt-4 text-gray-600 font-medium gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">Loading...</p>
         </div>
     </div>
 
     <!-- ============================================ -->
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR - GOVERNMENT STYLE -->
     <!-- ============================================ -->
     <nav class="navbar-gov fixed top-0 left-0 right-0 z-50 shadow-lg transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -892,24 +901,24 @@
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-3">
                         <div class="flex items-center space-x-2">
-                            <img src="{% static 'images/coat-of-arms.png' %}" alt="Government Logo" class="h-12 w-auto hidden sm:block">
+                            <img src="{% static 'images/coat-of-arms.png' %}" alt="Coat of Arms" class="h-12 w-auto hidden sm:block">
                             <div>
-                                <div class="text-[10px] text-gray-600 font-semibold tracking-wider uppercase gov-font-sans">Republic of Kenya</div>
-                                <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                                <div class="text-[10px] text-gray-600 font-semibold tracking-wider uppercase gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">REPUBLIC OF KENYA</div>
+                                <div class="text-sm font-bold text-primary-light gov-font" style="font-family: 'Times New Roman', Times, serif !important;">MINISTRY OF LABOUR</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Desktop Navigation -->
+                <!-- Desktop Navigation - UPPERCASE -->
                 <div class="hidden lg:flex items-center space-x-8">
-                    <a href="{% url 'home' %}" class="nav-link">Home</a>
-                    <a href="{% url 'job_list' %}" class="nav-link">Jobs</a>
-                    <a href="{% url 'countries' %}" class="nav-link">Countries</a>
-                    <a href="{% url 'employers:employer_list' %}" class="nav-link">Employers</a>
-                    <a href="{% url 'agencies:agency_list' %}" class="nav-link">Recruitment Agencies</a>
-                    <a href="{% url 'about' %}" class="nav-link">About Us</a>
-                    <a href="{% url 'contact' %}" class="nav-link">Contact</a>
+                    <a href="{% url 'home' %}" class="nav-link">HOME</a>
+                    <a href="{% url 'job_list' %}" class="nav-link">JOBS</a>
+                    <a href="{% url 'countries' %}" class="nav-link">COUNTRIES</a>
+                    <a href="{% url 'employers:employer_list' %}" class="nav-link">EMPLOYERS</a>
+                    <a href="{% url 'agencies:agency_list' %}" class="nav-link">RECRUITMENT AGENCIES</a>
+                    <a href="{% url 'about' %}" class="nav-link">ABOUT US</a>
+                    <a href="{% url 'contact' %}" class="nav-link">CONTACT</a>
                 </div>
 
                 <!-- Auth Buttons + Mobile Menu Toggle -->
@@ -926,8 +935,8 @@
                             <div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-2xl overflow-hidden hidden" id="notificationDropdown">
                                 <div class="p-4 border-b border-gray-200">
                                     <div class="flex justify-between items-center">
-                                        <h3 class="font-semibold text-gray-800 gov-font-sans">Notifications</h3>
-                                        <a href="{% url 'notification_list' %}" class="text-sm text-gold-dark hover:underline gov-font-sans">View All</a>
+                                        <h3 class="font-semibold text-gray-800 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">NOTIFICATIONS</h3>
+                                        <a href="{% url 'notification_list' %}" class="text-sm text-gold-dark hover:underline gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">VIEW ALL</a>
                                     </div>
                                 </div>
                                 <div class="max-h-96 overflow-y-auto" id="notificationList">
@@ -939,41 +948,41 @@
                         <!-- User Dropdown -->
                         <div class="relative dropdown">
                             <button class="flex items-center space-x-2 sm:space-x-3 focus:outline-none group">
-                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full gradient-gold flex items-center justify-center text-white font-semibold text-xs sm:text-sm gov-font">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full gradient-gold flex items-center justify-center text-white font-semibold text-xs sm:text-sm gov-font" style="font-family: 'Times New Roman', Times, serif !important;">
                                     {{ user.full_name|slice:":1"|upper }}
                                 </div>
                                 <div class="hidden lg:block text-left">
-                                    <p class="text-sm font-semibold text-gray-800 gov-font-sans">{{ user.full_name|truncatechars:15 }}</p>
-                                    <p class="text-xs text-gray-500 gov-font-sans">{{ user.user_type|title }}</p>
+                                    <p class="text-sm font-semibold text-gray-800 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">{{ user.full_name|truncatechars:15 }}</p>
+                                    <p class="text-xs text-gray-500 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">{{ user.user_type|title }}</p>
                                 </div>
                                 <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-300 group-hover:rotate-180 hidden sm:inline-block"></i>
                             </button>
                             
                             <div class="dropdown-menu absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-2xl py-2 border border-gray-100">
-                                <a href="{% url 'dashboard' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
-                                    <i class="fas fa-home w-6 text-gold"></i> Dashboard
+                                <a href="{% url 'dashboard' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                    <i class="fas fa-home w-6 text-gold"></i> DASHBOARD
                                 </a>
-                                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
-                                    <i class="fas fa-user w-6 text-gold"></i> Profile
+                                <a href="{% url 'profile' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                    <i class="fas fa-user w-6 text-gold"></i> PROFILE
                                 </a>
-                                <a href="{% url 'my_applications' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
-                                    <i class="fas fa-file-alt w-6 text-gold"></i> My Applications
+                                <a href="{% url 'my_applications' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                    <i class="fas fa-file-alt w-6 text-gold"></i> MY APPLICATIONS
                                 </a>
-                                <a href="{% url 'payments:payment_page' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans">
-                                    <i class="fas fa-credit-card w-6 text-gold"></i> Payments
+                                <a href="{% url 'payments:payment_page' %}" class="block px-4 py-3 text-gray-700 hover:bg-gold/10 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                    <i class="fas fa-credit-card w-6 text-gold"></i> PAYMENTS
                                 </a>
                                 <hr class="my-1 border-gray-200">
-                                <a href="{% url 'logout' %}" class="block px-4 py-3 text-red-600 hover:bg-red-50 transition-colors gov-font-sans">
-                                    <i class="fas fa-sign-out-alt w-6"></i> Logout
+                                <a href="{% url 'logout' %}" class="block px-4 py-3 text-red-600 hover:bg-red-50 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                    <i class="fas fa-sign-out-alt w-6"></i> LOGOUT
                                 </a>
                             </div>
                         </div>
                     {% else %}
-                        <a href="{% url 'login' %}" class="hidden sm:inline-block text-gray-700 hover:text-gold-dark font-medium transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 gov-font-sans text-sm">
-                            <i class="fas fa-sign-in-alt mr-1"></i> Login
+                        <a href="{% url 'login' %}" class="hidden sm:inline-block text-gray-700 hover:text-gold-dark font-medium transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 gov-font-sans text-sm" style="font-family: 'Times New Roman', Times, serif !important;">
+                            <i class="fas fa-sign-in-alt mr-1"></i> LOGIN
                         </a>
-                        <a href="{% url 'register' %}" class="btn-gold px-3 sm:px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300 font-semibold gov-font-sans text-xs sm:text-sm whitespace-nowrap">
-                            <i class="fas fa-user-plus mr-1"></i> <span class="hidden xs:inline">Register</span>
+                        <a href="{% url 'register' %}" class="btn-gold px-3 sm:px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300 font-semibold gov-font-sans text-xs sm:text-sm whitespace-nowrap" style="font-family: 'Times New Roman', Times, serif !important;">
+                            <i class="fas fa-user-plus mr-1"></i> <span class="hidden xs:inline">REGISTER</span>
                         </a>
                     {% endif %}
 
@@ -997,8 +1006,8 @@
             <div class="flex items-center space-x-3">
                 <img src="{% static 'images/coat-of-arms.png' %}" alt="Logo" class="h-10 w-auto">
                 <div>
-                    <div class="text-[10px] text-gray-600 font-semibold gov-font-sans">Republic of Kenya</div>
-                    <div class="text-sm font-bold text-primary-light gov-font">Ministry of Labour</div>
+                    <div class="text-[10px] text-gray-600 font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">REPUBLIC OF KENYA</div>
+                    <div class="text-sm font-bold text-primary-light gov-font" style="font-family: 'Times New Roman', Times, serif !important;">MINISTRY OF LABOUR</div>
                 </div>
             </div>
             <button class="text-gray-700 hover:text-gold-dark transition-colors p-2" id="closeMobileMenu">
@@ -1008,50 +1017,50 @@
         
         <div class="p-4 space-y-1 mobile-menu-content">
             <a href="{% url 'home' %}" class="mobile-menu-link">
-                <i class="fas fa-home"></i> Home
+                <i class="fas fa-home"></i> HOME
             </a>
             <a href="{% url 'job_list' %}" class="mobile-menu-link">
-                <i class="fas fa-briefcase"></i> Jobs
+                <i class="fas fa-briefcase"></i> JOBS
             </a>
             <a href="{% url 'countries' %}" class="mobile-menu-link">
-                <i class="fas fa-globe-africa"></i> Countries
+                <i class="fas fa-globe-africa"></i> COUNTRIES
             </a>
             <a href="{% url 'employers:employer_list' %}" class="mobile-menu-link">
-                <i class="fas fa-building"></i> Employers
+                <i class="fas fa-building"></i> EMPLOYERS
             </a>
             <a href="{% url 'agencies:agency_list' %}" class="mobile-menu-link">
-                <i class="fas fa-handshake"></i> Recruitment Agencies
+                <i class="fas fa-handshake"></i> RECRUITMENT AGENCIES
             </a>
             <a href="{% url 'about' %}" class="mobile-menu-link">
-                <i class="fas fa-info-circle"></i> About Us
+                <i class="fas fa-info-circle"></i> ABOUT US
             </a>
             <a href="{% url 'contact' %}" class="mobile-menu-link">
-                <i class="fas fa-envelope"></i> Contact
+                <i class="fas fa-envelope"></i> CONTACT
             </a>
             
             <div class="pt-6 mt-4 border-t border-gray-200 space-y-3">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="block text-center btn-primary py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-home mr-2"></i> Dashboard
+                    <a href="{% url 'dashboard' %}" class="block text-center btn-primary py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-home mr-2"></i> DASHBOARD
                     </a>
-                    <a href="{% url 'profile' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-user mr-2"></i> Profile
+                    <a href="{% url 'profile' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-user mr-2"></i> PROFILE
                     </a>
-                    <a href="{% url 'my_applications' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-file-alt mr-2"></i> My Applications
+                    <a href="{% url 'my_applications' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-file-alt mr-2"></i> MY APPLICATIONS
                     </a>
-                    <a href="{% url 'payments:payment_page' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-credit-card mr-2"></i> Payments
+                    <a href="{% url 'payments:payment_page' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-credit-card mr-2"></i> PAYMENTS
                     </a>
-                    <a href="{% url 'logout' %}" class="block text-center border border-red-500 text-red-500 py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    <a href="{% url 'logout' %}" class="block text-center border border-red-500 text-red-500 py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-sign-out-alt mr-2"></i> LOGOUT
                     </a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Login
+                    <a href="{% url 'login' %}" class="block text-center border border-primary-light text-primary-light py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-sign-in-alt mr-2"></i> LOGIN
                     </a>
-                    <a href="{% url 'register' %}" class="block text-center btn-gold py-3 rounded-lg font-semibold gov-font-sans">
-                        <i class="fas fa-user-plus mr-2"></i> Register
+                    <a href="{% url 'register' %}" class="block text-center btn-gold py-3 rounded-lg font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                        <i class="fas fa-user-plus mr-2"></i> REGISTER
                     </a>
                 {% endif %}
             </div>
@@ -1068,7 +1077,7 @@
                     <div class="flex items-start space-x-3">
                         <i class="fas {% if message.tags == 'success' %}fa-check-circle text-green-500{% elif message.tags == 'error' %}fa-exclamation-circle text-red-500{% elif message.tags == 'warning' %}fa-exclamation-triangle text-yellow-500{% else %}fa-info-circle text-blue-500{% endif %} mt-1"></i>
                         <div class="flex-1">
-                            <p class="text-sm gov-font-sans">{{ message }}</p>
+                            <p class="text-sm gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">{{ message }}</p>
                         </div>
                         <button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="this.parentElement.parentElement.remove()">
                             <i class="fas fa-times"></i>
@@ -1095,16 +1104,16 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div>
-                        <h3 class="text-2xl font-bold gov-font">Subscribe to Our Newsletter</h3>
-                        <p class="text-white/80 mt-2 gov-font-body">Get the latest job opportunities and updates directly in your inbox.</p>
+                        <h3 class="text-2xl font-bold gov-font" style="font-family: 'Times New Roman', Times, serif !important;">SUBSCRIBE TO OUR NEWSLETTER</h3>
+                        <p class="text-white/80 mt-2 gov-font-body" style="font-family: 'Times New Roman', Times, serif !important;">Get the latest job opportunities and updates directly in your inbox.</p>
                     </div>
                     <div>
                         <form action="{% url 'newsletter_subscribe' %}" method="POST" class="flex flex-col sm:flex-row gap-3">
                             {% csrf_token %}
                             <input type="email" name="email" placeholder="Enter your email" required 
-                                   class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white gov-font-sans">
-                            <button type="submit" class="bg-white text-gold-dark px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors gov-font-sans">
-                                <i class="fas fa-paper-plane mr-2"></i> Subscribe
+                                   class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                            <button type="submit" class="bg-white text-gold-dark px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">
+                                <i class="fas fa-paper-plane mr-2"></i> SUBSCRIBE
                             </button>
                         </form>
                     </div>
@@ -1116,8 +1125,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- About -->
                 <div>
-                    <h3 class="text-lg font-semibold mb-4 gov-font">Government Jobs Portal</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed gov-font-body">Connecting citizens to verified employment opportunities worldwide through a transparent, government-managed platform.</p>
+                    <h3 class="text-lg font-semibold mb-4 gov-font" style="font-family: 'Times New Roman', Times, serif !important;">GOVERNMENT JOBS PORTAL</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed gov-font-body" style="font-family: 'Times New Roman', Times, serif !important;">Connecting citizens to verified employment opportunities worldwide through a transparent, government-managed platform.</p>
                     <div class="flex space-x-4 mt-4">
                         <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors">
                             <i class="fab fa-facebook-f"></i>
@@ -1136,47 +1145,47 @@
                 
                 <!-- Quick Links -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 gov-font">Quick Links</h4>
+                    <h4 class="text-lg font-semibold mb-4 gov-font" style="font-family: 'Times New Roman', Times, serif !important;">QUICK LINKS</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="{% url 'job_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Browse Jobs</a></li>
-                        <li><a href="{% url 'countries' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Countries</a></li>
-                        <li><a href="{% url 'employers:employer_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Employers</a></li>
-                        <li><a href="{% url 'agencies:agency_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Recruitment Agencies</a></li>
-                        <li><a href="{% url 'about' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> About Us</a></li>
+                        <li><a href="{% url 'job_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> BROWSE JOBS</a></li>
+                        <li><a href="{% url 'countries' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> COUNTRIES</a></li>
+                        <li><a href="{% url 'employers:employer_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> EMPLOYERS</a></li>
+                        <li><a href="{% url 'agencies:agency_list' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> RECRUITMENT AGENCIES</a></li>
+                        <li><a href="{% url 'about' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> ABOUT US</a></li>
                     </ul>
                 </div>
                 
                 <!-- Support -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 gov-font">Support</h4>
+                    <h4 class="text-lg font-semibold mb-4 gov-font" style="font-family: 'Times New Roman', Times, serif !important;">SUPPORT</h4>
                     <ul class="space-y-2 text-gray-400">
-                        <li><a href="{% url 'faq' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> FAQ</a></li>
-                        <li><a href="{% url 'contact' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Contact Us</a></li>
-                        <li><a href="{% url 'privacy_policy' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Privacy Policy</a></li>
-                        <li><a href="{% url 'terms' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Terms & Conditions</a></li>
-                        <li><a href="{% url 'help' %}" class="footer-link hover:text-white transition-colors gov-font-sans"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> Help Center</a></li>
+                        <li><a href="{% url 'faq' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> FAQ</a></li>
+                        <li><a href="{% url 'contact' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> CONTACT US</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> PRIVACY POLICY</a></li>
+                        <li><a href="{% url 'terms' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> TERMS & CONDITIONS</a></li>
+                        <li><a href="{% url 'help' %}" class="footer-link hover:text-white transition-colors gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;"><i class="fas fa-chevron-right text-xs mr-2 text-gold"></i> HELP CENTER</a></li>
                     </ul>
                 </div>
                 
                 <!-- Contact -->
                 <div>
-                    <h4 class="text-lg font-semibold mb-4 gov-font">Get in Touch</h4>
+                    <h4 class="text-lg font-semibold mb-4 gov-font" style="font-family: 'Times New Roman', Times, serif !important;">GET IN TOUCH</h4>
                     <ul class="space-y-3 text-gray-400">
                         <li class="flex items-start space-x-3">
                             <i class="fas fa-map-marker-alt text-gold mt-1"></i>
-                            <span class="gov-font-body">Ministry of Labour<br>Nairobi, Kenya</span>
+                            <span class="gov-font-body" style="font-family: 'Times New Roman', Times, serif !important;">Ministry of Labour<br>Nairobi, Kenya</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-phone text-gold"></i>
-                            <span class="gov-font-sans">+254 20 222 0000</span>
+                            <span class="gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">+254 20 222 0000</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-envelope text-gold"></i>
-                            <span class="gov-font-sans">info@governmentjobs.go.ke</span>
+                            <span class="gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">info@governmentjobs.go.ke</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <i class="fas fa-clock text-gold"></i>
-                            <span class="gov-font-sans">Mon-Fri: 8:00 AM - 5:00 PM</span>
+                            <span class="gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">Mon-Fri: 8:00 AM - 5:00 PM</span>
                         </li>
                     </ul>
                 </div>
@@ -1184,21 +1193,21 @@
             
             <!-- Partners -->
             <div class="border-t border-white/10 mt-8 pt-8">
-                <h4 class="text-lg font-semibold text-center mb-6 gov-font">Our Partner Organizations</h4>
+                <h4 class="text-lg font-semibold text-center mb-6 gov-font" style="font-family: 'Times New Roman', Times, serif !important;">OUR PARTNER ORGANIZATIONS</h4>
                 <div class="flex flex-wrap justify-center items-center gap-8">
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Ministry of Labour</div>
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Public Employment Service</div>
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Accredited Recruitment Agencies</div>
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">International Employers</div>
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Foreign Embassies</div>
-                    <div class="text-gray-400 text-sm font-semibold gov-font-sans">Development Partners</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">MINISTRY OF LABOUR</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">PUBLIC EMPLOYMENT SERVICE</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">ACCREDITED RECRUITMENT AGENCIES</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">INTERNATIONAL EMPLOYERS</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">FOREIGN EMBASSIES</div>
+                    <div class="text-gray-400 text-sm font-semibold gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">DEVELOPMENT PARTNERS</div>
                 </div>
             </div>
             
             <!-- Copyright -->
             <div class="border-t border-white/10 mt-8 pt-8 text-center text-gray-400 text-sm">
-                <p class="gov-font-sans">&copy; {% now "Y" %} Government Jobs Portal. All rights reserved.</p>
-                <p class="mt-1 gov-font-body">Powered by the Government of Kenya</p>
+                <p class="gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">&copy; {% now "Y" %} Government Jobs Portal. All rights reserved.</p>
+                <p class="mt-1 gov-font-body" style="font-family: 'Times New Roman', Times, serif !important;">Powered by the Government of Kenya</p>
             </div>
         </div>
     </footer>
@@ -1324,9 +1333,9 @@
                                 <div class="flex items-start space-x-3">
                                     <div class="w-2 h-2 rounded-full ${notif.is_read ? 'bg-gray-300' : 'bg-gold'} mt-2"></div>
                                     <div class="flex-1">
-                                        <p class="text-sm font-medium text-gray-800 gov-font-sans">${notif.title}</p>
-                                        <p class="text-xs text-gray-500 mt-1 gov-font-body">${notif.message}</p>
-                                        <p class="text-xs text-gray-400 mt-1 gov-font-sans">${new Date(notif.created_at).toLocaleDateString()}</p>
+                                        <p class="text-sm font-medium text-gray-800 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">${notif.title}</p>
+                                        <p class="text-xs text-gray-500 mt-1 gov-font-body" style="font-family: 'Times New Roman', Times, serif !important;">${notif.message}</p>
+                                        <p class="text-xs text-gray-400 mt-1 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">${new Date(notif.created_at).toLocaleDateString()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -1335,7 +1344,7 @@
                         list.innerHTML = `
                             <div class="p-8 text-center">
                                 <i class="fas fa-bell-slash text-4xl text-gray-300"></i>
-                                <p class="text-gray-500 mt-2 gov-font-sans">No notifications</p>
+                                <p class="text-gray-500 mt-2 gov-font-sans" style="font-family: 'Times New Roman', Times, serif !important;">No notifications</p>
                             </div>
                         `;
                     }
