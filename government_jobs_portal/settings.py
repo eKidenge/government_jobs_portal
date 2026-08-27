@@ -25,13 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*kncs1+#0o%kw%-8nrw_!l+@w_)yi1c(+muw(x(h^&avqs(eea'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "government-jobs-portal.onrender.com",
     "127.0.0.1",
     "localhost",
     "dc-backend-6xlc.onrender.com",  # Added your backend domain
+     '.onrender.com',  # Add this to allow all render subdomains
 ]
 
 CSRF_TRUSTED_ORIGINS = [
