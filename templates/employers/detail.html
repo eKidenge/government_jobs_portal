@@ -1,0 +1,426 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ employer.company_name }} - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       GOVERNMENT STYLES
+       ============================================ */
+    .employer-detail-section {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+    }
+    
+    .employer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+    
+    .employer-header {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        transition: box-shadow 0.3s ease;
+    }
+    .employer-header:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    }
+    
+    .employer-logo-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #ebf8ff, #bee3f8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: #2b6cb0;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    .employer-logo-large:hover {
+        transform: scale(1.05) rotate(-3deg);
+    }
+    
+    .employer-name {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        color: #0a1628;
+        font-size: 2rem;
+        letter-spacing: 0.5px;
+        margin: 0;
+    }
+    
+    .employer-meta {
+        font-family: 'Inter', sans-serif;
+        color: #4a5568;
+        font-size: 0.95rem;
+        margin-top: 4px;
+    }
+    .employer-meta i {
+        color: #c9a33d;
+        width: 20px;
+    }
+    
+    .employer-description {
+        font-family: 'Merriweather', serif;
+        color: #4a5568;
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-top: 12px;
+    }
+    
+    .stat-box {
+        background: #f7fafc;
+        border-radius: 10px;
+        padding: 12px 20px;
+        text-align: center;
+        min-width: 100px;
+        border: 1px solid #edf2f7;
+        transition: all 0.3s ease;
+    }
+    .stat-box:hover {
+        border-color: #c9a33d;
+        background: #faf8f0;
+    }
+    .stat-box .stat-number {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1a365d;
+    }
+    .stat-box .stat-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .verification-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 16px;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .verification-badge.verified {
+        background: #c6f6d5;
+        color: #22543d;
+    }
+    .verification-badge.pending {
+        background: #fefcbf;
+        color: #975a16;
+    }
+    
+    .jobs-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        border: 1px solid rgba(201, 163, 61, 0.08);
+    }
+    .jobs-card h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+        border-bottom: 2px solid rgba(201, 163, 61, 0.1);
+        padding-bottom: 12px;
+    }
+    .jobs-card h2 i {
+        color: #c9a33d;
+        margin-right: 8px;
+    }
+    
+    .job-card-mini {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        transition: all 0.3s ease;
+        background: white;
+        margin-bottom: 12px;
+    }
+    .job-card-mini:last-child {
+        margin-bottom: 0;
+    }
+    .job-card-mini:hover {
+        border-color: #c9a33d;
+        box-shadow: 0 4px 16px rgba(201, 163, 61, 0.08);
+        transform: translateY(-2px);
+    }
+    .job-card-mini .job-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 1.1rem;
+    }
+    .job-card-mini .job-title a {
+        color: #1a365d;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .job-card-mini .job-title a:hover {
+        color: #c9a33d;
+    }
+    .job-card-mini .job-meta {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: #718096;
+    }
+    .job-card-mini .job-meta i {
+        color: #c9a33d;
+        width: 16px;
+    }
+    .job-card-mini .job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #edf2f7;
+    }
+    .job-card-mini .job-footer .closing {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        color: #a0aec0;
+    }
+    .job-card-mini .job-footer .btn-apply {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #c9a33d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .job-card-mini .job-footer .btn-apply:hover {
+        color: #b8942f;
+        transform: translateX(4px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #718096;
+    }
+    .empty-state i {
+        font-size: 48px;
+        color: #c9a33d;
+        opacity: 0.25;
+        margin-bottom: 16px;
+        display: block;
+    }
+    .empty-state p {
+        font-family: 'Merriweather', serif;
+        font-size: 1rem;
+    }
+    
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+        margin-top: 24px;
+    }
+    .back-btn:hover {
+        background: #edf2f7;
+        border-color: #c9a33d;
+        transform: translateX(-4px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .back-btn i {
+        color: #c9a33d;
+        transition: transform 0.3s ease;
+    }
+    .back-btn:hover i {
+        transform: translateX(-4px);
+    }
+    
+    @media (max-width: 768px) {
+        .employer-header {
+            padding: 20px;
+        }
+        .employer-name {
+            font-size: 1.5rem;
+        }
+        .employer-logo-large {
+            width: 80px;
+            height: 80px;
+            font-size: 36px;
+        }
+        .stat-box {
+            min-width: 80px;
+            padding: 8px 16px;
+        }
+        .stat-box .stat-number {
+            font-size: 1.4rem;
+        }
+        .jobs-card {
+            padding: 16px 20px;
+        }
+        .job-card-mini {
+            padding: 14px 16px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .employer-name {
+            font-size: 1.2rem;
+        }
+        .employer-header {
+            padding: 16px;
+        }
+        .stat-box {
+            min-width: 70px;
+            padding: 6px 12px;
+        }
+        .stat-box .stat-number {
+            font-size: 1.2rem;
+        }
+        .jobs-card {
+            padding: 12px 16px;
+        }
+        .job-card-mini .job-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="employer-detail-section">
+    <div class="employer-container">
+        <!-- Employer Header -->
+        <div class="employer-header">
+            <div class="flex flex-wrap items-start gap-6">
+                <div class="employer-logo-large">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <h1 class="employer-name">{{ employer.company_name }}</h1>
+                        <span class="verification-badge {% if employer.is_verified %}verified{% else %}pending{% endif %}">
+                            <i class="fas {% if employer.is_verified %}fa-check-circle{% else %}fa-clock{% endif %}"></i>
+                            {% if employer.is_verified %}Verified{% else %}Pending Verification{% endif %}
+                        </span>
+                    </div>
+                    <div class="employer-meta">
+                        <span><i class="fas fa-industry"></i> {{ employer.get_industry_display|default:'N/A' }}</span>
+                        {% if employer.country %}
+                            <span class="mx-3">|</span>
+                            <span><i class="fas fa-map-marker-alt"></i> {{ employer.country.name }}</span>
+                        {% endif %}
+                        <span class="mx-3">|</span>
+                        <span><i class="fas fa-users"></i> {{ employer.company_size|default:'N/A' }}</span>
+                    </div>
+                    {% if employer.website %}
+                        <div class="mt-1">
+                            <a href="{{ employer.website }}" target="_blank" class="text-gold hover:underline text-sm font-medium">
+                                <i class="fas fa-globe mr-1"></i> {{ employer.website }}
+                            </a>
+                        </div>
+                    {% endif %}
+                    {% if employer.description %}
+                        <div class="employer-description">{{ employer.description|linebreaks }}</div>
+                    {% endif %}
+                    
+                    <!-- Stats -->
+                    <div class="flex flex-wrap gap-4 mt-4">
+                        <div class="stat-box">
+                            <div class="stat-number">{{ job_count }}</div>
+                            <div class="stat-label">Jobs Posted</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ total_applications|default:0 }}</div>
+                            <div class="stat-label">Applications</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">{{ employer.created_at|date:"Y"|default:'N/A' }}</div>
+                            <div class="stat-label">Active Since</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Section -->
+        <div class="jobs-card">
+            <h2>
+                <i class="fas fa-briefcase"></i> Current Openings
+            </h2>
+
+            {% if jobs %}
+                <div class="space-y-3">
+                    {% for job in jobs %}
+                        <div class="job-card-mini">
+                            <div class="job-title">
+                                <a href="{% url 'job_detail' job.id %}">
+                                    {{ job.title }}
+                                </a>
+                            </div>
+                            <div class="job-meta mt-1">
+                                <span><i class="fas fa-map-marker-alt"></i> {{ job.country.name }}</span>
+                                <span class="mx-2">|</span>
+                                <span><i class="fas fa-clock"></i> {{ job.get_employment_type_display }}</span>
+                                {% if job.salary_min %}
+                                    <span class="mx-2">|</span>
+                                    <span><i class="fas fa-money-bill-wave text-green-600"></i> {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }}{% if job.salary_max %} - {{ job.salary_max|floatformat:0 }}{% endif %}</span>
+                                {% endif %}
+                            </div>
+                            <div class="job-footer">
+                                <span class="closing">
+                                    <i class="far fa-clock mr-1"></i> Closes: {{ job.closing_date|date:"M d, Y" }}
+                                </span>
+                                <a href="{% url 'apply_to_job' job.id %}" class="btn-apply">
+                                    Apply Now <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-briefcase"></i>
+                    <p>No active job openings at this time.</p>
+                    <p class="text-sm text-gray-400 mt-2">Please check back later.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-6">
+            <a href="{% url 'employers:employer_list' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Employers
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

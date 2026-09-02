@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Details - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <div class="flex items-center gap-4 mb-6">
+                <a href="{% url 'admin_panel:admin_user_list' %}" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <h1 class="text-2xl font-bold text-gray-800">User Details</h1>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Personal Information</h3>
+                    <p><strong>Name:</strong> {{ user.full_name }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Phone:</strong> {{ user.phone_number|default:'N/A' }}</p>
+                    <p><strong>National ID:</strong> {{ user.national_id|default:'N/A' }}</p>
+                    <p><strong>User Type:</strong> {{ user.get_user_type_display }}</p>
+                    <p><strong>Status:</strong> {{ user.get_status_display }}</p>
+                    <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">Statistics</h3>
+                    <p><strong>Applications:</strong> {{ applications_count }}</p>
+                    <p><strong>Total Paid:</strong> KES {{ total_paid|floatformat:2 }}</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex gap-3">
+                <a href="{% url 'admin_panel:admin_user_list' %}" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

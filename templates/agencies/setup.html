@@ -1,0 +1,579 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Agency Profile Setup - Government Jobs Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid rgba(201, 163, 61, 0.1);
+    }
+    
+    .form-container h1 {
+        font-family: 'Playfair Display', serif;
+        color: #0a1628;
+        font-weight: 700;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+    
+    .form-container .subtitle {
+        text-align: center;
+        color: #718096;
+        font-family: 'Merriweather', serif;
+        margin-bottom: 32px;
+        font-size: 1rem;
+    }
+    
+    .form-section {
+        background: #faf8f5;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(201, 163, 61, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .form-section:hover {
+        border-color: rgba(201, 163, 61, 0.2);
+    }
+    
+    .form-section-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 600;
+        color: #0a1628;
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-section-title i {
+        color: #c9a33d;
+    }
+    
+    .form-container label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #1a365d;
+        font-size: 0.85rem;
+    }
+    
+    .form-container .helptext {
+        font-family: 'Merriweather', serif;
+        font-size: 0.75rem;
+        color: #718096;
+        font-style: italic;
+    }
+    
+    .form-container input, 
+    .form-container select, 
+    .form-container textarea {
+        font-family: 'Inter', sans-serif;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        width: 100%;
+        transition: all 0.3s ease;
+        background: white;
+    }
+    
+    .form-container input:focus,
+    .form-container select:focus,
+    .form-container textarea:focus {
+        border-color: #c9a33d;
+        box-shadow: 0 0 0 4px rgba(201, 163, 61, 0.1);
+        outline: none;
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #0a1628, #1a365d);
+        color: white;
+        padding: 14px 36px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(26, 54, 93, 0.3);
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+    }
+    
+    .btn-cancel {
+        background: white;
+        color: #1a365d;
+        padding: 14px 36px;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: 2px solid #1a365d;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-cancel:hover {
+        background: #f8f6f2;
+        transform: translateY(-2px);
+    }
+    
+    .logo-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #e2e8f0;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        background: #f7fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .logo-preview:hover {
+        border-color: #c9a33d;
+        box-shadow: 0 4px 20px rgba(201, 163, 61, 0.15);
+    }
+    
+    .logo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .logo-preview .placeholder {
+        color: #a0aec0;
+        font-size: 3rem;
+    }
+    
+    .step-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 20px 0 32px 0;
+    }
+    
+    .step-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .step-number {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+    }
+    
+    .step-number.active {
+        background: linear-gradient(135deg, #c9a33d, #b8860b);
+        color: white;
+        border-color: #c9a33d;
+        box-shadow: 0 4px 15px rgba(201, 163, 61, 0.3);
+    }
+    
+    .step-number.completed {
+        background: #48bb78;
+        color: white;
+        border-color: #48bb78;
+    }
+    
+    .step-number.inactive {
+        background: #e2e8f0;
+        color: #a0aec0;
+        border-color: #e2e8f0;
+    }
+    
+    .step-label {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .step-label.active {
+        color: #c9a33d;
+    }
+    
+    .step-label.inactive {
+        color: #a0aec0;
+    }
+    
+    .step-connector {
+        width: 60px;
+        height: 3px;
+        margin: 0 8px;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+    
+    .step-connector.active {
+        background: linear-gradient(90deg, #c9a33d, #b8860b);
+    }
+    
+    .step-connector.inactive {
+        background: #e2e8f0;
+    }
+    
+    .help-box {
+        background: linear-gradient(135deg, #f0f7ff, #e8f0fe);
+        border-radius: 16px;
+        padding: 24px;
+        border-left: 4px solid #c9a33d;
+        border: 1px solid rgba(201, 163, 61, 0.15);
+        border-left-width: 4px;
+        margin-top: 24px;
+    }
+    
+    .help-box h3 {
+        font-family: 'Playfair Display', serif;
+        color: #0a1628;
+        font-weight: 600;
+    }
+    
+    .help-box p {
+        font-family: 'Merriweather', serif;
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    .required-field::after {
+        content: '*';
+        color: #e53e3e;
+        margin-left: 4px;
+        font-weight: 700;
+    }
+    
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 20px;
+        }
+        .form-container h1 {
+            font-size: 1.5rem;
+        }
+        .step-connector {
+            width: 20px;
+        }
+        .step-label {
+            font-size: 0.65rem;
+        }
+        .step-number {
+            width: 34px;
+            height: 34px;
+            font-size: 0.9rem;
+        }
+        .form-section {
+            padding: 16px;
+        }
+        .logo-preview {
+            width: 80px;
+            height: 80px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-8" data-aos="fade-up">
+            <div class="inline-flex items-center justify-center space-x-3 mb-4">
+                <div class="w-12 h-0.5 bg-gradient-to-r from-transparent to-gold"></div>
+                <span class="text-xs font-semibold text-gold-dark tracking-widest uppercase gov-font-sans">Agency Registration</span>
+                <div class="w-12 h-0.5 bg-gradient-to-l from-transparent to-gold"></div>
+            </div>
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 gov-font mb-4">
+                Complete Your <span class="text-gold">Agency</span> Profile
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto gov-font-body leading-relaxed">
+                Please fill in all required information to complete your recruitment agency profile setup.
+            </p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="step-container" data-aos="fade-up" data-aos-delay="100">
+            <div class="step-item">
+                <div class="step-number active">1</div>
+                <span class="step-label active gov-font-sans">Profile</span>
+            </div>
+            <div class="step-connector active"></div>
+            <div class="step-item">
+                <div class="step-number inactive">2</div>
+                <span class="step-label inactive gov-font-sans">Verification</span>
+            </div>
+            <div class="step-connector inactive"></div>
+            <div class="step-item">
+                <div class="step-number inactive">3</div>
+                <span class="step-label inactive gov-font-sans">Complete</span>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container" data-aos="fade-up" data-aos-delay="200">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-building"></i>
+                        Basic Information
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.agency_name|as_crispy_field }}
+                        </div>
+                        <div>
+                            {{ form.registration_number|as_crispy_field }}
+                        </div>
+                        <div>
+                            {{ form.license_number|as_crispy_field }}
+                        </div>
+                        <div>
+                            {{ form.country|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-address-card"></i>
+                        Contact Information
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form.contact_phone|as_crispy_field }}
+                        </div>
+                        <div>
+                            {{ form.contact_email|as_crispy_field }}
+                        </div>
+                        <div class="md:col-span-2">
+                            {{ form.address|as_crispy_field }}
+                        </div>
+                        <div>
+                            {{ form.website|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agency Details -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Agency Details
+                    </div>
+                    <div>
+                        {{ form.description|as_crispy_field }}
+                    </div>
+                    <div class="mt-4">
+                        {{ form.specializations|as_crispy_field }}
+                    </div>
+                    <div class="mt-4">
+                        {{ form.active_countries|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Logo Upload -->
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="fas fa-image"></i>
+                        Agency Logo
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
+                        <div class="logo-preview">
+                            {% if agency.logo %}
+                                <img src="{{ agency.logo.url }}" alt="{{ agency.agency_name }}">
+                            {% else %}
+                                <div class="placeholder">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1 w-full">
+                            {{ form.logo|as_crispy_field }}
+                            <p class="mt-2 text-xs text-gray-500 gov-font-sans">
+                                <i class="fas fa-info-circle text-gold mr-1"></i>
+                                Recommended: Square image, at least 200x200px (PNG, JPG, JPEG)
+                            </p>
+                            <p class="text-xs text-gray-500 gov-font-sans">
+                                <i class="fas fa-info-circle text-gold mr-1"></i>
+                                Maximum file size: 5MB
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row items-center justify-end space-y-4 sm:space-y-0 sm:space-x-4 pt-6 border-t-2 border-gray-100">
+                    <a href="{% url 'dashboard' %}" class="btn-cancel w-full sm:w-auto justify-center">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-submit w-full sm:w-auto justify-center">
+                        <i class="fas fa-save"></i> Save Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-box" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                        <i class="fas fa-question-circle text-gold text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3>Need Assistance?</h3>
+                    <p>
+                        After completing your profile, you'll be able to post overseas jobs, manage applications, and access agency features. 
+                        If you encounter any issues, please contact our support team at 
+                        <a href="mailto:support@governmentjobs.go.ke" class="text-gold-dark font-semibold hover:underline gov-font-sans">
+                            support@governmentjobs.go.ke
+                        </a>
+                        or call <span class="font-semibold gov-font-sans">+254 20 222 0000</span>
+                    </p>
+                    <div class="mt-3 flex flex-wrap gap-3">
+                        <span class="inline-flex items-center px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-600 border border-gray-200 gov-font-sans">
+                            <i class="fas fa-check-circle text-green-500 mr-1"></i> Secure & Encrypted
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-600 border border-gray-200 gov-font-sans">
+                            <i class="fas fa-shield-alt text-gold mr-1"></i> Government Verified
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-600 border border-gray-200 gov-font-sans">
+                            <i class="fas fa-clock text-blue-500 mr-1"></i> 24/7 Support
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Required Fields Note -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-500 gov-font-sans">
+                <i class="fas fa-asterisk text-red-500 text-xs mr-1"></i> 
+                Fields marked with asterisk are required
+            </p>
+            <p class="text-sm text-gray-400 gov-font-sans mt-2">
+                <i class="fas fa-lock text-gold mr-1"></i> 
+                Your information is securely encrypted and protected
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Logo preview
+        const logoInput = document.querySelector('input[type="file"][name="logo"]');
+        if (logoInput) {
+            logoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size exceeds 5MB limit. Please choose a smaller file.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewContainer = document.querySelector('.logo-preview');
+                        if (previewContainer) {
+                            const existingImg = previewContainer.querySelector('img');
+                            const existingPlaceholder = previewContainer.querySelector('.placeholder');
+                            
+                            if (existingImg) {
+                                existingImg.src = e.target.result;
+                            } else if (existingPlaceholder) {
+                                const newImg = document.createElement('img');
+                                newImg.src = e.target.result;
+                                newImg.alt = 'Agency Logo Preview';
+                                previewContainer.replaceChild(newImg, existingPlaceholder);
+                            } else {
+                                const newImg = document.createElement('img');
+                                newImg.src = e.target.result;
+                                newImg.alt = 'Agency Logo Preview';
+                                previewContainer.appendChild(newImg);
+                            }
+                            
+                            previewContainer.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                previewContainer.style.transform = 'scale(1)';
+                            }, 100);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Auto-focus on first field
+        const firstField = document.querySelector('input:not([type="file"]), select, textarea');
+        if (firstField) {
+            setTimeout(() => {
+                firstField.focus();
+            }, 500);
+        }
+
+        // Animate form sections on scroll
+        const sections = document.querySelectorAll('.form-section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease';
+            observer.observe(section);
+        });
+
+        console.log('🏛️ Government Jobs Portal - Agency Setup loaded successfully!');
+    });
+</script>
+{% endblock %}

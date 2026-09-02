@@ -1,0 +1,27 @@
+Welcome to Government Jobs Portal!
+
+Hello {{ user.full_name }},
+
+Thank you for registering on the Government Jobs Portal. You are now part of a trusted platform connecting citizens to verified employment opportunities.
+
+Your Account Details:
+- Name: {{ user.full_name }}
+- Email: {{ user.email }}
+- User Type: {{ user.get_user_type_display }}
+- Status: {{ user.get_status_display }}
+
+Your account is currently {{ user.get_status_display }}. Once verified, you will be able to:
+- Apply for jobs
+- Track your applications
+- Access verified employment opportunities
+- Receive job alerts and notifications
+
+Login to your account: {{ site_url }}{% url 'login' %}
+
+Need help? Contact us at info@governmentjobs.go.ke
+
+---
+Government Jobs Portal
+Ministry of Labour, Nairobi, Kenya
+Phone: +254 20 222 0000
+Email: info@governmentjobs.go.ke
