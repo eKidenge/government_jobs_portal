@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /panel/
+Disallow: /api/
+Disallow: /accounts/login/
+Disallow: /accounts/logout/
+Disallow: /accounts/password-reset/
+Disallow: /payments/
+Disallow: /static/
+Disallow: /media/
+
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+Sitemap: https://government-jobs-portal.onrender.com/sitemap.xml
