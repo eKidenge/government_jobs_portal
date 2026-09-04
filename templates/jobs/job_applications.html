@@ -1,161 +1,831 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Applications for {{ job.title }}{% endblock %}
+{% block title %}Official Job Applications - {{ job.title }} | Government Employment Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Government Official Styling */
+    :root {
+        --gov-primary: #1a3c6e;
+        --gov-secondary: #2c5282;
+        --gov-accent: #3182ce;
+        --gov-gold: #c9a84c;
+        --gov-light: #f0f4f8;
+        --gov-border: #cbd5e0;
+        --gov-text: #1a202c;
+        --gov-muted: #4a5568;
+    }
+    
+    .gov-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
+    
+    .gov-header {
+        background: linear-gradient(135deg, #0a1a3a 0%, #1a3c6e 50%, #2c5282 100%);
+        color: white;
+        padding: 2rem 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        border-left: 6px solid #c9a84c;
+    }
+    
+    .gov-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0;
+        text-transform: uppercase;
+        font-family: 'Georgia', serif;
+    }
+    
+    .gov-header .subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+        font-weight: 300;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        padding-top: 0.5rem;
+    }
+    
+    .gov-badge {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .gov-badge-active { background: #48bb78; color: white; }
+    .gov-badge-pending { background: #ecc94b; color: #1a202c; }
+    .gov-badge-closed { background: #a0aec0; color: white; }
+    .gov-badge-expired { background: #fc8181; color: white; }
+    .gov-badge-draft { background: #bee3f8; color: #1a202c; }
+    
+    .gov-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .gov-card-header {
+        background: #f7fafc;
+        padding: 1rem 1.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .gov-card-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        font-family: 'Georgia', serif;
+    }
+    
+    .gov-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    
+    .gov-table thead {
+        background: #2d3748;
+        color: white;
+    }
+    
+    .gov-table thead th {
+        padding: 1rem 1.5rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .gov-table thead th:last-child {
+        border-right: none;
+    }
+    
+    .gov-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: background 0.2s;
+    }
+    
+    .gov-table tbody tr:hover {
+        background: #f7fafc;
+    }
+    
+    .gov-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+    }
+    
+    .gov-status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .gov-status-badge::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+    
+    .gov-status-submitted { background: #fefcbf; color: #975a16; }
+    .gov-status-submitted::before { background: #d69e2e; }
+    
+    .gov-status-under_review { background: #bee3f8; color: #2a4365; }
+    .gov-status-under_review::before { background: #3182ce; }
+    
+    .gov-status-shortlisted { background: #e9d8fd; color: #44337a; }
+    .gov-status-shortlisted::before { background: #805ad5; }
+    
+    .gov-status-interview_scheduled { background: #c6f6d5; color: #22543d; }
+    .gov-status-interview_scheduled::before { background: #48bb78; }
+    
+    .gov-status-medical_examination { background: #feebc8; color: #7c2d12; }
+    .gov-status-medical_examination::before { background: #ed8936; }
+    
+    .gov-status-visa_processing { background: #e2e8f0; color: #1a202c; }
+    .gov-status-visa_processing::before { background: #718096; }
+    
+    .gov-status-offer_extended { background: #fbd38d; color: #7b341e; }
+    .gov-status-offer_extended::before { background: #dd6b20; }
+    
+    .gov-status-accepted { background: #c6f6d5; color: #22543d; }
+    .gov-status-accepted::before { background: #38a169; }
+    
+    .gov-status-rejected { background: #fed7d7; color: #742a2a; }
+    .gov-status-rejected::before { background: #e53e3e; }
+    
+    .gov-status-withdrawn { background: #e2e8f0; color: #4a5568; }
+    .gov-status-withdrawn::before { background: #a0aec0; }
+    
+    .gov-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1.25rem;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .gov-btn-primary {
+        background: #1a3c6e;
+        color: white;
+    }
+    
+    .gov-btn-primary:hover {
+        background: #0a1a3a;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(26, 60, 110, 0.3);
+    }
+    
+    .gov-btn-secondary {
+        background: #e2e8f0;
+        color: #2d3748;
+    }
+    
+    .gov-btn-secondary:hover {
+        background: #cbd5e0;
+    }
+    
+    .gov-btn-success {
+        background: #38a169;
+        color: white;
+    }
+    
+    .gov-btn-success:hover {
+        background: #2f855a;
+    }
+    
+    .gov-btn-danger {
+        background: #e53e3e;
+        color: white;
+    }
+    
+    .gov-btn-danger:hover {
+        background: #c53030;
+    }
+    
+    .gov-btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .gov-select {
+        padding: 0.35rem 2rem 0.35rem 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        background: white;
+        font-size: 0.85rem;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 12px;
+        cursor: pointer;
+    }
+    
+    .gov-select:focus {
+        outline: none;
+        border-color: #3182ce;
+        box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    .gov-filter-bar {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .gov-stat-box {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.25rem;
+        text-align: center;
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .gov-stat-box .number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a3c6e;
+        font-family: 'Georgia', serif;
+    }
+    
+    .gov-stat-box .label {
+        font-size: 0.8rem;
+        color: #4a5568;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.25rem;
+    }
+    
+    .gov-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        background: #f7fafc;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .gov-pagination a, .gov-pagination span {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        color: #2d3748;
+        border: 1px solid #e2e8f0;
+        background: white;
+        transition: all 0.2s;
+    }
+    
+    .gov-pagination a:hover {
+        background: #1a3c6e;
+        color: white;
+        border-color: #1a3c6e;
+    }
+    
+    .gov-pagination .current {
+        background: #1a3c6e;
+        color: white;
+        border-color: #1a3c6e;
+    }
+    
+    .gov-pagination .disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .gov-divider {
+        border: none;
+        border-top: 2px solid #e2e8f0;
+        margin: 1.5rem 0;
+    }
+    
+    .gov-text-muted {
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+    
+    .gov-text-uppercase {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .gov-watermark {
+        position: relative;
+    }
+    
+    .gov-watermark::after {
+        content: 'GOVERNMENT OF KENYA';
+        position: absolute;
+        bottom: 20px;
+        right: 30px;
+        font-size: 0.7rem;
+        color: rgba(0,0,0,0.05);
+        font-weight: 700;
+        letter-spacing: 2px;
+        transform: rotate(-5deg);
+        pointer-events: none;
+    }
+    
+    .gov-flag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .gov-flag::before {
+        content: '';
+        display: inline-block;
+        width: 24px;
+        height: 16px;
+        background: linear-gradient(to bottom, #000000 33%, #b30000 33%, #b30000 66%, #006600 66%, #006600 100%);
+        border-radius: 2px;
+        border: 1px solid #cbd5e0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .gov-header h1 {
+            font-size: 1.5rem;
+        }
+        .gov-table thead th,
+        .gov-table tbody td {
+            padding: 0.75rem 0.75rem;
+            font-size: 0.8rem;
+        }
+        .gov-stat-box .number {
+            font-size: 1.5rem;
+        }
+        .gov-filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+    
+    @media print {
+        .gov-btn, .gov-filter-bar, .gov-pagination {
+            display: none !important;
+        }
+        .gov-card {
+            border: 1px solid #000 !important;
+            box-shadow: none !important;
+        }
+        .gov-header {
+            background: #1a3c6e !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <!-- Back button -->
-    <div class="mb-6">
-        <a href="{% url 'employer_job_list' %}" class="text-blue-600 hover:text-blue-800">
-            ← Back to Jobs
-        </a>
-    </div>
-
-    <!-- Job Header -->
-    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h1 class="text-2xl font-bold">{{ job.title }}</h1>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
+<div class="gov-container gov-watermark">
+    <!-- Official Header -->
+    <div class="gov-header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
             <div>
-                <span class="text-gray-500">Status:</span>
-                <span class="font-semibold capitalize">{{ job.get_status_display }}</span>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 2.5rem;">🏛️</span>
+                    <div>
+                        <h1>OFFICIAL JOB APPLICATIONS</h1>
+                        <div class="subtitle">
+                            Republic of Kenya - Public Service Commission
+                            <span style="margin: 0 0.75rem;">•</span>
+                            Employment Records Management System
+                            <span style="margin: 0 0.75rem;">•</span>
+                            <span id="current-date" style="font-weight: 300;"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <span class="text-gray-500">Posted:</span>
-                <span class="font-semibold">{{ job.posted_date|date:"M d, Y" }}</span>
-            </div>
-            <div>
-                <span class="text-gray-500">Applications:</span>
-                <span class="font-semibold">{{ applications.paginator.count }}</span>
-            </div>
-            <div>
-                <span class="text-gray-500">Closing:</span>
-                <span class="font-semibold">{{ job.closing_date|date:"M d, Y" }}</span>
+            <div style="text-align: right; font-size: 0.8rem; opacity: 0.8; border-left: 2px solid rgba(255,255,255,0.3); padding-left: 1.5rem;">
+                <div style="font-weight: 300;">REF: PSC/JOB/{{ job.id|slice:"-8"|upper }}</div>
+                <div style="font-weight: 300;">CLASSIFIED - OFFICIAL USE</div>
             </div>
         </div>
     </div>
 
-    <!-- Filter -->
-    <div class="mb-6 flex flex-wrap items-center gap-4">
-        <form method="GET" class="flex items-center gap-2">
-            <label for="status" class="text-sm font-medium text-gray-700">Filter by Status:</label>
-            <select name="status" id="status" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                <option value="">All Applications</option>
-                {% for value, label in status_choices %}
-                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                Apply Filter
-            </button>
-        </form>
+    <!-- Job Information -->
+    <div class="gov-card">
+        <div class="gov-card-header">
+            <h3>
+                <span style="color: #1a3c6e;">📋</span> 
+                JOB DETAILS - OFFICIAL RECORD
+                <span style="font-weight: 400; font-size: 0.8rem; color: #4a5568; margin-left: 1rem;">
+                    Job Code: {{ job.id|slice:"-8"|upper }}
+                </span>
+            </h3>
+            <div>
+                <a href="{% url 'job_detail' job.id %}" class="gov-btn gov-btn-secondary gov-btn-sm">
+                    View Full Job Description
+                </a>
+            </div>
+        </div>
+        <div style="padding: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Position Title</div>
+                    <div style="font-size: 1.2rem; font-weight: 700; color: #1a202c;">{{ job.title }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Department / Category</div>
+                    <div style="font-weight: 600;">{{ job.category.name }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Location</div>
+                    <div>
+                        {{ job.location }}, {{ job.country.name }}
+                        {% if job.is_remote %}
+                            <span style="font-size: 0.7rem; background: #bee3f8; padding: 0.1rem 0.5rem; border-radius: 12px; margin-left: 0.5rem;">REMOTE</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Employment Type</div>
+                    <div><span style="font-weight: 600;">{{ job.get_employment_type_display }}</span> • {{ job.get_experience_level_display }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Salary Range</div>
+                    <div>
+                        {% if job.salary_min and job.salary_max %}
+                            {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }} - {{ job.salary_max|floatformat:0 }}
+                        {% elif job.salary_min %}
+                            {{ job.salary_currency }} {{ job.salary_min|floatformat:0 }}
+                        {% else %}
+                            <span class="gov-text-muted">Not specified</span>
+                        {% endif %}
+                        {% if job.is_salary_negotiable %}
+                            <span style="font-size: 0.7rem; background: #fefcbf; padding: 0.1rem 0.5rem; border-radius: 12px; margin-left: 0.5rem;">Negotiable</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Status</div>
+                    <div>
+                        <span class="gov-badge 
+                            {% if job.status == 'active' %}gov-badge-active
+                            {% elif job.status == 'pending' %}gov-badge-pending
+                            {% elif job.status == 'closed' %}gov-badge-closed
+                            {% elif job.status == 'expired' %}gov-badge-expired
+                            {% else %}gov-badge-draft{% endif %}">
+                            {{ job.get_status_display }}
+                        </span>
+                        {% if job.is_expired %}
+                            <span style="color: #e53e3e; font-weight: 600; margin-left: 0.5rem;">⚠️ EXPIRED</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Posted Date</div>
+                    <div>{{ job.posted_date|date:"d M Y, H:i" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Closing Date</div>
+                    <div>
+                        {{ job.closing_date|date:"d M Y, H:i" }}
+                        <span style="font-size: 0.75rem; color: #4a5568;">
+                            ({{ job.closing_date|timeuntil }} remaining)
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="gov-divider">
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                <div class="gov-stat-box">
+                    <div class="number">{{ applications.paginator.count }}</div>
+                    <div class="label">Total Applications</div>
+                </div>
+                <div class="gov-stat-box">
+                    <div class="number">
+                        {% with submitted=applications|length %}
+                            {{ applications|length }}
+                        {% endwith %}
+                    </div>
+                    <div class="label">Under Review</div>
+                </div>
+                <div class="gov-stat-box">
+                    <div class="number">
+                        {% with shortlisted=0 %}
+                            {% for app in applications %}
+                                {% if app.status == 'shortlisted' or app.status == 'interview_scheduled' %}
+                                    {% with shortlisted=shortlisted|add:1 %}{% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ shortlisted }}
+                        {% endwith %}
+                    </div>
+                    <div class="label">Shortlisted</div>
+                </div>
+                <div class="gov-stat-box">
+                    <div class="number">
+                        {% with accepted=0 %}
+                            {% for app in applications %}
+                                {% if app.status == 'accepted' %}
+                                    {% with accepted=accepted|add:1 %}{% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ accepted }}
+                        {% endwith %}
+                    </div>
+                    <div class="label">Accepted</div>
+                </div>
+                <div class="gov-stat-box">
+                    <div class="number">
+                        {% with rejected=0 %}
+                            {% for app in applications %}
+                                {% if app.status == 'rejected' %}
+                                    {% with rejected=rejected|add:1 %}{% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ rejected }}
+                        {% endwith %}
+                    </div>
+                    <div class="label">Rejected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="gov-filter-bar">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; width: 100%;">
+            <div style="font-weight: 600; color: #1a3c6e; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                🔍 Filter Applications
+            </div>
+            <form method="GET" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; flex: 1;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="status" style="font-size: 0.85rem; color: #4a5568;">Status:</label>
+                    <select name="status" id="status" class="gov-select">
+                        <option value="">All Statuses</option>
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="gov-btn gov-btn-primary gov-btn-sm">
+                    Apply Filter
+                </button>
+                {% if status_filter %}
+                    <a href="?" style="font-size: 0.85rem; color: #e53e3e; text-decoration: none; font-weight: 500;">
+                        ✕ Clear Filter
+                    </a>
+                {% endif %}
+            </form>
+            <div style="margin-left: auto; font-size: 0.85rem; color: #4a5568; background: #f7fafc; padding: 0.25rem 1rem; border-radius: 4px;">
+                <span style="font-weight: 600;">{{ applications.paginator.count }}</span> record(s) found
+            </div>
+        </div>
     </div>
 
     <!-- Applications Table -->
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <div class="gov-card">
+        <div class="gov-card-header">
+            <h3>
+                📊 APPLICANT REGISTER
+                <span style="font-weight: 400; font-size: 0.8rem; color: #4a5568; margin-left: 1rem;">
+                    Official Record of All Applicants
+                </span>
+            </h3>
+            <div style="font-size: 0.8rem; color: #4a5568;">
+                Generated: {% now "d M Y H:i:s" %}
+            </div>
+        </div>
+        
         {% if applications %}
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div style="overflow-x: auto;">
+                <table class="gov-table">
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CV</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th>#</th>
+                            <th>Applicant Details</th>
+                            <th>Contact Information</th>
+                            <th>Application Status</th>
+                            <th>Date Applied</th>
+                            <th>Documents</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody>
                         {% for application in applications %}
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">
+                                <td style="font-weight: 600; color: #1a3c6e; font-size: 0.8rem;">
+                                    {{ forloop.counter|add:applications.start_index|add:"-1" }}
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600; color: #1a202c;">
                                         {{ application.applicant.full_name|default:application.applicant.username }}
                                     </div>
+                                    <div style="font-size: 0.75rem; color: #4a5568;">
+                                        {% if application.applicant.profile %}
+                                            {{ application.applicant.profile.phone_number|default:"No phone" }}
+                                        {% endif %}
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ application.applicant.email }}
+                                <td>
+                                    <div style="font-size: 0.85rem;">
+                                        <a href="mailto:{{ application.applicant.email }}" style="color: #1a3c6e; text-decoration: none;">
+                                            {{ application.applicant.email }}
+                                        </a>
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #4a5568; margin-top: 0.2rem;">
+                                        ID: {{ application.applicant.id|slice:"-6"|upper }}
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {% if application.status == 'submitted' %}bg-yellow-100 text-yellow-800
-                                        {% elif application.status == 'under_review' %}bg-blue-100 text-blue-800
-                                        {% elif application.status == 'shortlisted' %}bg-purple-100 text-purple-800
-                                        {% elif application.status == 'accepted' %}bg-green-100 text-green-800
-                                        {% elif application.status == 'rejected' %}bg-red-100 text-red-800
-                                        {% elif application.status == 'withdrawn' %}bg-gray-100 text-gray-800
-                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                <td>
+                                    <span class="gov-status-badge gov-status-{{ application.status }}">
                                         {{ application.get_status_display }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ application.date_applied|date:"M d, Y" }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    {% if application.applicant.profile.cv %}
-                                        <a href="{% url 'download_cv' application.id %}" 
-                                           class="text-blue-600 hover:text-blue-900">
-                                            📄 Download
-                                        </a>
-                                    {% else %}
-                                        <span class="text-gray-400">Not uploaded</span>
+                                    {% if application.status == 'interview_scheduled' and application.interview_date %}
+                                        <div style="font-size: 0.7rem; color: #2c5282; margin-top: 0.2rem;">
+                                            Interview: {{ application.interview_date|date:"d M Y, H:i" }}
+                                        </div>
+                                    {% endif %}
+                                    {% if application.offered_salary %}
+                                        <div style="font-size: 0.7rem; color: #38a169; margin-top: 0.2rem;">
+                                            Offered: {{ job.salary_currency }} {{ application.offered_salary|floatformat:0 }}
+                                        </div>
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    <!-- Update Status Form -->
+                                <td style="font-size: 0.85rem;">
+                                    {{ application.date_applied|date:"d M Y" }}
+                                    <div style="font-size: 0.7rem; color: #4a5568;">
+                                        {{ application.date_applied|time:"H:i" }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if application.applicant.profile and application.applicant.profile.cv %}
+                                        <a href="{% url 'download_cv' application.id %}" 
+                                           style="color: #1a3c6e; text-decoration: none; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                            📄 CV
+                                        </a>
+                                    {% else %}
+                                        <span style="color: #a0aec0; font-size: 0.8rem;">No CV</span>
+                                    {% endif %}
+                                    {% if application.cover_letter %}
+                                        <div style="font-size: 0.7rem; color: #4a5568; margin-top: 0.2rem;">
+                                            Has Cover Letter
+                                        </div>
+                                    {% endif %}
+                                    {% if application.additional_documents %}
+                                        <div style="font-size: 0.7rem; color: #4a5568;">
+                                            {{ application.additional_documents|length }} extra doc(s)
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     <form method="POST" action="{% url 'update_application_status' application.id %}" 
-                                          class="flex items-center gap-2">
+                                          style="display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-start;">
                                         {% csrf_token %}
-                                        <select name="status" class="text-sm rounded-md border-gray-300">
+                                        <select name="status" class="gov-select" style="width: 100%; font-size: 0.75rem; padding: 0.2rem 1.5rem 0.2rem 0.5rem;">
                                             <option value="submitted" {% if application.status == 'submitted' %}selected{% endif %}>Submitted</option>
                                             <option value="under_review" {% if application.status == 'under_review' %}selected{% endif %}>Under Review</option>
                                             <option value="shortlisted" {% if application.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                            <option value="interview_scheduled" {% if application.status == 'interview_scheduled' %}selected{% endif %}>Interview Scheduled</option>
+                                            <option value="medical_examination" {% if application.status == 'medical_examination' %}selected{% endif %}>Medical Exam</option>
+                                            <option value="visa_processing" {% if application.status == 'visa_processing' %}selected{% endif %}>Visa Processing</option>
+                                            <option value="offer_extended" {% if application.status == 'offer_extended' %}selected{% endif %}>Offer Extended</option>
                                             <option value="accepted" {% if application.status == 'accepted' %}selected{% endif %}>Accepted</option>
                                             <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                            <option value="withdrawn" {% if application.status == 'withdrawn' %}selected{% endif %}>Withdrawn</option>
                                         </select>
-                                        <button type="submit" class="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
-                                            Update
-                                        </button>
+                                        <div style="display: flex; gap: 0.3rem; width: 100%;">
+                                            <button type="submit" class="gov-btn gov-btn-primary gov-btn-sm" style="flex: 1; justify-content: center;">
+                                                Update
+                                            </button>
+                                        </div>
                                     </form>
+                                    {% if application.review_notes %}
+                                        <div style="font-size: 0.7rem; color: #4a5568; margin-top: 0.3rem; border-top: 1px dashed #e2e8f0; padding-top: 0.3rem;">
+                                            📝 Notes: {{ application.review_notes|truncatechars:30 }}
+                                        </div>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-
+            
             <!-- Pagination -->
             {% if applications.has_other_pages %}
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <div class="text-sm text-gray-700">
-                            Showing {{ applications.start_index }} to {{ applications.end_index }} of {{ applications.paginator.count }} applications
-                        </div>
-                        <div class="flex gap-2">
-                            {% if applications.has_previous %}
-                                <a href="?page={{ applications.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
-                                   class="px-3 py-1 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                    Previous
-                                </a>
-                            {% endif %}
-                            {% if applications.has_next %}
-                                <a href="?page={{ applications.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" 
-                                   class="px-3 py-1 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                    Next
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="gov-pagination">
+                    {% if applications.has_previous %}
+                        <a href="?page={{ applications.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            ← Previous
+                        </a>
+                    {% else %}
+                        <span class="disabled">← Previous</span>
+                    {% endif %}
+                    
+                    <span style="font-size: 0.85rem; color: #4a5568;">
+                        Page 
+                        <span style="font-weight: 700; color: #1a3c6e;">{{ applications.number }}</span>
+                        of 
+                        <span style="font-weight: 700; color: #1a3c6e;">{{ applications.paginator.num_pages }}</span>
+                    </span>
+                    
+                    {% if applications.has_next %}
+                        <a href="?page={{ applications.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                            Next →
+                        </a>
+                    {% else %}
+                        <span class="disabled">Next →</span>
+                    {% endif %}
                 </div>
             {% endif %}
         {% else %}
-            <div class="p-8 text-center text-gray-500">
-                <p class="text-lg">No applications found for this job.</p>
-                <p class="text-sm mt-2">When candidates apply, they will appear here.</p>
+            <div style="padding: 4rem 2rem; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+                <h3 style="font-size: 1.5rem; color: #2d3748; font-family: 'Georgia', serif;">No Applications Received</h3>
+                <p style="color: #4a5568; max-width: 400px; margin: 1rem auto;">
+                    There are currently no applications for this position. 
+                    Please check back later or share the job posting to attract candidates.
+                </p>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="{% url 'employer_job_list' %}" class="gov-btn gov-btn-secondary">
+                        Back to Job Listings
+                    </a>
+                    <a href="{% url 'job_detail' job.id %}" class="gov-btn gov-btn-primary">
+                        View Job Posting
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>
+
+    <!-- Footer Information -->
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+        <div style="font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 1px;">
+            <span style="font-weight: 700;">PUBLIC SERVICE COMMISSION</span>
+            <span style="margin: 0 0.75rem;">•</span>
+            REPUBLIC OF KENYA
+            <span style="margin: 0 0.75rem;">•</span>
+            <span style="font-weight: 300;">EMPLOYMENT RECORDS MANAGEMENT SYSTEM</span>
+        </div>
+        <div style="font-size: 0.7rem; color: #a0aec0; margin-top: 0.5rem;">
+            This document is classified as OFFICIAL USE ONLY. Unauthorized distribution is prohibited.
+            <br>
+            Report any discrepancies to the Human Resource Management Department.
+        </div>
+        <div style="font-size: 0.65rem; color: #cbd5e0; margin-top: 0.5rem;">
+            System Version 2.1.0 • Generated on {% now "d M Y H:i:s" %} • PSC-KE/ERMS/{{ job.id|slice:"-8"|upper }}
+        </div>
+    </div>
 </div>
+
+<script>
+    // Set current date
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-KE', options);
+    });
+</script>
 {% endblock %}
