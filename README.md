@@ -98,7 +98,7 @@ flowchart TD
 - Real-time notifications
 - Application status tracking (Submitted → Under Review → Shortlisted → Interview → Accepted)
   ## 3. Citizen Flow
-  ```mermaid
+```mermaid
 flowchart TD
     A[Citizen Dashboard] --> B[Browse Jobs]
     A --> C[My Applications]
