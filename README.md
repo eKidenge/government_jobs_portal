@@ -187,7 +187,7 @@ flowchart TD
 - Contract uploads
 - Recruitment progress tracking
   ## 5. Recruitment Agency Flow
-  ```mermaid
+```mermaid
 flowchart TD
     A[Agency Dashboard] --> B[Agency Profile]
     A --> C[Post Overseas Jobs]
